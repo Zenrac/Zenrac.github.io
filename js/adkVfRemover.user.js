@@ -16,7 +16,7 @@
 // @match        https://m.adkami.com/agenda
 // @match        http://www.adkami.com/agenda
 // @match        http://m.adkami.com/agenda
-// @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/js/adkVfRemover.js
+// @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/js/adkVfRemover.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
 // @supportURL   https://github.com/zenrac/Zenrac.github.io/issues
 // @icon         https://www.google.com/s2/favicons?domain=adkami.com
