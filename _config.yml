@@ -1,0 +1,9 @@
+theme: jekyll-theme-cayman
+url : http://zenrac.xyz
+
+plugins:
+  - jekyll-redirect-from
+
+exclude:
+  - README.md
+  - LICENSE
