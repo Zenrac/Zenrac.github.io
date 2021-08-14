@@ -20,13 +20,13 @@
     btnNext.style = "margin: 10px";
 
     btnNext.onclick = function () {
-        var ep = window.location.href.match(/(\d+)-/)[1];
+        var ep = window.location.href.match(/(\d+)-v/)[1];
         var url = window.location.href.replace(ep, ((parseInt(ep) + 1 < 10) ? "0" : "") + ((parseInt(ep) + 1).toString()));
         window.location = url;
     };
 
     btnPrevious.onclick = function () {
-        var ep = window.location.href.match(/(\d+)-/)[1];
+        var ep = window.location.href.match(/(\d+)-v/)[1];
         var url = window.location.href.replace(ep, ((parseInt(ep) - 1 < 10) ? "0" : "") + ((parseInt(ep) - 1).toString()));
         if ((parseInt(ep) - 1) > 0) {
             window.location = url;
