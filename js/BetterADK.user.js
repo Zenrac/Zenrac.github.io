@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.5
 // @description  try to take over the world!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -57,10 +57,14 @@
     if (window.location.href.toLowerCase().includes("/anime/")) {
         var res = window.location.href.match(/anime\/(\d+)/);
         if (res) { // episode page
+            document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace('vf', 'vostfr');
             var lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("ul")[0].getElementsByTagName("li");
             var to_remove_again = [];
             for (let i = 0; i < lis.length; i++) {
-                lis.item(i).textContent.replace(' vostfr', '');
+                let toEdit = lis.item(i).getElementsByTagName("a")[0];
+                if (toEdit !== undefined) {
+                    toEdit.innerText = toEdit.innerText.replace(' vostfr', '');
+                }
                 if (lis.item(i).textContent.toLocaleLowerCase().includes(' vf') ||
                     lis.item(i).textContent.includes('PV ') ||
                     lis.item(i).textContent.includes('Ending ') ||
