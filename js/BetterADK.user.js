@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
