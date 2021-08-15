@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      1.0
 // @description  try to take over the world!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -18,6 +18,18 @@
 // ==/UserScript==
 (function() {
     'use strict';
+
+    function addGlobalStyle(css) {
+        var head, style;
+        head = document.getElementsByTagName('head')[0];
+        if (!head) {
+            return;
+        }
+        style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = css;
+        head.appendChild(style);
+    }
     const elems = document.getElementsByClassName("video-item-list")
     var to_remove = [];
     for (var i = 0; i < elems.length; i++) {
@@ -29,6 +41,17 @@
         $(elem).remove();
     });
 
+    $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
+    var newLogo = document.createElement('img');
+    newLogo.style = "height: 40px; width: 195px; margin-top: 10px; float: left; margin-left: 10px;";
+    newLogo.src = "https://i.imgur.com/wOQ3Mop.png";
+    var beel = document.getElementById("beelzebub");
+    beel.style = "background-size: contain; background-repeat: no-repeat;";
+
+    addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub { background-image: url(https://i.imgur.com/7UWLr6t.png) !important; }}');
+    addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub:after { content: "EZ EZ EZ EZ" !important; bottom: 7px; }}');
+
+    document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].appendChild(newLogo);
     if (elems.length > 0) {
         let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all")
         fetch(req)
@@ -56,8 +79,17 @@
 
     if (window.location.href.toLowerCase().includes("/anime/")) {
         var res = window.location.href.match(/anime\/(\d+)/);
-        if (res) { // episode page
-            document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace('vf', 'vostfr');
+        if (res) {
+            document.title = document.title.replace(' vostfr', '').replace('ADKami', 'BetterADK');
+            try {
+                document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace(' (77 vf)', '');
+            } catch {}
+            document.getElementsByClassName("title-header-video")[0].innerText = document.getElementsByClassName("title-header-video")[0].innerText.replace(' vostfr', '')
+            try {
+                document.getElementById("after-video").getElementsByTagName("span")[0].innerText = document.getElementById("after-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+                document.getElementById("before-video").getElementsByTagName("span")[0].innerText = document.getElementById("before-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+                document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText = document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+            } catch {}
             var lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("ul")[0].getElementsByTagName("li");
             var to_remove_again = [];
             for (let i = 0; i < lis.length; i++) {
