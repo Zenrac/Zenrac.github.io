@@ -55,23 +55,40 @@
     }
 
     if (window.location.href.toLowerCase().includes("/anime/")) {
-        var adk_id = window.location.href.match(/anime\/(\d+)/)[1];
-        let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all")
-        fetch(req)
-            .then(response => response.json())
-            .then(data => {
-                let url = data.data.find(el => el["anime_id"] == adk_id);
-                var ici = document.getElementsByClassName("anime-information-icon")[0];
-                if (url !== undefined) {
-                    let clickable = document.createElement("a");
-                    clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
-                    let el = document.createElement("img");
-                    clickable.appendChild(el);
-                    el.style = "width: 40px";
-                    el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
-                    ici.appendChild(clickable);
+        var res = window.location.href.match(/anime\/(\d+)/);
+        if (res) { // episode page
+            var lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("ul")[0].getElementsByTagName("li");
+            var to_remove_again = [];
+            for (let i = 0; i < lis.length; i++) {
+                lis.item(i).textContent.replace(' vostfr', '');
+                if (lis.item(i).textContent.toLocaleLowerCase().includes(' vf') ||
+                    lis.item(i).textContent.toLocaleLowerCase().includes('pv ') ||
+                    lis.item(i).textContent.toLocaleLowerCase().includes('ending ') ||
+                    lis.item(i).textContent.toLocaleLowerCase().includes('opening ')) {
+                    to_remove_again.push(lis.item(i));
                 }
-            })
+            }
+            to_remove_again.forEach(elem => {
+                $(elem).remove();
+            });
+            var adk_id = res[1];
+            let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all");
+            fetch(req)
+                .then(response => response.json())
+                .then(data => {
+                    let url = data.data.find(el => el["anime_id"] == adk_id);
+                    var ici = document.getElementsByClassName("anime-information-icon")[0];
+                    if (url !== undefined) {
+                        let clickable = document.createElement("a");
+                        clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
+                        let el = document.createElement("img");
+                        clickable.appendChild(el);
+                        el.style = "width: 40px";
+                        el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
+                        ici.appendChild(clickable);
+                    }
+                })
+        }
     }
 
     if (window.location.href.toLowerCase().includes("agenda")) {
