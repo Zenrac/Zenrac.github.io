@@ -62,14 +62,14 @@
             .then(data => {
                 let url = data.data.find(el => el["anime_id"] == adk_id);
                 var ici = document.getElementsByClassName("anime-information-icon")[0];
-                        let clickable = document.createElement("a");
-                        clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
-                        let el = document.createElement("img");
-                        clickable.appendChild(el);
-                        el.style = "width: 40px";
-                        el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
+                let clickable = document.createElement("a");
+                clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
+                let el = document.createElement("img");
+                clickable.appendChild(el);
+                el.style = "width: 40px";
+                el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
                 ici.appendChild(clickable);
-        })
+            })
     }
 
     if (window.location.href.toLowerCase().includes("agenda")) {
