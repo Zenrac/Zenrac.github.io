@@ -62,9 +62,9 @@
             for (let i = 0; i < lis.length; i++) {
                 lis.item(i).textContent.replace(' vostfr', '');
                 if (lis.item(i).textContent.toLocaleLowerCase().includes(' vf') ||
-                    lis.item(i).textContent.toLocaleLowerCase().includes('pv ') ||
-                    lis.item(i).textContent.toLocaleLowerCase().includes('ending ') ||
-                    lis.item(i).textContent.toLocaleLowerCase().includes('opening ')) {
+                    lis.item(i).textContent.includes('PV ') ||
+                    lis.item(i).textContent.includes('Ending ') ||
+                    lis.item(i).textContent.includes('Opening ')) {
                     to_remove_again.push(lis.item(i));
                 }
             }
