@@ -5,6 +5,7 @@
 // @description  try to take over the world!
 // @author       Zenrac
 // @match        http://www.mavanimes.co/*
+// @match        https://www.mavanimes.co/*
 // @icon         https://www.google.com/s2/favicons?domain=mavanimes.co
 // @grant        none
 // ==/UserScript==
