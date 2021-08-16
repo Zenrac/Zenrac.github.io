@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      1.1
-// @description  try to take over the world!
+// @version      1.2
+// @description  Removes VF from ADKami, also add MAL buttons, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
 // @match        https://www.adkami.com/*
@@ -40,7 +40,7 @@
 
     $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
     var newLogo = document.createElement('img');
-    newLogo.style = "height: 40px; width: 195px; margin-top: 10px; float: left; margin-left: 10px;";
+    newLogo.style = "width: 195px; margin-top: 15px; float: left; margin-left: 10px;";
     newLogo.src = "https://i.imgur.com/wOQ3Mop.png";
     var beel = document.getElementById("beelzebub");
     beel.style = "background-size: contain; background-repeat: no-repeat;";
