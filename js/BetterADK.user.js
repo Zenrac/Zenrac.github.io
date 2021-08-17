@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -50,6 +50,12 @@
 
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub { background-image: url(https://i.imgur.com/7UWLr6t.png) !important; }}');
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub:after { content: "EZ EZ EZ EZ" !important; bottom: 7px; }}');
+
+    let paypal = document.createElement("a");
+    paypal.href = "https://www.paypal.com/paypalme/ZenracZenrac"
+    beel.parentNode.insertBefore(paypal, beel.nextSibling);
+    paypal.appendChild(beel);
+
     document.title = document.title.replace('ADKami', 'BetterADK');
 
     document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].appendChild(newLogo);
