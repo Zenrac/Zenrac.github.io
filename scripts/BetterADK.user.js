@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.4
+// @version      1.5
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -64,6 +64,7 @@
         fetch(req)
             .then(response => response.json())
             .then(data => {
+                if (data.data === undefined) return;
                 for (let i = 0; i < elems.length; i++) {
                     let after = elems[i].getElementsByClassName("right list-edition")[0];
                     let id = after.dataset["info"].split(",")[0];
@@ -126,6 +127,7 @@
             fetch(req)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.data === undefined) return;
                     let url = data.data.find(el => el["anime_id"] == adk_id);
                     let ici = document.getElementsByClassName("anime-information-icon")[0];
                     if (url !== undefined) {
@@ -138,10 +140,11 @@
                         ici.appendChild(clickable);
                     }
                 })
+                .catch(console.error);
 
             // Mavanime.co
             let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
-            let title = document.getElementsByClassName("title-header-video")[0].innerText.split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
+            let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
 
 
             let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/)
@@ -163,7 +166,7 @@
             el.src = "https://i.imgur.com/xSHwElF.png"
             ici.appendChild(clickable);
 
-            if (document.getElementsByClassName("h-t-v-a").length < 2) {
+            if (document.getElementsByClassName("h-t-v-a").length < 2 && document.getElementsByClassName("licensier-text")[0] !== undefined) {
                 $(".lecteur-video")[0].remove();
                 let iframeLink = document.createElement("iframe");
                 let main = document.createElement("p");
