@@ -59,7 +59,7 @@ a:hover, a:focus {
 }
 
 .bigavatar {
-	width: 200px;
+	width: 150px;
 
     transform: translatey(0px);
     display: block;
@@ -91,7 +91,7 @@ footer {
 @media screen and (max-height: 800px) , screen and (max-width: 700px) {
 
 	.bigavatar {
-		width: 250px;
+		width: 100px;
 	}
 
 	.toptext h1 {
@@ -110,7 +110,7 @@ footer {
 		width: 100px !important;
 	}
 	.bigavatar {
-		width: 230px;
+		width: 80px;
 	}
 
 	.toptext h3 span {

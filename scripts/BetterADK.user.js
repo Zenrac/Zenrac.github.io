@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BetterADK (Remove VF & Mal Buttons)
+// @name         BetterADK
 // @namespace    http://tampermonkey.net/
 // @version      1.4
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
@@ -9,7 +9,7 @@
 // @match        https://m.adkami.com/*
 // @match        http://www.adkami.com/*
 // @match        http://m.adkami.com/*
-// @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/js/adkVfRemover.user.js
+// @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
 // @supportURL   https://github.com/zenrac/Zenrac.github.io/issues
 // @icon         https://www.google.com/s2/favicons?domain=adkami.com
@@ -164,6 +164,7 @@
             ici.appendChild(clickable);
 
             if (document.getElementsByClassName("h-t-v-a").length < 2) {
+                $(".lecteur-video")[0].remove();
                 let iframeLink = document.createElement("iframe");
                 let main = document.createElement("p");
                 main.classList.add("h-t-v-a");

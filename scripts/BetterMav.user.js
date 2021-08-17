@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         MavAnime next previous
+// @name         BetterMav
 // @namespace    http://tampermonkey.net/
 // @version      0.2
 // @description  try to take over the world!
@@ -8,6 +8,7 @@
 // @match        https://www.mavanimes.co/*
 // @icon         https://www.google.com/s2/favicons?domain=mavanimes.co
 // @grant        none
+// @license      MIT
 // ==/UserScript==
 
 (function() {
