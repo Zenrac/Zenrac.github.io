@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         BetterADK (Remove VF & Mal Buttons)
 // @namespace    http://tampermonkey.net/
-// @version      1.2
-// @description  Removes VF from ADKami, also add MAL buttons, new fancy icons and cool stuff!
+// @version      1.3
+// @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
 // @match        https://www.adkami.com/*
@@ -18,18 +18,21 @@
 // ==/UserScript==
 (function() {
     'use strict';
+
     function addGlobalStyle(css) {
         var head, style;
         head = document.getElementsByTagName('head')[0];
-        if (!head) { return; }
+        if (!head) {
+            return;
+        }
         style = document.createElement('style');
         style.type = 'text/css';
         style.innerHTML = css;
         head.appendChild(style);
     }
     const elems = document.getElementsByClassName("video-item-list")
-    var to_remove = [];
-    for (var i = 0; i < elems.length; i++) {
+    let to_remove = [];
+    for (let i = 0; i < elems.length; i++) {
         if (elems.item(i).textContent.toLocaleLowerCase().includes(' vf ')) {
             to_remove.push(elems.item(i));
         }
@@ -39,10 +42,10 @@
     });
 
     $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
-    var newLogo = document.createElement('img');
+    let newLogo = document.createElement('img');
     newLogo.style = "width: 195px; margin-top: 15px; float: left; margin-left: 10px;";
     newLogo.src = "https://i.imgur.com/wOQ3Mop.png";
-    var beel = document.getElementById("beelzebub");
+    let beel = document.getElementById("beelzebub");
     beel.style = "background-size: contain; background-repeat: no-repeat;";
 
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub { background-image: url(https://i.imgur.com/7UWLr6t.png) !important; }}');
@@ -76,23 +79,24 @@
     }
 
     if (window.location.href.toLowerCase().includes("/anime/")) {
-        var res = window.location.href.match(/anime\/(\d+)/);
+        let res = window.location.href.match(/anime\/(\d+)/);
+        // Any anime page
         if (res) {
             document.title = document.title.replace(' vostfr', '');
             try {
-            document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace(' (77 vf)', '');
-            } catch {
-            }
+                document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace(' (77 vf)', '');
+            } catch {}
             document.getElementsByClassName("title-header-video")[0].innerText = document.getElementsByClassName("title-header-video")[0].innerText.replace(' vostfr', '')
             try {
-            document.getElementById("after-video").getElementsByTagName("span")[0].innerText = document.getElementById("after-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
-            document.getElementById("before-video").getElementsByTagName("span")[0].innerText = document.getElementById("before-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
-            document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText
-                = document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
-            } catch {
-            }
-            var lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("ul")[0].getElementsByTagName("li");
-            var to_remove_again = [];
+                document.getElementById("after-video").getElementsByTagName("span")[0].innerText = document.getElementById("after-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+                document.getElementById("before-video").getElementsByTagName("span")[0].innerText = document.getElementById("before-video").getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+                document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText = document.getElementsByClassName("normal")[0].getElementsByTagName("li")[2].getElementsByTagName("a")[0].getElementsByTagName("span")[0].innerText.replace(' vostfr', '');
+            } catch {}
+            let lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("ul")[0].getElementsByTagName("li");
+
+            // Remove useless fake EPs (OP, PV, ED, "vostfr in name")
+
+            let to_remove_again = [];
             for (let i = 0; i < lis.length; i++) {
                 let toEdit = lis.item(i).getElementsByTagName("a")[0];
                 if (toEdit !== undefined) {
@@ -108,13 +112,16 @@
             to_remove_again.forEach(elem => {
                 $(elem).remove();
             });
-            var adk_id = res[1];
+            let adk_id = res[1];
+
+            // Add MAL Icon
+
             let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all");
             fetch(req)
                 .then(response => response.json())
                 .then(data => {
                     let url = data.data.find(el => el["anime_id"] == adk_id);
-                    var ici = document.getElementsByClassName("anime-information-icon")[0];
+                    let ici = document.getElementsByClassName("anime-information-icon")[0];
                     if (url !== undefined) {
                         let clickable = document.createElement("a");
                         clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
@@ -125,13 +132,60 @@
                         ici.appendChild(clickable);
                     }
                 })
+
+            // Mavanime.co
+            let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
+            let title = document.getElementsByClassName("title-header-video")[0].innerText.split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
+
+
+            let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/)
+            let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/)
+
+            if (saison) {
+                title += "-saison-" + saison[1];
+            }
+            title += "-" + (parseInt(ep[1]) > 9 ? parseInt(ep[1]) : "0" + parseInt(ep[1])) + "-vostfr";
+            let url = "https://www.mavanimes.co/" + title;
+            let ici = document.getElementsByClassName("anime-information-icon")[0];
+
+            // Add Mav Icon
+            let clickable = document.createElement("a");
+            clickable.href = url;
+            let el = document.createElement("img");
+            clickable.appendChild(el);
+            el.style = "width: 40px";
+            el.src = "https://i.imgur.com/xSHwElF.png"
+            ici.appendChild(clickable);
+
+            if (document.getElementsByClassName("h-t-v-a").length < 2) {
+                let iframeLink = document.createElement("iframe");
+                let main = document.createElement("p");
+                main.classList.add("h-t-v-a");
+                let link = document.createElement("a");
+                link.href = url;
+                link.innerText = " Mavanimes.co";
+                let team = document.createElement("a");
+                team.href = url;
+                team.innerText = "[BetterADK]";
+                team.classList.add("team");
+                main.appendChild(team);
+                main.appendChild(link);
+                iframeLink.classList.add("lecteur-video");
+                iframeLink.classList.add("row");
+                iframeLink.classList.add("active");
+                iframeLink.src = url;
+                iframeLink.style = "width: 100%; height: 1000px;";
+                let video = document.getElementById("video");
+                video.appendChild(main);
+                video.appendChild(iframeLink);
+            }
         }
     }
 
     if (window.location.href.toLowerCase().includes("agenda")) {
         const agenda = document.getElementsByClassName("col-12 episode");
-        var to_delete = [];
-        for (var u = 0; u < agenda.length; u++) {
+        let to_delete = [];
+        for (let u = 0; u < agenda.length; u++) {
             if (agenda.item(u).textContent.toLocaleLowerCase().includes(' vf')) {
                 to_delete.push(agenda.item(u));
             }
