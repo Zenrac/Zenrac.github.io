@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.8
+// @version      1.9
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -151,12 +151,19 @@
 
 
             let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/)
+            let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/)
             let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/)
 
             if (saison) {
                 title += "-saison-" + saison[1];
             }
-            title += "-" + (parseInt(ep[1]) > 9 ? parseInt(ep[1]) : "0" + parseInt(ep[1])) + "-vostfr";
+            if (ep) {
+                title += "-" + (parseInt(ep[1]) > 9 ? parseInt(ep[1]) : "0" + parseInt(ep[1]));
+            }
+            if (oav) {
+                title += "-oav-" + parseInt(oav[1]);
+            }
+            title += "-vostfr";
             let url = "https://www.mavanimes.co/" + title;
             let ici = document.getElementsByClassName("anime-information-icon")[0];
 
