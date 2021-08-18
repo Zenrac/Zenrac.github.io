@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.7
+// @version      1.8
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -52,6 +52,7 @@
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub:after { content: "EZ EZ EZ EZ" !important; bottom: 7px; }}');
 
     let paypal = document.createElement("a");
+    paypal.target = "_blank"
     paypal.href = "https://www.paypal.com/paypalme/ZenracZenrac"
     beel.parentNode.insertBefore(paypal, beel.nextSibling);
     paypal.appendChild(beel);
@@ -71,6 +72,7 @@
                     let url = data.data.find(el => el["anime_id"] == id);
                     if (url !== undefined) {
                         let clickable = document.createElement("a");
+                        clickable.target = "_blank"
                         clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
                         clickable.classList.add("lecteur-icon");
                         clickable.classList.add("crunchyroll");
@@ -132,6 +134,7 @@
                     let ici = document.getElementsByClassName("anime-information-icon")[0];
                     if (url !== undefined) {
                         let clickable = document.createElement("a");
+                        clickable.target = "_blank"
                         clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
                         let el = document.createElement("img");
                         clickable.appendChild(el);
@@ -160,6 +163,7 @@
             // Add Mav Icon
             let clickable = document.createElement("a");
             clickable.href = url;
+            clickable.target = "_blank"
             let el = document.createElement("img");
             clickable.appendChild(el);
             el.style = "width: 40px";
@@ -172,9 +176,11 @@
                 let main = document.createElement("p");
                 main.classList.add("h-t-v-a");
                 let link = document.createElement("a");
+                link.target = "_blank"
                 link.href = url;
                 link.innerText = " Mavanimes.co";
                 let team = document.createElement("a");
+                team.target = "_blank"
                 team.href = url;
                 team.innerText = "[BetterADK]";
                 team.classList.add("team");
