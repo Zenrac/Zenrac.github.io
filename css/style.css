@@ -66,6 +66,7 @@ a:hover, a:focus {
     margin: auto;
     animation: float 6s ease-in-out infinite;
     overflow: hidden;
+	cursor: pointer;
 }
 
 .toptext h1 {
@@ -264,6 +265,10 @@ footer span {
 
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out
+}
+
+.github-corner {
+	cursor: pointer;
 }
 
 @keyframes octocat-wave {

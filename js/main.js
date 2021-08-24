@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
   // Remove url text on mouseover for icons links
-  $('.icon a').each(function() {
+  $('a').each(function() {
     $(this).attr('onclick', 'window.location.href="' + $(this).attr('href') + '"');
     $(this).removeAttr('href');
   });
