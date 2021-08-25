@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
       text: 'I may refuse your friend request btw!',
       imageUrl: './images/discord.png',
       imageAlt: 'My discord image',
-      background: '#23272a',
+      background: '#202225',
       confirmButtonText:
       '<i class="fa fa-thumbs-up"></i> Great!',
     confirmButtonAriaLabel: 'Thumbs up, great!',

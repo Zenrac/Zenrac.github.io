@@ -86,6 +86,10 @@ footer {
 	margin-top: 100%;
 }
 
+.swal2-styled.swal2-confirm {
+	background-color: #195FF5;
+}
+
 @media screen and (max-height: 800px) , screen and (max-width: 700px) {
 
 	.bigavatar {
