@@ -49,13 +49,24 @@ jQuery(document).ready(function($) {
       background: '#202225',
       confirmButtonText:
       '<i class="fa fa-thumbs-up"></i> Great!',
-    confirmButtonAriaLabel: 'Thumbs up, great!',
-    cancelButtonText:
-      '<i class="fa fa-thumbs-down"></i> Fuck you',
-    cancelButtonAriaLabel: 'Thumbs down',
-    showCloseButton: true,
-    showCancelButton: true,
-    focusConfirm: false,
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText:
+      '<i class="fa fa-thumbs-down"></i> Fuck you!',
+      cancelButtonAriaLabel: 'Thumbs down',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+    }).then((result) => {
+      if (result.dismiss == "cancel") {
+        Swal.fire({
+          title: 'ARE YOU SURE ABOUT THAT?',
+          html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img src=https://i.imgur.com/ZngZTjQ.png /></a>",
+          imageAlt: "BERSERK",
+          confirmButtonText:
+          '<i class="fa fa-thumbs-up"></i> I am sorry!',
+          confirmButtonAriaLabel: 'Thumbs up, great!',
+        })
+      }
     })
   });
 });
