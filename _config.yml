@@ -1,4 +1,4 @@
-theme: jekyll-theme-cayman
+remote_theme: "dracula/gh-pages"
 
 exclude:
   - README.md

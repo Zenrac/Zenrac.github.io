@@ -17,7 +17,7 @@ html {
 
 body {
 	color: black;
-	display: flex;
+	display: block;
 	justify-content: center;
 	flex-direction: column;
 	align-items: center;
@@ -91,11 +91,6 @@ footer {
 }
 
 @media screen and (max-height: 800px) , screen and (max-width: 700px) {
-
-	.bigavatar {
-		width: 100px;
-	}
-
 	.toptext h1 {
 		font-size: 40px;
 	}
@@ -104,15 +99,11 @@ footer {
 		font-size: 20px;
 		padding: 7px;
 	}
-
 }
 
 @media screen and (max-width: 700px) {
 	.wb_button {
 		width: 100px !important;
-	}
-	.bigavatar {
-		width: 80px;
 	}
 
 	.toptext h3 span {
