@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.10
+// @version      1.11
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -19,6 +19,9 @@
 (function() {
     'use strict';
 
+    /**
+    * Enables to add a custom global css style.
+    */
     function addGlobalStyle(css) {
         var head, style;
         head = document.getElementsByTagName('head')[0];
@@ -30,6 +33,56 @@
         style.innerHTML = css;
         head.appendChild(style);
     }
+
+    /**
+    * Enables to have a sweet animation on all players thanks to collapsibles.
+    */
+    function collapsePlayerAnimation() {
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("activedPlayer");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight != "0px"){
+                    content.style.maxHeight = "0px";
+                } else {
+                    content.style.maxHeight = "1000px";
+                }
+            });
+        }
+
+        addGlobalStyle(`
+			.collapsible {
+			  background-color: #777;
+			  color: white;
+			  cursor: pointer;
+			  padding: 18px;
+			  width: 100%;
+			  border: none;
+			  text-align: left;
+			  outline: none;
+			  font-size: 15px;
+			}
+			.collapsible:after {
+			  content: "\\2212";
+			  color: white;
+			  font-weight: bold;
+			  float: right;
+			  margin-left: 5px;
+			}
+			.activedPlayer:after {
+              content: '\\002B';
+			}
+			.content {
+			  max-height: 1000px;
+			  overflow: hidden;
+			  transition: max-height 0.2s ease-out;
+			}`);
+    }
+
+    // Main events
     const elems = document.getElementsByClassName("video-item-list")
     let to_remove = [];
     for (let i = 0; i < elems.length; i++) {
@@ -51,11 +104,11 @@
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub { background-image: url(https://i.imgur.com/7UWLr6t.png) !important; }}');
     addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub:after { content: "EZ EZ EZ EZ" !important; bottom: 7px; }}');
 
-    let paypal = document.createElement("a");
-    paypal.target = "_blank"
-    paypal.href = "https://www.paypal.com/paypalme/ZenracZenrac"
-    beel.parentNode.insertBefore(paypal, beel.nextSibling);
-    paypal.appendChild(beel);
+    let zenrac = document.createElement("a");
+    zenrac.target = "_blank"
+    zenrac.href = "https://zenrac.github.io/"
+    beel.parentNode.insertBefore(zenrac, beel.nextSibling);
+    zenrac.appendChild(beel);
 
     document.title = document.title.replace('ADKami', 'BetterADK');
 
@@ -153,6 +206,7 @@
             let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/)
             let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/)
             let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/)
+            let film = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/film (\d+)/)
 
             if (saison) {
                 title += "-saison-" + saison[1];
@@ -162,6 +216,9 @@
             }
             if (oav) {
                 title += "-oav-" + parseInt(oav[1]);
+            }
+            if (film) {
+                title += "-film-" + parseInt(film[1]);
             }
             title += "-vostfr";
             let url = "https://www.mavanimes.co/" + title;
@@ -177,32 +234,48 @@
             el.src = "https://i.imgur.com/xSHwElF.png"
             ici.appendChild(clickable);
 
-            if ((document.getElementsByClassName("h-t-v-a").length < 3 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
-                $(".lecteur-video")[0]?.remove();
-                let iframeLink = document.createElement("iframe");
-                let main = document.createElement("p");
-                main.classList.add("h-t-v-a");
-                let link = document.createElement("a");
-                link.target = "_blank"
-                link.href = url;
-                link.innerText = " Mavanimes.co";
-                let team = document.createElement("a");
-                team.target = "_blank"
-                team.href = url;
-                team.innerText = "[BetterADK]";
-                team.classList.add("team");
-                main.appendChild(team);
-                main.appendChild(link);
-                iframeLink.classList.add("lecteur-video");
-                iframeLink.classList.add("row");
-                iframeLink.classList.add("active");
-                iframeLink.setAttribute("allowfullscreen", "true");
-                iframeLink.src = url;
-                iframeLink.style = "width: 100%; height: 1000px;";
-                let video = document.getElementById("video");
-                video.appendChild(main);
-                video.appendChild(iframeLink);
+
+            var licencedPlayer = document.getElementsByClassName("lecteur-video")[0]
+            if (licencedPlayer) {
+                licencedPlayer.style.maxHeight = "0px";
+                document.getElementsByClassName("h-t-v-a")[0].classList.add("activedPlayer");
             }
+            let iframeLink = document.createElement("iframe");
+            let main = document.createElement("p");
+            main.classList.add("h-t-v-a");
+            let link = document.createElement("a");
+            link.target = "_blank"
+            link.href = url;
+            link.innerText = " Mavanimes.co";
+            let team = document.createElement("a");
+            team.target = "_blank"
+            team.href = url;
+            team.innerText = "[BetterADK]";
+            team.classList.add("team");
+            main.appendChild(team);
+            main.appendChild(link);
+            iframeLink.classList.add("lecteur-video");
+            iframeLink.classList.add("row");
+            iframeLink.classList.add("active");
+            iframeLink.classList.add("content");
+            iframeLink.setAttribute("allowfullscreen", "true");
+            iframeLink.src = url;
+            iframeLink.style = "width: 100%; height: 600px; border: none;";
+
+            // if 2 players or less and licensed or no player
+            if ((document.getElementsByClassName("h-t-v-a").length < 3 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
+                iframeLink.style.maxHeight = "1000px";
+            } else {
+                iframeLink.style.maxHeight = "0px";
+                main.classList.add("activedPlayer");
+            }
+
+            let video = document.getElementById("video");
+            let playerparent = document.createElement("div");
+            playerparent.appendChild(main);
+            playerparent.appendChild(iframeLink);
+            video.appendChild(playerparent);
+
         }
     }
 
@@ -218,4 +291,22 @@
             $(elem).remove();
         });
     }
+
+    // collapsible players
+    let elemsHeader = document.getElementsByClassName("h-t-v-a");
+    for (let u = 0; u < elemsHeader.length; u++) {
+        elemsHeader[u].classList.add("collapsible");
+    }
+    let videoBlocks = document.getElementsByClassName("video-block");
+    for (let u = 0; u < videoBlocks.length; u++) {
+        videoBlocks[u].classList.add("content");
+    }
+
+    let iframes = document.getElementsByClassName("lecteur-video");
+    for (let u = 0; u < iframes.length; u++) {
+        iframes[u].classList.add("content");
+    }
+
+    collapsePlayerAnimation();
+
 })();
