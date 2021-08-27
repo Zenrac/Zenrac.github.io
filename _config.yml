@@ -1,8 +1,3 @@
-remote_theme: "dracula/gh-pages"
-
-gems:
-- jekyll-seo-tag
-
 exclude:
   - README.md
   - LICENSE
