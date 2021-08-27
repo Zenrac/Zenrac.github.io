@@ -6,3 +6,5 @@ gems:
 exclude:
   - README.md
   - LICENSE
+
+theme: jekyll-theme-midnight
