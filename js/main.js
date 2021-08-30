@@ -58,13 +58,39 @@ jQuery(document).ready(function($) {
       focusConfirm: false,
     }).then((result) => {
       if (result.dismiss == "cancel") {
-        Swal.fire({
-          title: 'ARE YOU SURE ABOUT THAT?',
-          html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img src=https://i.imgur.com/ZngZTjQ.png /></a>",
-          imageAlt: "BERSERK",
+
+        swal.fire({
+          title: "YOU GOT RICK ROLLED",
+          background: '#202225',
+          width: '500px',
           confirmButtonText:
-          '<i class="fa fa-thumbs-up"></i> I am sorry!',
-          confirmButtonAriaLabel: 'Thumbs up, great!',
+          '<i class="fa fa-thumbs-up"></i> I got destroyed!',
+          cancelButtonText:
+          '<i class="fa fa-thumbs-down"></i> Ahaha, predictable kid.',
+          showCloseButton: true,
+          showCancelButton: true,
+          html:
+          '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
+        }).then((result) => {
+          if (result.dismiss == "cancel") {
+            Swal.fire({
+              title: "CAN'T YOU ADMIT?",
+              html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img src=https://i.imgur.com/ZngZTjQ.png /></a>",
+              imageAlt: "BERSERK",
+              confirmButtonText:
+              '<i class="fa fa-thumbs-up"></i> I am sorry!',
+              confirmButtonAriaLabel: 'Thumbs up, great!',
+            }).then((result) => {
+              if (!result.dismiss) {
+                Swal.fire({
+                  title: "You're not sorry! You're a user! Gotcha",
+                  width: '500px',
+                  html:
+                  '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/K5JLIdAPfdc?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
+                })
+              }
+            })
+          }
         })
       }
     })
