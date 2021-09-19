@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.11
+// @version      1.12
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -249,12 +249,13 @@
                 title += "-film-" + parseInt(film[1]);
             }
             title += "-vostfr";
-            let url = "https://www.mavanimes.co/" + title + "/?adk=true";
+            let urlNormal = "https://www.mavanimes.co/" + title;
+            let url = urlNormal + "/?adk=true";
             let ici = document.getElementsByClassName("anime-information-icon")[0];
 
             // Add Mav Icon
             let clickable = document.createElement("a");
-            clickable.href = url;
+            clickable.href = urlNormal;
             clickable.target = "_blank"
             let el = document.createElement("img");
             clickable.appendChild(el);
@@ -273,11 +274,11 @@
             main.classList.add("h-t-v-a");
             let link = document.createElement("a");
             link.target = "_blank"
-            link.href = url;
+            link.href = urlNormal;
             link.innerText = " Mavanimes.co";
             let team = document.createElement("a");
             team.target = "_blank"
-            team.href = url;
+            team.href = urlNormal;
             team.innerText = "[BetterADK]";
             team.classList.add("team");
             main.appendChild(team);
