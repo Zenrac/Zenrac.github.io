@@ -9,6 +9,10 @@
 // @match        https://m.adkami.com/*
 // @match        http://www.adkami.com/*
 // @match        http://m.adkami.com/*
+// @match        https://adkami.com/*
+// @match        http://adkami.com/*
+// @match        https://www.mavanimes.co/*
+// @match        http://www.mavanimes.co/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
 // @supportURL   https://github.com/zenrac/Zenrac.github.io/issues
@@ -80,6 +84,30 @@
 			  overflow: hidden;
 			  transition: max-height 0.2s ease-out;
 			}`);
+    }
+
+    if (document.location.href.includes("mavanimes") && document.location.href.includes("?adk=true")) {
+        var r = document.getElementsByTagName('script');
+
+        for (var i = (r.length-1); i >= 0; i--) {
+
+            if(r[i].getAttribute('id') != 'a'){
+                r[i].parentNode.removeChild(r[i]);
+            }
+
+        }
+        let maviframes =  document.getElementsByTagName("iframe");
+        let text = "";
+        for (let i = 0; i < maviframes.length; i++) {
+            text += maviframes[i].outerHTML;
+        }
+        document.body.innerHTML = text;
+        let mavframes =  document.getElementsByTagName("iframe");
+        for (let i = 0; i < mavframes.length; i++) {
+            mavframes[i].style.width = "100%";
+        }
+
+        return;
     }
 
     // Main events
@@ -221,7 +249,7 @@
                 title += "-film-" + parseInt(film[1]);
             }
             title += "-vostfr";
-            let url = "https://www.mavanimes.co/" + title;
+            let url = "https://www.mavanimes.co/" + title + "/?adk=true";
             let ici = document.getElementsByClassName("anime-information-icon")[0];
 
             // Add Mav Icon
@@ -260,7 +288,7 @@
             iframeLink.classList.add("content");
             iframeLink.setAttribute("allowfullscreen", "true");
             iframeLink.src = url;
-            iframeLink.style = "width: 100%; height: 600px; border: none;";
+            iframeLink.style = "width: 100%; height: 500px; border: none;";
 
             // if 2 players or less and licensed or no player
             if ((document.getElementsByClassName("h-t-v-a").length < 3 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
