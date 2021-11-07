@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.13
+// @version      1.14
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -325,22 +325,23 @@
             $(elem).remove();
         });
     }
+    else {
+        // collapsible players
+        let elemsHeader = document.getElementsByClassName("h-t-v-a");
+        for (let u = 0; u < elemsHeader.length; u++) {
+            elemsHeader[u].classList.add("collapsible");
+        }
+        let videoBlocks = document.getElementsByClassName("video-block");
+        for (let u = 0; u < videoBlocks.length; u++) {
+            videoBlocks[u].classList.add("content");
+        }
 
-    // collapsible players
-    let elemsHeader = document.getElementsByClassName("h-t-v-a");
-    for (let u = 0; u < elemsHeader.length; u++) {
-        elemsHeader[u].classList.add("collapsible");
-    }
-    let videoBlocks = document.getElementsByClassName("video-block");
-    for (let u = 0; u < videoBlocks.length; u++) {
-        videoBlocks[u].classList.add("content");
-    }
+        let iframes = document.getElementsByClassName("lecteur-video");
+        for (let u = 0; u < iframes.length; u++) {
+            iframes[u].classList.add("content");
+        }
 
-    let iframes = document.getElementsByClassName("lecteur-video");
-    for (let u = 0; u < iframes.length; u++) {
-        iframes[u].classList.add("content");
+        collapsePlayerAnimation();
     }
-
-    collapsePlayerAnimation();
 
 })();
