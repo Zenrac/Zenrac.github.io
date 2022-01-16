@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.15
+// @version      1.16
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -268,12 +268,6 @@
             el.src = "https://i.imgur.com/xSHwElF.png"
             ici.appendChild(clickable);
 
-
-            var licencedPlayer = document.getElementsByClassName("lecteur-video")[0]
-            if (licencedPlayer) {
-                licencedPlayer.style.maxHeight = "0px";
-                document.getElementsByClassName("h-t-v-a")[0].classList.add("activedPlayer");
-            }
             let iframeLink = document.createElement("iframe");
             let main = document.createElement("p");
             main.classList.add("h-t-v-a");
@@ -296,8 +290,8 @@
             iframeLink.src = url;
             iframeLink.style = "width: 100%; height: 500px; border: none;";
 
-            // if 2 players or less and licensed or no player
-            if ((document.getElementsByClassName("h-t-v-a").length < 3 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
+            // if 4 players or less and licensed or no player
+            if ((document.getElementsByClassName("h-t-v-a").length < 5 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
                 iframeLink.style.maxHeight = "1000px";
             } else {
                 iframeLink.style.maxHeight = "0px";
