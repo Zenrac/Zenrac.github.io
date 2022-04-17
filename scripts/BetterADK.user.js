@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.17
+// @version      1.18
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -14,6 +14,7 @@
 // @match        https://www.mavanimes.co/*
 // @match        http://www.mavanimes.co/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
+// @updateURL    https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
 // @supportURL   https://github.com/zenrac/Zenrac.github.io/issues
 // @icon         https://www.google.com/s2/favicons?domain=adkami.com
