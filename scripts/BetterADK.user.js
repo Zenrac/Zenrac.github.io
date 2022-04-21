@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.20
+// @version      1.21
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -136,14 +136,15 @@
     });
 
     const elems_teams = document.getElementsByClassName("team");
-    console.log(elems_teams)
-    let to_remove_teams = [];
-    for (let i = 0; i < elems_teams.length; i++) {
-        to_remove_teams.push(elems_teams.item(i));
+    if (!window.location.href.toLowerCase().includes("/anime/")) {
+        let to_remove_teams = [];
+        for (let i = 0; i < elems_teams.length; i++) {
+            to_remove_teams.push(elems_teams.item(i));
+        }
+        to_remove_teams.forEach(elem => {
+            $(elems_teams).remove();
+        });
     }
-    to_remove_teams.forEach(elem => {
-        $(elems_teams).remove();
-    });
 
     $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
     let newLogo = document.createElement('img');
@@ -196,6 +197,12 @@
         // Any anime page
         if (res) {
             document.title = document.title.replace(' vostfr', '');
+            try {
+                let lienNormal = document.getElementsByClassName("normal")
+                let titleLink = lienNormal.item(0).getElementsByTagName("li")
+                let titlevostfr = titleLink.item(titleLink.length - 1);
+                titlevostfr.getElementsByTagName("a").item(0).getElementsByTagName("span").item(0).textContent = titlevostfr.getElementsByTagName("a").item(0).getElementsByTagName("span").item(0).textContent.replace('vostfr', '');
+            } catch {}
             try {
                 document.getElementById("find_episode").placeholder = document.getElementById("find_episode").placeholder.replace(' (77 vf)', '');
             } catch {}
