@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.18
+// @version      1.19
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -14,7 +14,7 @@
 // @match        https://www.mavanimes.co/*
 // @match        http://www.mavanimes.co/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
-// @updateURL    https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
+// @updateURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
 // @supportURL   https://github.com/zenrac/Zenrac.github.io/issues
 // @icon         https://www.google.com/s2/favicons?domain=adkami.com
@@ -110,7 +110,7 @@
             }
         }
         document.body.innerHTML = text;
-        let mavframes =  document.getElementsByTagName("iframe");
+        let mavframes = document.getElementsByTagName("iframe");
         for (let i = 0; i < mavframes.length; i++) {
             mavframes[i].style.width = "100%";
         }
@@ -119,15 +119,30 @@
     }
 
     // Main events
-    const elems = document.getElementsByClassName("video-item-list")
+    const elems = document.getElementsByClassName("video-item-list");
     let to_remove = [];
     for (let i = 0; i < elems.length; i++) {
         if (elems.item(i).textContent.toLocaleLowerCase().includes(' vf ')) {
             to_remove.push(elems.item(i));
+        } else if (elems.item(i).textContent.toLocaleLowerCase().includes(' vostfr ')) {
+            let epVostfr = elems.item(i).getElementsByClassName("episode").item(0);
+            if (epVostfr) {
+                epVostfr.innerText = epVostfr.innerText.replace(' vostfr', '')
+            }
         }
     }
     to_remove.forEach(elem => {
         $(elem).remove();
+    });
+
+    const elems_teams = document.getElementsByClassName("teams");
+    console.log(elems_teams)
+    let to_remove_teams = [];
+    for (let i = 0; i < elems_teams.length; i++) {
+        to_remove_teams.push(elems_teams.item(i));
+    }
+    to_remove_teams.forEach(elem => {
+        $(elems_teams).remove();
     });
 
     $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
