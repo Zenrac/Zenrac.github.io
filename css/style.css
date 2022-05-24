@@ -64,7 +64,8 @@ a:hover, a:focus {
     display: block;
     margin: auto;
     overflow: hidden;
-	cursor: pointer;
+    cursor: pointer;
+    width: 100px;
 }
 
 .toptext h1 {
