@@ -59,6 +59,12 @@ a:hover, a:focus {
 	font-size: 15px;
 }
 
+iframe.fullscreen {
+	height: 100%;
+	width: 100%;
+	border: 0;
+}
+
 .bigavatar {
     transform: translatey(0px);
     display: block;
@@ -119,6 +125,10 @@ footer {
 	}
 }
 
+.buttons {
+	margin-top: 10px;
+}
+
 .pink {
 	color: #1972F5;
 }
@@ -130,6 +140,27 @@ footer {
 footer span {
 	color: white;
 	padding: 5px;
+}
+
+.player:hover {
+	opacity: 1 !important;
+}
+
+.player {
+	position: absolute;
+	top: 0px;
+	right: 50px;
+	z-index: 1;
+	opacity: 1;
+	transition: opacity 1s ease;
+}
+
+.player a {
+	display: flex;
+}
+
+.player a i {
+	align-self: center;
 }
 
 .wb_button {

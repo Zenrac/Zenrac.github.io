@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>0x40</title>
+        <!-- Non minified at https://github.com/mon/0x40-web/ -->
+        <link rel="stylesheet" href="css/hues-min.css">
+        <script type="text/javascript" src="lib/hues-min.js"></script>
+        <script type="text/javascript">
+            window.addEventListener("load", function() {
+                var defaults = {
+                    workersPath : "lib/workers/",
+                    respacks : ["./respacks/Defaults_v5.0_Opaque.zip",
+                                "./respacks/CharPackage v0.03 Opaque.zip",
+                                "./respacks/HuesMixA.zip"
+                                ],
+                    firstSong : "Veraxe - The clockmaker",
+                };
+                core = new HuesCore(defaults);
+            });
+        </script>
+    </head>
+    <body>
+        This page requires Javascript.
+    </body>
+</html>

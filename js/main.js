@@ -6,19 +6,20 @@ jQuery(document).ready(function($) {
   });
 });
 
-
 jQuery(document).ready(function($) {
   /**
    * Set footer always on the bottom of the page
    */
   function footerAlwayInBottom(footerSelector) {
     var docHeight = $(window).height();
-    var footerTop = footerSelector.position().top + footerSelector.height();
-    if (footerTop < docHeight) {
-      footerSelector.css("margin-top", (docHeight - footerTop) + "px");
-    } else {
-      footerSelector.css('margin-top', '0px');
-    }
+	if (footerSelector.position() != undefined && $('footer').is(":visible")) {
+		var footerTop = footerSelector.position().top + footerSelector.height();
+		if (footerTop < docHeight) {
+		  footerSelector.css("margin-top", (docHeight - footerTop) + "px");
+		} else {
+		  footerSelector.css('margin-top', '0px');
+		}
+	}
   }
   // Apply when page is loading
   footerAlwayInBottom($("#footer"));
@@ -38,6 +39,44 @@ jQuery(document).ready(function($) {
   window.setInterval(function() {
     footerAlwayInBottom($("#footer"));
   }, 25);
+
+  $('body').on('click', '.play', function(e) {
+	  if ($('iframe').length < 1) {
+		  var iframe = document.createElement('iframe')
+		  iframe.src = './0x40?song=Vexare%20-%20The%20Clockmaker&autoSong=loop&autoSongDelay=1';
+		  iframe.classList.add('fullScreen');
+		  $('body').prepend(iframe)
+		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
+		  $('#footer').addClass('hidden');
+		  var hideButton = $('.play').clone();
+		  hideButton.html(hideButton.html().replace('fa-stop', 'fa-eye-slash').replace('Stop', 'Hide'))
+		  hideButton.removeClass('play')
+      hideButton.removeClass('hover')
+      hideButton.removeClass('rasberry-dropshadow')
+		  hideButton.addClass('hideInterface')
+      $('.player').css('opacity', '0.5')
+		  $('.player').append(hideButton);
+	  } else {
+      $('iframe').remove();
+      $('.hideInterface').remove();
+      $('.play').html($('.play').html().replace('fa-stop', 'fa-play').replace('Stop', 'Play'))
+      $('#footer').removeClass('hidden');
+      $('.player').css('opacity', '1')
+      if (!$('.mainblock').is(":visible")) {
+        $('.mainblock').show();
+      }
+	  }
+  });
+
+  $('body').on('click', '.hideInterface', function(e) {
+    if ($('.mainblock').is(":visible")) {
+      $('.hideInterface').html($('.hideInterface').html().replace('Hide', 'Show').replace('fa-eye-slash', 'fa-eye'));
+	    $('.mainblock').hide();
+    } else {
+      $('.hideInterface').html($('.hideInterface').html().replace('Show', 'Hide').replace('fa-eye', 'fa-eye-slash'));
+      $('.mainblock').show();
+    }
+  });
 
   $('.docs').on('click', function(e) {
     Swal.fire({
