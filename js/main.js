@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
   $('body').on('click', '.play', function(e) {
 	  if ($('iframe').length < 1) {
 		  var iframe = document.createElement('iframe')
-		  iframe.src = './0x40?song=Vexare%20-%20The%20Clockmaker&autoSong=loop&autoSongDelay=1';
+		  iframe.src = './0x40?song=Vexare%20-%20The%20Clockmaker&autoSong=time&autoSongDelay=3';
 		  iframe.classList.add('fullScreen');
 		  $('body').prepend(iframe)
 		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
       hideButton.removeClass('hover')
       hideButton.removeClass('rasberry-dropshadow')
 		  hideButton.addClass('hideInterface')
-      $('.player').css('opacity', '0.5')
+      $('.player').css('opacity', '0.8')
 		  $('.player').append(hideButton);
 	  } else {
       $('iframe').remove();

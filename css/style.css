@@ -211,6 +211,10 @@ footer span {
 	padding: 5px;
 }
 
+.hideInterface:active {
+	box-shadow: none;
+}
+
 .stats img {
   display: block;
   margin: auto;
