@@ -233,6 +233,14 @@ footer span {
   padding: 10px;
 }
 
+.nopointers {
+	pointer-events: none;
+}
+
+.initialpointers {
+	pointer-events: initial;
+}
+
 .top {
 	padding: 30px;
 }
