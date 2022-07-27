@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
   $('body').on('click', '.play', function(e) {
 	  if ($('iframe').length < 1) {
 		  var iframe = document.createElement('iframe')
-		  iframe.src = './0x40?song=Vexare%20-%20The%20Clockmaker&autoSong=loop&autoSongDelay=5';
+		  iframe.src = './0x40?song=Vexare%20-%20The%20Clockmaker&autoSong=loop&autoSongDelay=3';
 		  iframe.classList.add('fullScreen');
 		  $('body').prepend(iframe)
 		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
