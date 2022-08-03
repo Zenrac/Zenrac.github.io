@@ -74,6 +74,30 @@ iframe.fullscreen {
     width: 100px;
 }
 
+.botimgs {
+	display: flex;
+	justify-content: space-around;
+}
+
+.figcapwatora {
+	color:rgb(255, 1, 91);
+	font-size: 25px;
+}
+
+.figcapmeet {
+	color: #7289da;
+	font-size: 25px;
+}
+
+.botwatora, .botmeet {
+	height: 200px !important;
+	border-radius: 50%;
+}
+
+.botimgs figure {
+	height: 250px;
+}
+
 .toptext h1 {
 	color: #1972F5;
 	font: 700 48px Times New Roman, Times, serif;

@@ -77,7 +77,18 @@ jQuery(document).ready(function($) {
       $('.mainblock').show();
     }
   });
-
+  $('.docsbots').on('click', function(e) {
+    Swal.fire({
+      width: 600,
+      html: "<div class='botimgs'><figure class='btn hover animation'><a href='https://watorabot.github.io'><img class='botwatora' src='./images/watora.png'/><figcaption class='figcapwatora'> Watora </figcaption></a></figure><figure class='btn hover animation'><a href='https://meetcord.github.io'><img class='botmeet' src='./images/meetcord.png'/><figcaption class='figcapmeet'> meetcord </figcaption></a></figure></div>",
+      imageWidth: 500,
+      imageAlt: 'My bots image',
+      background: '#202225',
+      showCloseButton: true,
+      showCancelButton: false,
+      showConfirmButton: false,
+    })
+  });
   $('.docs').on('click', function(e) {
     Swal.fire({
       title: 'Nice!',
