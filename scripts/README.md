@@ -1,3 +1,3 @@
 # Scripts
 - [BetterADK](./BetterADK.md)
-- [BetterMav](.BetterMav.md)
+- [BetterMav](./BetterMav.md)
