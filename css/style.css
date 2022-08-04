@@ -79,6 +79,10 @@ iframe.fullscreen {
 	justify-content: space-around;
 }
 
+.botimgs figure a {
+	text-decoration: none;
+}
+
 .figcapwatora {
 	color:rgb(255, 1, 91);
 	font-size: 25px;
