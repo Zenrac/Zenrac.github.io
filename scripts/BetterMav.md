@@ -1,5 +1,3 @@
-![](https://i.imgur.com/wOQ3Mop.png)
-
 # Installation
 - L'extension Tampermonkey disponible pour [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=fr), [Firefox](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/), [Opera](https://addons.opera.com/fr/extensions/details/tampermonkey-beta/).
 - Le [script](https://github.com/Zenrac/Zenrac.github.io/raw/main/scripts/BetterMav.user.js), cliquer sur "Installer".
