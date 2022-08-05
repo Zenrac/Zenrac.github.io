@@ -72,11 +72,21 @@ iframe.fullscreen {
     overflow: hidden;
     cursor: pointer;
     width: 100px;
+	animation: fadeIn 2s;
 }
+
+@keyframes fadeIn {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+  }
 
 .botimgs {
 	display: flex;
 	justify-content: space-around;
+}
+
+.undertitle {
+	animation: fadeIn 2s;
 }
 
 .botimgs figure a {
@@ -124,6 +134,35 @@ footer {
 
 .swal2-styled.swal2-confirm {
 	background-color: #195FF5;
+}
+
+.typewriter h1 {
+	overflow: hidden; /* Ensures the content is not revealed until the animation */
+	border-right: 3px solid rgb(7, 189, 245);
+	display: inline-block;
+	white-space: nowrap; /* Keeps the content on a single line */
+	margin: 0; /* Gives that scrolling effect as the typing happens */
+	letter-spacing: .15em; /* Adjust as needed */
+	transform: translateY(-20%);
+	animation: typewriter 1s steps(36) .5s 1 normal both, blinkTextCursor 500ms steps(36) infinite normal;
+  }
+
+  @keyframes typewriter {
+	from {
+		width: 0;
+	}
+	to {
+		width: 3.5em;
+	}
+}
+
+@keyframes blinkTextCursor {
+	from {
+		border-right-color: rgb(7, 189, 245);
+	}
+	to {
+		border-right-color: transparent;
+	}
 }
 
 @media screen and (max-height: 800px) , screen and (max-width: 700px) {
