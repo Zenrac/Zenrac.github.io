@@ -1,5 +1,9 @@
 exclude:
   - README.md
   - LICENSE
+  
+logo: /images/avatar.gif
+
+description: Random scripts I wanna share
 
 theme: jekyll-theme-minimal
