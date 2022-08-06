@@ -1,5 +1,3 @@
-#
-
 ![](https://i.imgur.com/wOQ3Mop.png)
 
 
@@ -54,8 +52,6 @@ En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 </div>
 
 <br />
-
-#
 
 ![](https://i.imgur.com/lYMTw7Y.png)
 
