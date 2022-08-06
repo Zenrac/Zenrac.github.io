@@ -1,7 +1,3 @@
----
-
----
-
 <script>
   var allposts = [];
   function redirectToCorrectPage() {
@@ -47,21 +43,23 @@
             <hr>
             <div class='_1'>THE PAGE</div>
             <div class='_2'>WAS NOT FOUND</div>
-            <a class='btn' href='{{ "/" | absolute_url }}'>BACK TO ZENRAC</a>
+            <a class='btn' href='/'>BACK TO ZENRAC</a>
         </div>
 
 <style>
     @import url(https://fonts.googleapis.com/css?family=opensans:500);
 
+
     body {
         background: #232830;
         color:#fff;
         font-family: 'Open Sans', sans-serif;
-        max-height:700px;
         overflow: hidden;
         position: fixed;
         width: 100%;
         height: 100%;
+        min-height: 100% !important;
+        top: -50px;
     }
 
     .c {
@@ -160,7 +158,7 @@
 
     .cloud {
         width: 350px; height: 120px;
-        background-image: url("https://i.imgur.com/f6KQZ4q.png");
+        background-color: white;
         background: linear-gradient(top, #FFF 100%);
         background: -webkit-linear-gradient(top, #FFF 100%);
         background: -moz-linear-gradient(top, #FFF 100%);
@@ -180,7 +178,7 @@
     .cloud:after, .cloud:before {
         content: '';
         position: absolute;
-        background-image: url("https://i.imgur.com/g0Pi1hV.png");
+        background-color: white;
         z-index: -1
     }
 

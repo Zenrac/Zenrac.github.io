@@ -83,6 +83,7 @@ iframe.fullscreen {
 .botimgs {
 	display: flex;
 	justify-content: space-around;
+	flex-wrap: wrap;
 }
 
 .undertitle {
@@ -136,6 +137,21 @@ footer {
 	background-color: #195FF5;
 }
 
+
+@media screen and (max-width: 750px) {
+	.maintext {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	.botwatora, .botmeet {
+		height: 150px !important;
+	}
+}
+
 .typewriter h1 {
 	overflow: hidden; /* Ensures the content is not revealed until the animation */
 	border-right: 3px solid rgb(7, 189, 245);
@@ -143,7 +159,6 @@ footer {
 	white-space: nowrap; /* Keeps the content on a single line */
 	margin: 0; /* Gives that scrolling effect as the typing happens */
 	letter-spacing: .15em; /* Adjust as needed */
-	transform: translateY(-20%);
 	animation: typewriter 1s steps(36) .5s 1 normal both, blinkTextCursor 500ms steps(36) infinite normal;
   }
 
