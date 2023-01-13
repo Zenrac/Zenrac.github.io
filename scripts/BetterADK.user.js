@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.21
+// @version      1.22
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -259,12 +259,13 @@
             // Mavanime.co
             let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
             let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
+            let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join(' ').trim().toLowerCase();
 
 
-            let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/)
-            let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/)
-            let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/)
-            let film = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/film (\d+)/)
+            let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/);
+            let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/);
+            let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/);
+            let film = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/film (\d+)/);
 
             if (saison) {
                 title += "-saison-" + saison[1];
@@ -282,6 +283,16 @@
             let urlNormal = "https://www.mavanimes.co/" + title;
             let url = urlNormal + "/?adk=true";
             let ici = document.getElementsByClassName("anime-information-icon")[0];
+
+            // Add Nyaa.si Icon
+            let clickableNyaa = document.createElement("a");
+            clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + parseInt(ep[1]) + " vostfr";
+            clickableNyaa.target = "_blank"
+            let elNyaa = document.createElement("img");
+            clickableNyaa.appendChild(elNyaa);
+            elNyaa.style = "width: 40px";
+            elNyaa.src = "https://i.imgur.com/c8dv9WI.png"
+            ici.appendChild(clickableNyaa);
 
             // Add Mav Icon
             let clickable = document.createElement("a");
