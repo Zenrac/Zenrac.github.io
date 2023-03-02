@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterMav
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  try to take over the world!
 // @author       Zenrac
 // @match        http://www.mavanimes.co/*
@@ -39,6 +39,18 @@
             window.location = url;
         }
     };
+
+    try
+    {
+        // fix for https image on main page
+        var imgs = document.getElementsByClassName("col-sm-3 col-xs-12");
+        Array.prototype.forEach.call(imgs, function(img) {
+            img.getElementsByTagName("a")[0].getElementsByTagName("img")[0].outerHTML = img.getElementsByTagName("a")[0].getElementsByTagName("img")[0].outerHTML.replaceAll('http:', 'https:');
+        });
+    }
+    catch
+    {
+    }
 
     document.getElementsByClassName("entry-title")[0].appendChild(document.createElement("br"));
     document.getElementsByClassName("entry-title")[0].appendChild(btnPrevious);
