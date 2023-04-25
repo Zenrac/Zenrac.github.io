@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.23
+// @version      1.24
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -165,7 +165,10 @@
     document.title = document.title.replace('ADKami', 'BetterADK');
 
     document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].appendChild(newLogo);
+
+    // on main page
     if (elems.length > 0) {
+        // add mal icons
         let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all")
         fetch(req)
             .then(response => response.json())
@@ -190,11 +193,35 @@
                 }
             })
             .catch(console.error);
+
+        // add nyaa icons
+        for (let i = 0; i < elems.length; i++) {
+            let after = elems[i].getElementsByClassName("right list-edition")[0];
+            let title = elems[i].getElementsByClassName("title")[0];
+            let episode = elems[i].getElementsByClassName("episode")[0];
+            let clickableNyaa = document.createElement("a");
+            let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
+            console.log(ep)
+            if (ep) {
+                clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + " " + parseInt(ep[1]) + " (vostfr|multi)";
+            }
+            else {
+                clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + " (vostfr|multi)";
+            }
+            clickableNyaa.target = "_blank"
+            let elNyaa = document.createElement("img");
+            clickableNyaa.appendChild(elNyaa);
+            clickableNyaa.classList.add("lecteur-icon");
+            clickableNyaa.classList.add("crunchyroll");
+            elNyaa.style = "width: 40px";
+            elNyaa.src = "https://i.imgur.com/c8dv9WI.png"
+            elems[i].insertBefore(clickableNyaa, after.nextSibling.nextSibling.nextSibling);
+        }
     }
 
+    // Any anime page
     if (window.location.href.toLowerCase().includes("/anime/")) {
         let res = window.location.href.match(/anime\/(\d+)/);
-        // Any anime page
         if (res) {
             document.title = document.title.replace(' vostfr', '');
             try {
@@ -288,7 +315,12 @@
 
             // Add Nyaa.si Icon
             let clickableNyaa = document.createElement("a");
-            clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + parseInt(ep[1]) + " vostfr";
+            if (ep) {
+                clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + parseInt(ep[1]) + " (vostfr|multi)";
+            }
+            else {
+                clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " (vostfr|multi)";
+            }
             clickableNyaa.target = "_blank"
             let elNyaa = document.createElement("img");
             clickableNyaa.appendChild(elNyaa);
@@ -345,6 +377,7 @@
         }
     }
 
+    // agenda page
     if (window.location.href.toLowerCase().includes("agenda")) {
         const agenda = document.getElementsByClassName("col-12 episode");
         let to_delete = [];
