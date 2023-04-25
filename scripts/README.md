@@ -1,23 +1,37 @@
 ![](https://i.imgur.com/wOQ3Mop.png)
 
+<br />
 
 # Installation
 - L'extension Tampermonkey disponible pour [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=fr), [Firefox](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/), [Opera](https://addons.opera.com/fr/extensions/details/tampermonkey-beta/).
 - Le [script](https://github.com/Zenrac/Zenrac.github.io/raw/main/scripts/BetterADK.user.js), cliquer sur "Installer".
 
+<br />
+
 # Fonctionnalités
-## 1. Liens et icones MAL pour tous les animés dès que possible.
-Accès à MAL (Myanimelist) depuis n'importe quelle liste.
-<div style="text-align:left">
-    <img src="https://i.imgur.com/c72gGC9.png" />
+
+## 1. Nouvelles icones
+
+<br />
+
+<div align="center">
+    <div style="text-align:left">
+        <img src="https://i.imgur.com/tLEfHiJ.png" />
+    </div>
+    Accès à MyAnimeList et Nyaa sur la page principale
 </div>
 
-Bouttons pour accèder rapidement à MAL et Mavanime depuis la page d'un épisode.
+<br />
+<br />
 
-<div style="text-align:left">
-    <img src="https://i.imgur.com/XJkJdol.png" />
+<div align="center">
+    <div style="text-align:left">
+        <img src="https://i.imgur.com/LhgZaeI.png" />
+    </div>
+   Boutons pour accèder rapidement à MAL, Nyaa et Mavanime depuis la page d'un épisode
 </div>
 
+<br />
 <br />
 
 ## 2. Retire toute la partie "VF" du site, les PV, les Ending et Opening (Listes, Agenda, Texte, Episode)
@@ -52,15 +66,24 @@ En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 </div>
 
 <br />
+<br />
+<br />
 
 ![](https://i.imgur.com/lYMTw7Y.png)
+
+<br />
 
 # Installation
 - L'extension Tampermonkey disponible pour [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=fr), [Firefox](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/), [Opera](https://addons.opera.com/fr/extensions/details/tampermonkey-beta/).
 - Le [script](https://github.com/Zenrac/Zenrac.github.io/raw/main/scripts/BetterMav.user.js), cliquer sur "Installer".
 
+<br />
+
 # Fonctionnalités
+
 ## 1. Boutons pour naviguer entre les épisodes
+
+<br />
 
 Je ne sais pas comment vous faites pour utiliser Mavanime sans ça, sérieusement.
 <div style="text-align:left">
