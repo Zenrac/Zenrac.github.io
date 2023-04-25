@@ -10,6 +10,8 @@
 
 # Fonctionnalités
 
+<br />
+
 ## 1. Nouvelles icones
 
 <br />
@@ -80,6 +82,8 @@ En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 <br />
 
 # Fonctionnalités
+
+<br />
 
 ## 1. Boutons pour naviguer entre les épisodes
 
