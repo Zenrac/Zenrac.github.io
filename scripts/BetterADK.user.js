@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.24
+// @version      1.25
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -201,9 +201,11 @@
             let episode = elems[i].getElementsByClassName("episode")[0];
             let clickableNyaa = document.createElement("a");
             let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
-            console.log(ep)
+            let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
             if (ep) {
-                clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + " " + parseInt(ep[1]) + " (vostfr|multi)";
+                let epStr = parseInt(ep[1]).toString().padStart(2, '0');
+                let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                 clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + ` (${epStr}|S${saisonStr}E${epStr}) (vostfr|multi)`;
             }
             else {
                 clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + " (vostfr|multi)";
@@ -316,7 +318,9 @@
             // Add Nyaa.si Icon
             let clickableNyaa = document.createElement("a");
             if (ep) {
-                clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + parseInt(ep[1]) + " (vostfr|multi)";
+                let epStr = parseInt(ep[1]).toString().padStart(2, '0');
+                let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                 clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) (vostfr|multi)`;
             }
             else {
                 clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " (vostfr|multi)";
