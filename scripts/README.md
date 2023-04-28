@@ -64,9 +64,9 @@ Des modifications légères qui permettent de bien se rendre compte qu'on utilis
 ## 5. Script configurable facilement
 <div align="center">
     <div style="text-align:left">
-        <img src="https://i.imgur.com/iRVZ0wr.png" />
+        <img src="https://i.imgur.com/iyIe68B.png" />
     </div>
-    Il suffit de cliquer sur BetterADK en haut à gauche!
+    Il suffit de cliquer sur l'icone de Zenrac en haut à droite!
 </div>
 
 <br />
