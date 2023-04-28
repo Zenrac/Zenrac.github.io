@@ -61,7 +61,15 @@ Des modifications légères qui permettent de bien se rendre compte qu'on utilis
 
 <br />
 
-## 5. Script désactivable et reactivable à tout moment via Tampermonkey
+## 5. Script configurable facilement
+<div align="center">
+    <div style="text-align:left">
+        <img src="https://i.imgur.com/iRVZ0wr.png" />
+    </div>
+    Il suffit de cliquer sur BetterADK en haut à gauche!
+</div>
+
+## 6. Script désactivable et reactivable à tout moment via Tampermonkey
 En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 <div style="text-align:left">
     <img src="https://i.imgur.com/zFfkk3X.png" />
