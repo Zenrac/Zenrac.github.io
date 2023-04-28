@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.28
+// @version      1.29
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -129,9 +129,11 @@
 
             }`)
 
-        function openSettingPanel() {
-            GM_config.open();
-
+        function openSettingPanel(event) {
+            if (!event.ctrlKey) {
+                event.preventDefault();
+                GM_config.open();
+            }
         }
         /**
     * Enables to add a custom global css style.
@@ -230,12 +232,11 @@
             }
         }
 
-        // Add custom Zenrac icon (mandatory to have configuration panel)
+        // Add custom icons (mandatory to have configuration panel)
         $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
         let newLogo = document.createElement('img');
         newLogo.style = "width: 195px; margin-top: 15px; float: left; margin-left: 10px;";
         newLogo.src = "https://i.imgur.com/wOQ3Mop.png";
-        newLogo.addEventListener("click", openSettingPanel);
         let beel = document.getElementById("beelzebub");
         beel.style = "background-size: contain; background-repeat: no-repeat;";
 
@@ -245,12 +246,15 @@
         let zenrac = document.createElement("a");
         zenrac.target = "_blank"
         zenrac.href = "https://zenrac.github.io/"
+        zenrac.addEventListener("click", openSettingPanel);
+
+        // display version
+        document.getElementsByClassName("col-12 copy")[0].textContent += " - BetterADK v" + GM_info.script.version;
         beel.parentNode.insertBefore(zenrac, beel.nextSibling);
         zenrac.appendChild(beel);
 
         document.title = document.title.replace('ADKami', 'BetterADK');
 
-        document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].removeAttribute("href");
         document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].appendChild(newLogo);
 
         // on main page
