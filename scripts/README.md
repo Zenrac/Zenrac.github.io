@@ -69,6 +69,8 @@ Des modifications légères qui permettent de bien se rendre compte qu'on utilis
     Il suffit de cliquer sur BetterADK en haut à gauche!
 </div>
 
+<br />
+
 ## 6. Script désactivable et reactivable à tout moment via Tampermonkey
 En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 <div style="text-align:left">
