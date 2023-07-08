@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.29
+// @version      1.30
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -76,6 +76,11 @@
             },
             "removeopedpv" : {
                 "label" : "Retirer les ED, OP et PV des listes d'épisodes",
+                "type" : "checkbox",
+                "default" : true
+            },
+             "calculateRealEpisodeNumber" : {
+                "label" : "Recalcul du numéro d'épisode à partir de 1 à chaque nouvelle saison",
                 "type" : "checkbox",
                 "default" : true
             },
@@ -321,6 +326,46 @@
             let res = window.location.href.match(/anime\/(\d+)/);
             if (res) {
                 document.title = document.title.replace(' vostfr', '');
+
+                // recalculate episode number
+                if (GM_config.get('calculateRealEpisodeNumber')) {
+                    let seasonsList = document.getElementsByClassName("ul-episodes");
+                    if (seasonsList && seasonsList.length > 0) {
+                        let seasons = seasonsList[0].getElementsByClassName("saison-container");
+                        if (seasons && seasons.length > 0) {
+                            for (let season of seasons) {
+                                let seasonName = season.getElementsByClassName("saison")
+                                if (seasonName && seasonName.length > 0) {
+                                    let seasonNameMatch = seasonName[0].innerText.toLowerCase().match(/saison (\d+)/);
+                                    let saisonNumber = seasonNameMatch ? parseInt(seasonNameMatch[1]) : "01";
+                                    let episodes = season.getElementsByTagName("a");
+                                    if (episodes && episodes.length > 0) {
+                                        let newEpisodeNumber = 1;
+                                        for (let episode of episodes) {
+                                            let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
+                                            let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
+                                            let oldEp = episodeNumber.toString().padStart(2, '0');
+                                            let newEp = newEpisodeNumber.toString().padStart(2, '0');
+                                            episode.innerText = episode.innerText.replace(oldEp, newEp);
+                                            if (episode.parentNode.classList.contains("actived")) {
+                                                let currentPageTitle = document.getElementsByClassName("title-header-video");
+                                                if (currentPageTitle && currentPageTitle.length > 0) {
+                                                    console.log(currentPageTitle[0].innerText)
+                                                    console.log(episodeNumber)
+                                                    console.log("replace")
+                                                    console.log(newEpisodeNumber)
+                                                    currentPageTitle[0].innerText = currentPageTitle[0].innerText.replace(episodeNumber, newEpisodeNumber);
+                                                }
+                                            }
+                                            newEpisodeNumber++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 try {
                     let lienNormal = document.getElementsByClassName("normal")
                     let titleLink = lienNormal.item(0).getElementsByTagName("li")
@@ -401,7 +446,7 @@
                 title = title.replace(/[^a-zA-Z0-9!?:-_]/g, "-");
 
                 if (saison) {
-                    title += "-saison-" + saison[1];
+                    title += "-" + saison[1];
                 }
                 if (ep) {
                     title += "-" + (parseInt(ep[1]) > 9 ? parseInt(ep[1]) : "0" + parseInt(ep[1]));
