@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.30
+// @version      1.31
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -156,6 +156,49 @@
         }
 
         /**
+    * Recalculates right episode number starting from 1 at each new season.
+    */
+        function recalculateEpisodeNumbers(type) {
+            console.log("recalculate ep")
+            let seasonsList = document.getElementsByClassName("ul-episodes");
+            if (seasonsList && seasonsList.length > 0) {
+                let seasons = seasonsList[0].getElementsByClassName("saison-container");
+                if (seasons && seasons.length > 0) {
+                    for (let season of seasons) {
+                        let seasonName = season.getElementsByClassName("saison")
+                        if (seasonName && seasonName.length > 0) {
+                            let seasonNameMatch = seasonName[0].innerText.toLowerCase().match(/saison (\d+)/);
+                            let saisonNumber = seasonNameMatch ? parseInt(seasonNameMatch[1]) : "01";
+                            let episodes = season.getElementsByTagName("a");
+                            if (episodes && episodes.length > 0) {
+                                let newEpisodeNumber = 1;
+                                for (let episode of episodes) {
+                                    console.log(episode)
+                                    if (episode.innerText.includes(type)) {
+                                        console.log(episode.innerText)
+                                        console.log(type)
+                                        let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
+                                        let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
+                                        let oldEp = episodeNumber.toString().padStart(2, '0');
+                                        let newEp = newEpisodeNumber.toString().padStart(2, '0');
+                                        episode.innerText = episode.innerText.replace(oldEp, newEp);
+                                        if (episode.parentNode.classList.contains("actived")) {
+                                            let currentPageTitle = document.getElementsByClassName("title-header-video");
+                                            if (currentPageTitle && currentPageTitle.length > 0) {
+                                                currentPageTitle[0].innerText = currentPageTitle[0].innerText.replace(episodeNumber, newEpisodeNumber);
+                                            }
+                                        }
+                                        newEpisodeNumber++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
     * Enables to have a sweet animation on all players thanks to collapsibles.
     */
         function collapsePlayerAnimation() {
@@ -213,6 +256,11 @@
                 let epVostfr = elems.item(i).getElementsByClassName("episode").item(0);
                 if (epVostfr) {
                     epVostfr.innerText = epVostfr.innerText.replace(' vostfr', '')
+                }
+            } else if (GM_config.get('removevfepisode') && elems.item(i).textContent.toLocaleLowerCase().includes(' multi ')) {
+                let epMulti = elems.item(i).getElementsByClassName("episode").item(0);
+                if (epMulti) {
+                    epMulti.innerText = epMulti.innerText.replace(' multi', '')
                 }
             }
         }
@@ -329,41 +377,8 @@
 
                 // recalculate episode number
                 if (GM_config.get('calculateRealEpisodeNumber')) {
-                    let seasonsList = document.getElementsByClassName("ul-episodes");
-                    if (seasonsList && seasonsList.length > 0) {
-                        let seasons = seasonsList[0].getElementsByClassName("saison-container");
-                        if (seasons && seasons.length > 0) {
-                            for (let season of seasons) {
-                                let seasonName = season.getElementsByClassName("saison")
-                                if (seasonName && seasonName.length > 0) {
-                                    let seasonNameMatch = seasonName[0].innerText.toLowerCase().match(/saison (\d+)/);
-                                    let saisonNumber = seasonNameMatch ? parseInt(seasonNameMatch[1]) : "01";
-                                    let episodes = season.getElementsByTagName("a");
-                                    if (episodes && episodes.length > 0) {
-                                        let newEpisodeNumber = 1;
-                                        for (let episode of episodes) {
-                                            let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
-                                            let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
-                                            let oldEp = episodeNumber.toString().padStart(2, '0');
-                                            let newEp = newEpisodeNumber.toString().padStart(2, '0');
-                                            episode.innerText = episode.innerText.replace(oldEp, newEp);
-                                            if (episode.parentNode.classList.contains("actived")) {
-                                                let currentPageTitle = document.getElementsByClassName("title-header-video");
-                                                if (currentPageTitle && currentPageTitle.length > 0) {
-                                                    console.log(currentPageTitle[0].innerText)
-                                                    console.log(episodeNumber)
-                                                    console.log("replace")
-                                                    console.log(newEpisodeNumber)
-                                                    currentPageTitle[0].innerText = currentPageTitle[0].innerText.replace(episodeNumber, newEpisodeNumber);
-                                                }
-                                            }
-                                            newEpisodeNumber++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    recalculateEpisodeNumbers("vostfr");
+                    recalculateEpisodeNumbers("vf");
                 }
 
                 try {
@@ -541,6 +556,11 @@
             for (let u = 0; u < agenda.length; u++) {
                 if (agenda.item(u).textContent.toLocaleLowerCase().includes(' vf')) {
                     to_delete.push(agenda.item(u));
+                } else if (GM_config.get('removevfagenda') && agenda.item(u).textContent.toLocaleLowerCase().includes(' multi')) {
+                    let titleAgendaEp = agenda.item(u).getElementsByClassName("epis");
+                    if (titleAgendaEp && titleAgendaEp.length > 0) {
+                        titleAgendaEp[0].innerText = titleAgendaEp[0].innerText.replace(' multi', '')
+                    }
                 }
             }
             if (GM_config.get('removevfagenda')) {
