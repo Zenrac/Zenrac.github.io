@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.31
+// @version      1.32
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -25,6 +25,8 @@
 // ==/UserScript==
 (function() {
     'use strict';
+
+    var connected = document.getElementById("headerprofil") != null
 
     // small part designed for mavanime only
     if (document.location.href.includes("mavanimes") && document.location.href.includes("?adk=true")) {
@@ -159,7 +161,6 @@
     * Recalculates right episode number starting from 1 at each new season.
     */
         function recalculateEpisodeNumbers(type) {
-            console.log("recalculate ep")
             let seasonsList = document.getElementsByClassName("ul-episodes");
             if (seasonsList && seasonsList.length > 0) {
                 let seasons = seasonsList[0].getElementsByClassName("saison-container");
@@ -173,10 +174,7 @@
                             if (episodes && episodes.length > 0) {
                                 let newEpisodeNumber = 1;
                                 for (let episode of episodes) {
-                                    console.log(episode)
                                     if (episode.innerText.includes(type)) {
-                                        console.log(episode.innerText)
-                                        console.log(type)
                                         let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
                                         let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
                                         let oldEp = episodeNumber.toString().padStart(2, '0');
@@ -320,7 +318,7 @@
                     .then(data => {
                     if (data.data === undefined) return;
                     for (let i = 0; i < elems.length; i++) {
-                        let after = elems[i].getElementsByClassName("right list-edition")[0];
+                        let after = elems[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
                         let id = after.dataset["info"].split(",")[0];
                         let url = data.data.find(el => el["anime_id"] == id);
                         if (url !== undefined) {
@@ -343,7 +341,7 @@
             if (GM_config.get('addnyaamain')) {
                 // add nyaa icons
                 for (let i = 0; i < elems.length; i++) {
-                    let after = elems[i].getElementsByClassName("right list-edition")[0];
+                    let after = elems[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
                     let title = elems[i].getElementsByClassName("title")[0];
                     let episode = elems[i].getElementsByClassName("episode")[0];
                     let clickableNyaa = document.createElement("a");
