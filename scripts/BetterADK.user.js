@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.32
+// @version      1.33
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -178,6 +178,9 @@
                                         let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
                                         let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
                                         let oldEp = episodeNumber.toString().padStart(2, '0');
+                                        if (oldEp == "00") {
+                                            continue;
+                                        }
                                         let newEp = newEpisodeNumber.toString().padStart(2, '0');
                                         episode.innerText = episode.innerText.replace(oldEp, newEp);
                                         if (episode.parentNode.classList.contains("actived")) {
