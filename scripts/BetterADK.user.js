@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.33
+// @version      1.34
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -27,6 +27,8 @@
     'use strict';
 
     var connected = document.getElementById("headerprofil") != null
+
+    var statusCorrelationADKToMal = [-1, 1, 3, 5, 4, 2, 2]
 
     // small part designed for mavanime only
     if (document.location.href.includes("mavanimes") && document.location.href.includes("?adk=true")) {
@@ -61,6 +63,16 @@
     }
     else {
          GM_config.init("BetterADK Configuration", {
+             "syncadklist" : {
+                "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
+                "type" : "checkbox",
+                "default" : true
+            },
+             "removednswarning" : {
+                "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
+                "type" : "checkbox",
+                "default" : true
+            },
             "removevfepisode" : {
                 "label" : "Retirer les épisodes VF",
                 "type" : "checkbox",
@@ -120,7 +132,16 @@
                 "label" : "Filtre recherche Nyaa",
                 "type" : "text",
                 "default" : "(vostfr|multi)"
-            }
+            },
+             "removecomments" : {
+                 "label" : "Masquer par défaut les commentaires sur les pages d'animé",
+                 "type" : "select",
+                 "options" : {
+                     "never" : "Jamais",
+                     "always" : "Toujours",
+                     "current" : "Seulement si en train de regarder"
+                 }
+             }
         },
         'body { background-color: grey !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
         {
@@ -199,23 +220,56 @@
             }
         }
 
+        function resizeMainPageToMatchRight() {
+            var droite = document.querySelector("#col-droit")
+            var gauche = document.getElementsByClassName("fiche-look")[0]
+
+            if (droite && gauche) {
+                gauche.style.height = Math.min(gauche.clientHeight, droite.clientHeight) + "px";
+            }
+        }
+
         /**
     * Enables to have a sweet animation on all players thanks to collapsibles.
     */
         function collapsePlayerAnimation() {
             var coll = document.getElementsByClassName("collapsible");
+            var collComments = document.getElementsByClassName("collapsible-comments");
+            var droite = document.querySelector("#col-droit")
+            var gauche = document.getElementsByClassName("fiche-look")[0]
             var i;
 
             for (i = 0; i < coll.length; i++) {
                 coll[i].addEventListener("click", function() {
                     this.classList.toggle("activedPlayer");
                     var content = this.nextElementSibling;
-                    if (content.style.maxHeight != "0px"){
-                        content.style.maxHeight = "0px";
-                    } else {
-                        content.style.maxHeight = "1000px";
+                    if (!content.classList.contains("content") && !content.classList.contains("commentscontent")) {
+                        content = content.nextElementSibling;
+                    }
+                    if (this.classList.contains("collapsibleComments")) {
+                        if (content.style.visibility != "hidden"){
+                            content.style.visibility = "hidden";
+                            content.style.maxHeight = "2500px";
+
+                        } else {
+                            content.style.visibility = "visible";
+                            content.style.maxHeight = "initial"
+                        }
+                    }
+                    else {
+                        if (content.style.maxHeight != "0px"){
+                            content.style.maxHeight = "0px";
+                        } else {
+                            content.style.maxHeight = "2500px";
+                        }
                     }
                 });
+
+                if (GM_config.get('removednswarning')) {
+                    if (coll[i].nextElementSibling.innerText.includes("DNS")) {
+                        coll[i].nextElementSibling.remove();
+                    }
+                }
             }
 
             addGlobalStyle(`
@@ -240,12 +294,45 @@
 			.activedPlayer:after {
               content: '\\002B';
 			}
+            .commentscontent {
+              padding: 0px !important;
+              margin: 0px !important;
+			  overflow: hidden;
+			  transition: max-height 0.2s ease-out;
+			}
 			.content {
-			  max-height: 1000px;
+              padding: 0px !important;
+              margin: 0px !important;
+			  max-height: 2500px;
 			  overflow: hidden;
 			  transition: max-height 0.2s ease-out;
 			}`);
         }
+
+        /**
+    * Allows to wait for an element to exist
+    */
+        function waitForElm(selector) {
+            return new Promise(resolve => {
+                if (document.querySelector(selector)) {
+                    return resolve(document.querySelector(selector));
+                }
+
+                const observer = new MutationObserver(mutations => {
+                    if (document.querySelector(selector)) {
+                        resolve(document.querySelector(selector));
+                        observer.disconnect();
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
+        }
+
+        // --- CODE ---
 
         // Remove VF animes from lists
         const elems = document.getElementsByClassName("video-item-list");
@@ -373,6 +460,7 @@
         // Any anime page
         if (window.location.href.toLowerCase().includes("/anime/")) {
             let res = window.location.href.match(/anime\/(\d+)/);
+
             if (res) {
                 document.title = document.title.replace(' vostfr', '');
 
@@ -535,7 +623,7 @@
 
                     // if 4 players or less and licensed or no player
                     if ((document.getElementsByClassName("h-t-v-a").length < 5 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
-                        iframeLink.style.maxHeight = "1000px";
+                        iframeLink.style.maxHeight = "2500px";
                     } else {
                         iframeLink.style.maxHeight = "0px";
                         main.classList.add("activedPlayer");
@@ -547,6 +635,107 @@
                     playerparent.appendChild(iframeLink);
                     video.appendChild(playerparent);
                 }
+
+                if (GM_config.get('syncadklist')) {
+                    waitForElm('#malEpisodes').then((elm) => {
+                        var adklistInput = document.getElementById("watchlist-episode");
+                        adklistInput.disabled = true;
+                        elm.addEventListener('change', (event) => {
+                            adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
+                            document.getElementById("watchlist").click()
+                        });
+
+                        setInterval(() => {
+                            var valueToSet = Math.min(document.getElementById("watchlist-episode").dataset.max, elm.value)
+                            if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
+                                adklistInput.value = valueToSet
+                                document.getElementById("watchlist").click()
+                            }
+                        }, 100);
+                    });
+
+                    waitForElm('#malStatus').then((elm) => {
+                        var adklistInput = document.getElementById("watchlist_look");
+                        adklistInput.disabled = true;
+                        elm.addEventListener('change', (event) => {
+                            adklistInput.value = (elm.value != 23) ? statusCorrelationADKToMal[elm.value] : 1;
+                            document.getElementById("watchlist").click()
+                        });
+
+                        setInterval(() => {
+                            var valueToSet = (elm.value != 23) ? statusCorrelationADKToMal[elm.value] : 1
+                            if (valueToSet && valueToSet != -1 && adklistInput.value != valueToSet) {
+                                adklistInput.value = valueToSet;
+                                document.getElementById("watchlist").click()
+                            }
+                        }, 100);
+                    });
+
+                    waitForElm('#malUserRating').then((elm) => {
+                        var adklistInput = document.getElementById("watchlist-note");
+                        adklistInput.disabled = true;
+                        elm.addEventListener('change', (event) => {
+                            adklistInput.value = Math.round(event.target.value / 10)
+                            document.getElementById("watchlist").click()
+                        });
+
+                        setInterval(() => {
+                            var valueToSet = Math.round(elm.value / 10)
+                            if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
+                                adklistInput.value = valueToSet
+                                document.getElementById("watchlist").click()
+                            }
+                        }, 100);
+                    });
+                }
+
+                // collapsible comments
+                var commentDiv = document.getElementById("comments");
+                if (commentDiv) {
+                    commentDiv = commentDiv.getElementsByTagName("div")[0]
+                    var titleComment = commentDiv.getElementsByClassName("title")[0];
+                    titleComment.innerText = titleComment.innerText.replace("Commentaire", "Commentaires");
+                    titleComment.classList.add("collapsible");
+                    titleComment.classList.add("collapsibleComments");
+                    titleComment.style.marginLeft = "0px";
+                    var formComment = commentDiv.getElementsByTagName("form")[0]
+                    var commentsComment = commentDiv.getElementsByClassName("comm");
+                    var divComment = document.createElement("div");
+                    divComment.classList.add("commentscontent");
+                    commentDiv.insertBefore(divComment, formComment)
+                    divComment.appendChild(formComment);
+                    for (var com of commentsComment) {
+                        divComment.appendChild(com);
+                    }
+                    if (GM_config.get('removecomments') == "always"
+                        || (GM_config.get('removecomments') == "current" && document.getElementById("watchlist_look") && document.getElementById("watchlist_look").value == 1))
+                    {
+                        divComment.style.visibility = "hidden"
+                        divComment.style.maxHeight = "2500px"
+                        titleComment.classList.toggle("activedPlayer");
+                    }
+                }
+
+                // collapsible players
+                let elemsHeader = document.getElementsByClassName("h-t-v-a");
+                for (let u = 0; u < elemsHeader.length; u++) {
+                    elemsHeader[u].classList.add("collapsible");
+                }
+                let videoBlocks = document.getElementsByClassName("video-block");
+                for (let u = 0; u < videoBlocks.length; u++) {
+                    videoBlocks[u].classList.add("content");
+                }
+                let redirectionBlocks = document.getElementsByClassName("lecteur-redirection");
+                for (let u = 0; u < redirectionBlocks.length; u++) {
+                    redirectionBlocks[u].classList.add("content");
+                }
+
+                let iframes = document.getElementsByClassName("lecteur-video");
+                for (let u = 0; u < iframes.length; u++) {
+                    iframes[u].classList.add("content");
+                }
+
+                collapsePlayerAnimation();
             }
         }
 
@@ -569,24 +758,6 @@
                     $(elem).remove();
                 });
             }
-        }
-        else {
-            // collapsible players
-            let elemsHeader = document.getElementsByClassName("h-t-v-a");
-            for (let u = 0; u < elemsHeader.length; u++) {
-                elemsHeader[u].classList.add("collapsible");
-            }
-            let videoBlocks = document.getElementsByClassName("video-block");
-            for (let u = 0; u < videoBlocks.length; u++) {
-                videoBlocks[u].classList.add("content");
-            }
-
-            let iframes = document.getElementsByClassName("lecteur-video");
-            for (let u = 0; u < iframes.length; u++) {
-                iframes[u].classList.add("content");
-            }
-
-            collapsePlayerAnimation();
         }
     }
 
