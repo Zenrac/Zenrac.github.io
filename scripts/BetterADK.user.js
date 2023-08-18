@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.35
+// @version      1.36
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -76,9 +76,13 @@
                 "default" : true
             },
             "alreadywatchedonagenda" : {
-                "label" : "Affiche différement les épisodes vus dans l'agenda",
-                "type" : "checkbox",
-                "default" : true
+                "label" : "Affiche par défaut seulement les animés en cours de visionnage dans l'agenda",
+                "type" : "select",
+                 "options" : {
+                     "yes" : "Oui",
+                     "no" : "Non",
+                     "disable" : "Désactivé"
+                 }
             },
             "addprofiletomenu" : {
                 "label" : "Ajoute une option mon profile au menu en haut à droite",
@@ -837,7 +841,7 @@
                 });
             }
 
-            if (GM_config.get('alreadywatchedonagenda')) {
+            if (GM_config.get('alreadywatchedonagenda') != "disable") {
                 $.get('https://www.adkami.com/api/main?objet=anime-list', null, function(text){
                     if (text && text["data"] && text["data"]["items"]) {
                         var items = text["data"]["items"]
@@ -873,6 +877,10 @@
                                 }
                             }
                         });
+
+                        if (GM_config.get('alreadywatchedonagenda') == "yes") {
+                            checkbox.click();
+                        }
                     }
                 });
             }
