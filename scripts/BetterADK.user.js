@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.34
+// @version      1.35
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -11,6 +11,8 @@
 // @match        http://m.adkami.com/*
 // @match        https://adkami.com/*
 // @match        http://adkami.com/*
+// @match        http://*.adkami.com/*
+// @match        https://*.adkami.com/*
 // @match        https://www.mavanimes.co/*
 // @match        http://www.mavanimes.co/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
@@ -70,6 +72,16 @@
             },
              "removednswarning" : {
                 "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
+                "type" : "checkbox",
+                "default" : true
+            },
+            "alreadywatchedonagenda" : {
+                "label" : "Affiche différement les épisodes vus dans l'agenda",
+                "type" : "checkbox",
+                "default" : true
+            },
+            "addprofiletomenu" : {
+                "label" : "Ajoute une option mon profile au menu en haut à droite",
                 "type" : "checkbox",
                 "default" : true
             },
@@ -334,6 +346,7 @@
 
         // --- CODE ---
 
+        // All pages
         // Remove VF animes from lists
         const elems = document.getElementsByClassName("video-item-list");
         let to_remove = [];
@@ -397,6 +410,25 @@
         document.title = document.title.replace('ADKami', 'BetterADK');
 
         document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].appendChild(newLogo);
+
+        if (GM_config.get('addprofiletomenu')) {
+            var profileElement = document.getElementById("headerprofil");
+            if (profileElement) {
+                var profileContent = profileElement.getElementsByTagName("ul")[0];
+                if (profileContent) {
+                    var profileFirstChild = profileContent.getElementsByTagName("li")[0];
+                    if (profileFirstChild) {
+                        var newProfileElement = profileFirstChild.cloneNode(true);
+                        $.get('https://www.adkami.com/profil/', null, function(text){
+                            var username = $(text).find('#username')[0].value;
+                            newProfileElement.firstChild.href = `https://www.adkami.com/profil/${username}`;
+                            newProfileElement.firstChild.innerText = "Mon profile";
+                            profileContent.insertBefore(newProfileElement, profileFirstChild)
+                        });
+                    }
+                }
+            }
+        }
 
         // on main page
         if (elems.length > 0) {
@@ -524,7 +556,8 @@
                         let ici = document.getElementsByClassName("anime-information-icon")[0];
                         if (url !== undefined) {
                             let clickable = document.createElement("a");
-                            clickable.target = "_blank"
+                            clickable.id = "malicon";
+                            clickable.target = "_blank";
                             clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
                             let el = document.createElement("img");
                             clickable.appendChild(el);
@@ -565,6 +598,11 @@
                 let urlNormal = "https://www.mavanimes.co/" + title;
                 let url = urlNormal + "/?adk=true";
                 let ici = document.getElementsByClassName("anime-information-icon")[0];
+
+                var currentSeason = 1
+                if (saison) {
+                    currentSeason = saison[1];
+                }
 
                 // Add Nyaa.si Icon
                 if (GM_config.get('addnyaaanime')) {
@@ -639,16 +677,35 @@
                 if (GM_config.get('syncadklist')) {
                     waitForElm('#malEpisodes').then((elm) => {
                         var adklistInput = document.getElementById("watchlist-episode");
-                        adklistInput.disabled = true;
+                        var adklistSeasonInput = document.getElementById("watchlist-saison");
+                        if (adklistInput) {
+                            adklistInput.disabled = true;
+                        }
+                        if (adklistSeasonInput) {
+                            adklistSeasonInput.disabled = true;
+                        }
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
                             document.getElementById("watchlist").click()
                         });
-
                         setInterval(() => {
+                            var toSave = false;
                             var valueToSet = Math.min(document.getElementById("watchlist-episode").dataset.max, elm.value)
+                            if (adklistSeasonInput && adklistSeasonInput.type != "hidden" && valueToSet != 0) {
+                                var seasonToSet = Math.min(document.getElementById("watchlist-saison").dataset.max, currentSeason);
+                                if (adklistSeasonInput.value > currentSeason) {
+                                    return;
+                                }
+                                if (adklistSeasonInput.value != seasonToSet && seasonToSet != 0) {
+                                    adklistSeasonInput.value = seasonToSet
+                                    toSave = true;
+                                }
+                            }
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
                                 adklistInput.value = valueToSet
+                                toSave = true;
+                            }
+                            if (toSave) {
                                 document.getElementById("watchlist").click()
                             }
                         }, 100);
@@ -656,6 +713,7 @@
 
                     waitForElm('#malStatus').then((elm) => {
                         var adklistInput = document.getElementById("watchlist_look");
+                        var adklistSeasonInput = document.getElementById("watchlist-saison");
                         adklistInput.disabled = true;
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = (elm.value != 23) ? statusCorrelationADKToMal[elm.value] : 1;
@@ -664,7 +722,10 @@
 
                         setInterval(() => {
                             var valueToSet = (elm.value != 23) ? statusCorrelationADKToMal[elm.value] : 1
-                            if (valueToSet && valueToSet != -1 && adklistInput.value != valueToSet) {
+                            if (!document.querySelector("#AddMal") && valueToSet && valueToSet != -1 && adklistInput.value != valueToSet) {
+                                if (adklistSeasonInput.value > currentSeason) {
+                                    return;
+                                }
                                 adklistInput.value = valueToSet;
                                 document.getElementById("watchlist").click()
                             }
@@ -673,7 +734,9 @@
 
                     waitForElm('#malUserRating').then((elm) => {
                         var adklistInput = document.getElementById("watchlist-note");
+                        var adklistSeasonInput = document.getElementById("watchlist-saison");
                         adklistInput.disabled = true;
+
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = Math.round(event.target.value / 10)
                             document.getElementById("watchlist").click()
@@ -682,8 +745,23 @@
                         setInterval(() => {
                             var valueToSet = Math.round(elm.value / 10)
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
+                                if (adklistSeasonInput.value > currentSeason) {
+                                    return;
+                                }
                                 adklistInput.value = valueToSet
                                 document.getElementById("watchlist").click()
+                            }
+                        }, 100);
+                    });
+
+                    waitForElm('#malRating').then((elm) => {
+                        setInterval(() => {
+                            if (elm && elm.href && elm.href.includes("myanimelist")) {
+                                var malicon = document.getElementById("malicon");
+                                if (malicon.href != elm.href) {
+                                    malicon.href = elm.href;
+                                    clearInterval(this)
+                                }
                             }
                         }, 100);
                     });
@@ -739,7 +817,7 @@
             }
         }
 
-        // Remove VF from Agenda
+        // Agenda page
         if (window.location.href.toLowerCase().includes("agenda")) {
             const agenda = document.getElementsByClassName("col-12 episode");
             let to_delete = [];
@@ -756,6 +834,46 @@
             if (GM_config.get('removevfagenda')) {
                 to_delete.forEach(elem => {
                     $(elem).remove();
+                });
+            }
+
+            if (GM_config.get('alreadywatchedonagenda')) {
+                $.get('https://www.adkami.com/api/main?objet=anime-list', null, function(text){
+                    if (text && text["data"] && text["data"]["items"]) {
+                        var items = text["data"]["items"]
+                        var currentAnimes = []
+                        var currentAnimesIds = []
+                        for (var item of items) {
+                            if (item["genre"] == 1) {
+                                currentAnimes.push(item);
+                                currentAnimesIds.push(item["anime"])
+                            }
+                        }
+
+                        var legende = document.getElementsByClassName("legende")[0].parentNode;
+                        var checkbox = document.createElement("input");
+                        var checkboxLabel = document.createElement("label");
+                        checkbox.type = "checkbox";
+                        checkbox.id = "currentCheck";
+                        checkboxLabel.innerText = "Afficher que les animés en cours de visionnage";
+                        checkboxLabel.setAttribute("for", "currentCheck");
+                        legende.appendChild(checkbox);
+                        legende.appendChild(checkboxLabel);
+
+                        checkbox.addEventListener('change', function() {
+                            if (this.checked) {
+                                for (let u = 0; u < agenda.length; u++) {
+                                    if (!currentAnimesIds.includes(agenda.item(u).dataset.info.split(',')[0])) {
+                                        agenda.item(u).style.display = "none";
+                                    }
+                                }
+                            } else {
+                                for (let u = 0; u < agenda.length; u++) {
+                                    agenda.item(u).style.display = "initial";
+                                }
+                            }
+                        });
+                    }
                 });
             }
         }
