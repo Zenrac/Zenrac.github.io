@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -165,7 +165,7 @@
 
         addGlobalStyle(`
             #GM_config {
-              height: 50% !important;
+              height: 60% !important;
               width: 50% !important;
               opacity: 0.90 !important;
               background-color: grey !important;
@@ -653,7 +653,10 @@
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        if (epBeforeStr != epStr) {
+                            clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                        }
                     }
                     else {
                         clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
