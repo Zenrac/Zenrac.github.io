@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.37
+// @version      1.38
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -486,13 +486,14 @@
                     let clickableNyaa = document.createElement("a");
                     let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
                     let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
+                    title = title.textContent.replace(',', '').replace('.', '').split(':')[0].split('-')[0].trim()
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                     }
                     else {
-                        clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + " " + GM_config.get('customnyaasearch');
+                        clickableNyaa.href = "https://nyaa.si/?q=" + title + " " + GM_config.get('customnyaasearch');
                     }
                     clickableNyaa.target = "_blank"
                     let elNyaa = document.createElement("img");
@@ -513,7 +514,7 @@
                                     let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                                     let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                     if (epStr != newEpStr) {
-                                        clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                        clickableNyaa.href = "https://nyaa.si/?q=" + title + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                                     }
                                 }
 
@@ -532,6 +533,11 @@
 
             if (res) {
                 document.title = document.title.replace(' vostfr', '');
+                let nbBeforeRecalculate = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
+                let epBeforeRecalculate = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nbBeforeRecalculate].toLowerCase().match(/episode (\d+)/);
+                if (epBeforeRecalculate) {
+                    var epBeforeStr = parseInt(epBeforeRecalculate[1]).toString().padStart(2, '0');
+                }
 
                 // recalculate episode number
                 if (GM_config.get('calculateRealEpisodeNumber')) {
@@ -647,7 +653,7 @@
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
                     }
                     else {
                         clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
