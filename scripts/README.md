@@ -52,7 +52,25 @@ Au passage je vous conseille [ce script](https://github.com/Zenrac/Zenrac.github
 
 <br />
 
-## 4. Modifiaction du thème pour BetterADK.
+## 4. Synchronisation automatique ADKList et MyAnimeList/AniList... via MAL-Sync
+Prise en charge de l'extension [MAL-Sync](https://malsync.moe/) pour automatiquement mettre à jour les animés vus. Fonctionne aussi lorsque MAL-Sync detecte que l'épisode a été visionné sur le lecteur.
+
+<div style="text-align:left">
+    <img src="https://i.imgur.com/JQAKwXI.png" />
+</div>
+
+<br />
+
+## 5. Meilleur agenda 
+Basé sur la liste remplie automatiquement avec [MAL-Sync](https://malsync.moe/), possibilité d'afficher seulement les animés (vraiment) en cours de visionnage. Egalement la possibilité d'afficher les premiers épisodes pour ne pas manquer les nouveautés. (Configurables par défaut dans les paramètres de BetterADK)
+
+<div style="text-align:left">
+    <img src="https://i.imgur.com/C6DrZC1.png" />
+</div>
+
+<br />
+
+## 6. Modification du thème pour BetterADK.
 Des modifications légères qui permettent de bien se rendre compte qu'on utilise l'extention correctement.
 
 <div style="text-align:left">
@@ -61,17 +79,17 @@ Des modifications légères qui permettent de bien se rendre compte qu'on utilis
 
 <br />
 
-## 5. Script configurable facilement
+## 7. Script configurable facilement
 <div align="center">
     <div style="text-align:left">
-        <img src="https://i.imgur.com/iyIe68B.png" />
+        <img src="https://i.imgur.com/GEBXtiX.png" />
     </div>
     Il suffit de cliquer sur l'icone de Zenrac en haut à droite!
 </div>
 
 <br />
 
-## 6. Script désactivable et reactivable à tout moment via Tampermonkey
+## 8. Script désactivable et reactivable à tout moment via Tampermonkey
 En utilisant ce script vous faites chier Kami, et ça, ça n'a pas de prix.
 <div style="text-align:left">
     <img src="https://i.imgur.com/zFfkk3X.png" />
