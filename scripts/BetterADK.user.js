@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.36
+// @version      1.37
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -29,7 +29,6 @@
     'use strict';
 
     var connected = document.getElementById("headerprofil") != null
-
     var statusCorrelationADKToMal = [-1, 1, 3, 5, 4, 2, 2]
 
     // small part designed for mavanime only
@@ -147,7 +146,7 @@
             "customnyaasearch" : {
                 "label" : "Filtre recherche Nyaa",
                 "type" : "text",
-                "default" : "(vostfr|multi)"
+                "default" : "(vostfr|multi) 1080p"
             },
              "removecomments" : {
                  "label" : "Masquer par défaut les commentaires sur les pages d'animé",
@@ -234,6 +233,20 @@
                     }
                 }
             }
+        }
+
+        function calculateEpisodeNumberFromActived(activedElement) {
+            var ulListElement = activedElement.parentNode;
+            var i = 1;
+            if (!activedElement.previousSibling && activedElement.innerHTML.includes('000')) {
+                return 0;
+            }
+            while ((activedElement = activedElement.previousSibling) != null ) {
+                if (!activedElement.innerHTML.includes('000') && activedElement.innerHTML.includes('vostfr')) {
+                   i++;
+                }
+            }
+            return i;
         }
 
         function resizeMainPageToMatchRight() {
@@ -488,6 +501,26 @@
                     clickableNyaa.classList.add("crunchyroll");
                     elNyaa.style = "width: 40px";
                     elNyaa.src = "https://i.imgur.com/c8dv9WI.png"
+                    clickableNyaa.addEventListener('click', (event) => {
+                        if (ep && saison) {
+                            event.preventDefault();
+                            var url = elems[i].getElementsByClassName("img")[0].href;
+                            $.get(url, null, function(text) {
+                                var actived = $(text).find('.actived')[0];
+                                if (actived) {
+                                    var newEp = calculateEpisodeNumberFromActived(actived);
+                                    let newEpStr = newEp.toString().padStart(2, '0');
+                                    let epStr = parseInt(ep[1]).toString().padStart(2, '0');
+                                    let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                                    if (epStr != newEpStr) {
+                                        clickableNyaa.href = "https://nyaa.si/?q=" + title.textContent + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                    }
+                                }
+
+                                window.open(clickableNyaa.href, '_blank');
+                            });
+                        }
+                    });
                     elems[i].insertBefore(clickableNyaa, after.nextSibling);
                 }
             }
@@ -844,31 +877,59 @@
             if (GM_config.get('alreadywatchedonagenda') != "disable") {
                 $.get('https://www.adkami.com/api/main?objet=anime-list', null, function(text){
                     if (text && text["data"] && text["data"]["items"]) {
-                        var items = text["data"]["items"]
-                        var currentAnimes = []
-                        var currentAnimesIds = []
-                        for (var item of items) {
-                            if (item["genre"] == 1) {
-                                currentAnimes.push(item);
-                                currentAnimesIds.push(item["anime"])
-                            }
-                        }
+                        var currentAnimes = text["data"]["items"]
+                        var currentWatchingAnimes = currentAnimes.filter(m => !["4", "2"].includes(m["genre"]))
+                        var currentWatchingAnimesIds = currentWatchingAnimes.map(m => m["anime"]);
 
-                        var legende = document.getElementsByClassName("legende")[0].parentNode;
-                        var checkbox = document.createElement("input");
-                        var checkboxLabel = document.createElement("label");
-                        checkbox.type = "checkbox";
-                        checkbox.id = "currentCheck";
-                        checkboxLabel.innerText = "Afficher que les animés en cours de visionnage";
-                        checkboxLabel.setAttribute("for", "currentCheck");
-                        legende.appendChild(checkbox);
-                        legende.appendChild(checkboxLabel);
+                        var checkbox = document.getElementById("agenda-filter-watch").getElementsByTagName("input")[0];
+                        checkbox.parentNode.id = "agenda-filter-watch-new";
+                        var newCheckbox = checkbox.cloneNode(true);
+                        checkbox.parentNode.replaceChild(newCheckbox, checkbox);
+                        checkbox = newCheckbox;
+
+                        var epOne = checkbox.parentNode.cloneNode(true);
+                        epOne.id = "agenda-filter-watch-one";
+                        epOne.innerHTML = epOne.innerHTML.replace("En visionnage", "Premier episode")
+                        epOne.title = "Toujours afficher les premiers épisodes (même si filtre)"
+                        checkbox.parentNode.parentNode.insertBefore(epOne, checkbox.parentNode.nextSibling);
+                        epOne = epOne.firstElementChild;
+
+                        checkbox.checked = GM_config.get('alreadywatchedonagenda') == "yes";
+                        epOne.checked = GM_config.get('alreadywatchedonagenda') == "yes";
+
+                        epOne.addEventListener('change', function() {
+                            for (let u = 0; u < agenda.length; u++) {
+                                agenda.item(u).style.display = "initial";
+                            }
+                            var event = new Event('change');
+                            checkbox.dispatchEvent(event);
+                        });
+
+                        var pannelList = document.getElementById("pannel-list");
+                        var legendeDiv = document.getElementsByClassName("legende")[0];
+                        var newElementLegende = legendeDiv.firstElementChild.cloneNode(true);
+                        newElementLegende.id = "already-seen-legend";
+                        newElementLegende.innerText = "Déjà vu";
+                        newElementLegende.style.backgroundColor = "#ff7c2b";
+                        legendeDiv.insertBefore(newElementLegende, pannelList);
+
+                        addGlobalStyle('.agenda a .episode.vu .date_hour::before { content: "" !important; }');
 
                         checkbox.addEventListener('change', function() {
                             if (this.checked) {
                                 for (let u = 0; u < agenda.length; u++) {
-                                    if (!currentAnimesIds.includes(agenda.item(u).dataset.info.split(',')[0])) {
+                                    var animeId = agenda.item(u).dataset.info.split(',')[0];
+                                    if (!currentWatchingAnimesIds.includes(animeId)) {
+                                        if (epOne.checked && agenda.item(u).dataset.info.split(',')[1] == 1 && agenda.item(u).dataset.info.split(',')[3] == 1) {
+                                            continue;
+                                        }
                                         agenda.item(u).style.display = "none";
+                                    }
+                                    else {
+                                        var animeElement = currentAnimes.find(anime => anime["anime"] == animeId)
+                                        if (animeElement && animeElement["genre"] == 3 && agenda.item(u).dataset.info.split(',')[2] > animeElement["saison"]) {
+                                            agenda.item(u).style.display = "none";
+                                        }
                                     }
                                 }
                             } else {
@@ -878,9 +939,11 @@
                             }
                         });
 
-                        if (GM_config.get('alreadywatchedonagenda') == "yes") {
-                            checkbox.click();
+                        for (let u = 0; u < agenda.length; u++) {
+                            agenda.item(u).style.display = "initial";
                         }
+                        var event = new Event('change');
+                        checkbox.dispatchEvent(event);
                     }
                 });
             }
