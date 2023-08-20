@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.39
+// @version      1.40
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -30,6 +30,7 @@
 
     var connected = document.getElementById("headerprofil") != null
     var statusCorrelationADKToMal = [-1, 1, 3, 5, 4, 2, 2]
+    var malContent = null;
 
     // small part designed for mavanime only
     if (document.location.href.includes("mavanimes") && document.location.href.includes("?adk=true")) {
@@ -196,7 +197,12 @@
         /**
     * Recalculates right episode number starting from 1 at each new season.
     */
-        function recalculateEpisodeNumbers(type) {
+        function recalculateEpisodeNumbers(type, adk_id) {
+            let animeElement = malContent.filter(el => el["anime_id"] == adk_id && el["saison"] > 1);
+            if (animeElement.length == 0) {
+                // anime is not more than one season on mal, should not count from 0"
+                return;
+            }
             let seasonsList = document.getElementsByClassName("ul-episodes");
             if (seasonsList && seasonsList.length > 0) {
                 let seasons = seasonsList[0].getElementsByClassName("saison-container");
@@ -210,7 +216,7 @@
                             if (episodes && episodes.length > 0) {
                                 let newEpisodeNumber = 1;
                                 for (let episode of episodes) {
-                                    if (episode.innerText.includes(type)) {
+                                    if (episode.innerText.includes(type) || (type == "vostfr" && !episode.innerText.includes("vf"))) {
                                         let episodeNameMatch = episode.innerText.toLowerCase().match(/episode (\d+)/);
                                         let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : "01";
                                         let oldEp = episodeNumber.toString().padStart(2, '0');
@@ -235,18 +241,70 @@
             }
         }
 
-        function calculateEpisodeNumberFromActived(activedElement) {
+        function checkIfAllSeasonStartWithOne() {
+            let check = true;
+            let seasonsList = document.getElementsByClassName("ul-episodes");
+            if (seasonsList && seasonsList.length > 0) {
+                let seasons = seasonsList[0].getElementsByClassName("saison-container");
+                if (seasons && seasons.length > 0) {
+                    for (let season of seasons) {
+                        let episodes = season.getElementsByTagName("ul");
+                        let realEpisodes = season.getElementsByTagName("a");
+                        if (realEpisodes && realEpisodes.length > 0) {
+                            for (let ep of realEpisodes) {
+                                if (ep.innerText.includes("Episode")) {
+                                    let episodeNameMatch = ep.innerText.toLowerCase().match(/episode (\d+)/);
+                                    let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : 99;
+                                    check = check && episodeNumber < 2;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return check;
+        }
+
+        function calculateEpisodeNumberFromActived(activedElement, multiLanguages) {
             var ulListElement = activedElement.parentNode;
             var i = 1;
             if (!activedElement.previousSibling && activedElement.innerHTML.includes('000')) {
                 return 0;
             }
             while ((activedElement = activedElement.previousSibling) != null ) {
-                if (!activedElement.innerHTML.includes('000') && activedElement.innerHTML.includes('vostfr')) {
+                if (!activedElement.innerHTML.includes('000') && (!multiLanguages || activedElement.innerHTML.includes('vostfr'))) {
                    i++;
                 }
             }
             return i;
+        }
+
+        function calculateEpisodeNumberFromEpAndSeason(ep, season) {
+            var seasonContainer = document.getElementsByClassName("ul-episodes")[0];
+            var i = 0;
+            var currentIndexEpisode = 0;
+            var currentIndexSeason = 1;
+            if (season == 0) {
+                return ep;
+            }
+            var seasonElements = seasonContainer.getElementsByClassName("saison-container");
+            for (var seasonElement of seasonElements) {
+                var currentSeasonNumber = seasonElements.getElementsByClassName("saison");
+                var episodeElements = seasonElement.getElementsByTagName("li");
+                if (!episodeElements) {
+                    continue;
+                }
+                for (var episodeElement of episodeElements) {
+                    if (episodeElement.innerHTML.includes('vostfr') && episodeElement.innerHTML.includes('Episode')) {
+                        i++;
+                    }
+                }
+                if (currentIndexSeason == season) {
+                    break
+                }
+            }
+            return i + ep;
         }
 
         function resizeMainPageToMatchRight() {
@@ -279,10 +337,14 @@
                         if (content.style.visibility != "hidden"){
                             content.style.visibility = "hidden";
                             content.style.maxHeight = "2500px";
+                            let commentTitle = document.getElementById("collapsibleCommentTitle");
+                            commentTitle.innerText = commentTitle.innerHTML.replace('Commentaires', 'Commentaires (cachés)');
 
                         } else {
                             content.style.visibility = "visible";
                             content.style.maxHeight = "initial"
+                            let commentTitle = document.getElementById("collapsibleCommentTitle");
+                            commentTitle.innerText = commentTitle.innerHTML.replace('Commentaires (cachés)', 'Commentaires');
                         }
                     }
                     else {
@@ -404,7 +466,10 @@
         }
 
         // Add custom icons (mandatory to have configuration panel)
-        $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
+        try {
+            $(document.getElementsByClassName("toolbar")[0].getElementsByTagName("a")[0].getElementsByTagName("div")[0]).remove();
+        } catch {
+        }
         let newLogo = document.createElement('img');
         newLogo.style = "width: 195px; margin-top: 15px; float: left; margin-left: 10px;";
         newLogo.src = "https://i.imgur.com/wOQ3Mop.png";
@@ -436,12 +501,18 @@
                     var profileFirstChild = profileContent.getElementsByTagName("li")[0];
                     if (profileFirstChild) {
                         var newProfileElement = profileFirstChild.cloneNode(true);
-                        $.get('https://www.adkami.com/profil/', null, function(text){
+                        /* $.get('https://www.adkami.com/profil/', null, function(text){
                             var username = $(text).find('#username')[0].value;
                             newProfileElement.firstChild.href = `https://www.adkami.com/profil/${username}`;
                             newProfileElement.firstChild.innerText = "Mon profile";
                             profileContent.insertBefore(newProfileElement, profileFirstChild)
-                        });
+                        }); */
+                        var username = document.head.querySelector("[name~=pseudo_member][content]").content;
+                        if (username) {
+                            newProfileElement.firstChild.href = `https://www.adkami.com/profil/${username}`;
+                            newProfileElement.firstChild.innerText = "Mon profile";
+                            profileContent.insertBefore(newProfileElement, profileFirstChild)
+                        }
                     }
                 }
             }
@@ -456,14 +527,27 @@
                     .then(response => response.json())
                     .then(data => {
                     if (data.data === undefined) return;
+                    malContent = data.data;
                     for (let i = 0; i < elems.length; i++) {
                         let after = elems[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
+                        let title = elems[i].getElementsByClassName("title")[0];
+                        let episode = elems[i].getElementsByClassName("episode")[0];
+                        let clickableNyaa = document.createElement("a");
+                        let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
+                        let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
                         let id = after.dataset["info"].split(",")[0];
-                        let url = data.data.find(el => el["anime_id"] == id);
-                        if (url !== undefined) {
+                        let malElement = data.data.filter(el => el["anime_id"] == id);
+                        if (saison) {
+                            let malElementSeason = malElement.filter(el => el["saison"] == saison[1]);
+                            if (malElementSeason && malElementSeason.length > 0) {
+                                malElement = malElementSeason;
+                            }
+                        }
+                        malElement = malElement[0];
+                        if (malElement !== undefined) {
                             let clickable = document.createElement("a");
                             clickable.target = "_blank"
-                            clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
+                            clickable.href = "https://myanimelist.net/anime/" + malElement["mal_id"];
                             clickable.classList.add("lecteur-icon");
                             clickable.classList.add("crunchyroll");
                             let el = document.createElement("img");
@@ -509,7 +593,7 @@
                             $.get(url, null, function(text) {
                                 var actived = $(text).find('.actived')[0];
                                 if (actived) {
-                                    var newEp = calculateEpisodeNumberFromActived(actived);
+                                    var newEp = calculateEpisodeNumberFromActived(actived, true);
                                     let newEpStr = newEp.toString().padStart(2, '0');
                                     let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                                     let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
@@ -533,17 +617,6 @@
 
             if (res) {
                 document.title = document.title.replace(' vostfr', '');
-                let nbBeforeRecalculate = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
-                let epBeforeRecalculate = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nbBeforeRecalculate].toLowerCase().match(/episode (\d+)/);
-                if (epBeforeRecalculate) {
-                    var epBeforeStr = parseInt(epBeforeRecalculate[1]).toString().padStart(2, '0');
-                }
-
-                // recalculate episode number
-                if (GM_config.get('calculateRealEpisodeNumber')) {
-                    recalculateEpisodeNumbers("vostfr");
-                    recalculateEpisodeNumbers("vf");
-                }
 
                 try {
                     let lienNormal = document.getElementsByClassName("normal")
@@ -562,8 +635,16 @@
                 } catch {}
                 let lis = document.getElementsByClassName("os-content")[0].getElementsByTagName("li");
 
-                // Remove useless fake EPs (OP, PV, ED, "vostfr in name")
+                // Add data to all episode
+                let allEpisodes = document.getElementsByClassName("ul-episodes")[0].getElementsByTagName("li");
+                for (let episodeFromList of allEpisodes) {
+                    if (episodeFromList.firstElementChild && episodeFromList.firstElementChild.innerText.includes("Episode")) {
+                        let episodeNumber = episodeFromList.firstElementChild.innerText.toLowerCase().match(/episode (\d+)/);
+                        episodeFromList.dataset.epnumber = parseInt(episodeNumber[1]);
+                    };
+                }
 
+                // Remove useless fake EPs (OP, PV, ED, "vostfr in name")
                 let to_remove_again = [];
                 for (let i = 0; i < lis.length; i++) {
                     let toEdit = lis.item(i).getElementsByTagName("a")[0];
@@ -588,35 +669,10 @@
                 });
                 let adk_id = res[1];
 
-                // Add MAL Icon
-                if (GM_config.get('addmalanime')) {
-                    let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all");
-                    fetch(req)
-                        .then(response => response.json())
-                        .then(data => {
-                        if (data.data === undefined) return;
-                        let url = data.data.find(el => el["anime_id"] == adk_id);
-                        let ici = document.getElementsByClassName("anime-information-icon")[0];
-                        if (url !== undefined) {
-                            let clickable = document.createElement("a");
-                            clickable.id = "malicon";
-                            clickable.target = "_blank";
-                            clickable.href = "https://myanimelist.net/anime/" + url["mal_id"];
-                            let el = document.createElement("img");
-                            clickable.appendChild(el);
-                            el.style = "width: 40px";
-                            el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
-                            ici.appendChild(clickable);
-                        }
-                    })
-                        .catch(console.error);
-                }
-
                 // Mavanime.co
                 let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
                 let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
                 let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join(' ').trim();
-
 
                 let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/);
                 let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/);
@@ -647,12 +703,63 @@
                     currentSeason = saison[1];
                 }
 
+                var allSeasonStartWithOne = checkIfAllSeasonStartWithOne();
+
+                var seasonNumber = document.getElementById("watchlist-saison").dataset.max
+                if (!seasonNumber) {
+                    seasonNumber = document.getElementsByClassName("saison").length.toString()
+                }
+
+                // Add MAL Icon
+                if (GM_config.get('addmalanime') || GM_config.get('calculateRealEpisodeNumber') || GM_config.get('syncadklist')) {
+                    let req = new Request("https://www.adkami.com/api/main?objet=adk-mal-all");
+                    fetch(req)
+                        .then(response => response.json())
+                        .then(data => {
+                        if (data.data === undefined) return;
+                        malContent = data.data;
+                        // recalculate episode number
+                        if (GM_config.get('calculateRealEpisodeNumber')) {
+                            if (seasonNumber > 1) {
+                                recalculateEpisodeNumbers("vostfr", adk_id);
+                                recalculateEpisodeNumbers("vf", adk_id);
+                            }
+                        }
+                        if (!GM_config.get('addmalanime')) return;
+                        let url = data.data.find(el => el["anime_id"] == adk_id);
+                        let ici = document.getElementsByClassName("anime-information-icon")[0];
+                        let malElement = data.data.filter(el => el["anime_id"] == adk_id);
+                        if (saison) {
+                            let malElementSeason = malElement.filter(el => el["saison"] == saison[1]);
+                            if (malElementSeason && malElementSeason.length > 0) {
+                                malElement = malElementSeason;
+                            }
+                        }
+                        malElement = malElement[0];
+                        if (url !== undefined) {
+                            let clickable = document.createElement("a");
+                            clickable.id = "malicon";
+                            clickable.target = "_blank";
+                            clickable.href = "https://myanimelist.net/anime/" + malElement["mal_id"];
+                            let el = document.createElement("img");
+                            clickable.appendChild(el);
+                            el.style = "width: 40px";
+                            el.src = "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAiC8a86sHufn_jOI-JGtoCQ"
+                            ici.appendChild(clickable);
+                        }
+                    })
+                        .catch(console.error);
+                }
+
                 // Add Nyaa.si Icon
                 if (GM_config.get('addnyaaanime')) {
                     let clickableNyaa = document.createElement("a");
                     if (ep) {
-                        let epStr = parseInt(ep[1]).toString().padStart(2, '0');
+                        let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                        let activedElement = document.getElementsByClassName("actived")[0];
+                        let newEpElement = calculateEpisodeNumberFromActived(activedElement, false);
+                        let epStr = newEpElement.toString().padStart(2, '0');
                         clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                         if (epBeforeStr != epStr) {
                             clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
@@ -747,6 +854,11 @@
                                     toSave = true;
                                 }
                             }
+                            if (seasonToSet > 1 && !allSeasonStartWithOne) {
+                                let activedElement = document.getElementsByClassName("actived")[0];
+                                let episodesSameSeason = document.getElementsByClassName("actived")[0].parentNode.getElementsByTagName("li");
+                                valueToSet = episodesSameSeason[valueToSet - 1].dataset.epnumber;
+                            }
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
                                 adklistInput.value = valueToSet
                                 toSave = true;
@@ -804,7 +916,7 @@
                         setInterval(() => {
                             if (elm && elm.href && elm.href.includes("myanimelist")) {
                                 var malicon = document.getElementById("malicon");
-                                if (malicon.href != elm.href) {
+                                if (malicon && malicon.href != elm.href) {
                                     malicon.href = elm.href;
                                     clearInterval(this)
                                 }
@@ -814,31 +926,63 @@
                 }
 
                 // collapsible comments
-                var commentDiv = document.getElementById("comments");
-                if (commentDiv) {
-                    commentDiv = commentDiv.getElementsByTagName("div")[0]
-                    var titleComment = commentDiv.getElementsByClassName("title")[0];
-                    titleComment.innerText = titleComment.innerText.replace("Commentaire", "Commentaires");
-                    titleComment.classList.add("collapsible");
-                    titleComment.classList.add("collapsibleComments");
-                    titleComment.style.marginLeft = "0px";
-                    var formComment = commentDiv.getElementsByTagName("form")[0]
-                    var commentsComment = commentDiv.getElementsByClassName("comm");
-                    var divComment = document.createElement("div");
-                    divComment.classList.add("commentscontent");
-                    commentDiv.insertBefore(divComment, formComment)
-                    divComment.appendChild(formComment);
-                    for (var com of commentsComment) {
-                        divComment.appendChild(com);
-                    }
-                    if (GM_config.get('removecomments') == "always"
-                        || (GM_config.get('removecomments') == "current" && document.getElementById("watchlist_look") && document.getElementById("watchlist_look").value == 1))
-                    {
-                        divComment.style.visibility = "hidden"
-                        divComment.style.maxHeight = "2500px"
-                        titleComment.classList.toggle("activedPlayer");
+                function transformCommentsToCollapsible(visible) {
+                    var commentDiv = document.getElementById("comments");
+                    if (commentDiv) {
+                        commentDiv = commentDiv.getElementsByTagName("div")[0]
+                        var titleComment = commentDiv.getElementsByClassName("title")[0];
+                        titleComment.innerText = titleComment.innerText.replace("Commentaire", "Commentaires");
+                        titleComment.classList.add("collapsible");
+                        titleComment.classList.add("collapsibleComments");
+                        titleComment.id = "collapsibleCommentTitle";
+                        titleComment.style.marginLeft = "0px";
+                        var formComment = commentDiv.getElementsByTagName("form")[0]
+                        var commentsComment = commentDiv.getElementsByClassName("comm");
+                        var divComment = document.createElement("div");
+                        divComment.classList.add("commentscontent");
+                        divComment.id = "commentsDiv";
+                        commentDiv.insertBefore(divComment, formComment)
+                        divComment.parentNode.insertBefore(formComment, divComment);
+                        for (var com of commentsComment) {
+                            divComment.appendChild(com);
+                        }
+                        if ((visible == null && (GM_config.get('removecomments') == "always"
+                            || (GM_config.get('removecomments') == "current" && document.getElementById("watchlist_look") && document.getElementById("watchlist_look").value == 1))) || !visible)
+                        {
+                            divComment.style.visibility = "hidden"
+                            divComment.style.maxHeight = "2500px"
+                            titleComment.innerText = titleComment.innerText.replace('Commentaires', 'Commentaires (cachés)');
+                            titleComment.classList.toggle("activedPlayer");
+                        }
+
+                        var btnComment = document.getElementById("comm-add");
+                        if (btnComment) {
+                            btnComment.addEventListener('click', function() {
+                                let visibleOrNot = !document.getElementById("comments").getElementsByClassName("title")[0].classList.contains("activedPlayer");
+                                setInterval(() => {
+                                    var elm = document.getElementById("collapsibleCommentTitle")
+                                    if (!elm) {
+                                        transformCommentsToCollapsible(visibleOrNot);
+                                        collapsePlayerAnimation()
+                                        clearInterval(this)
+                                    }
+                                }, 100);
+                            });
+                        }
+
+                        var observer = new MutationObserver(function(mutationsList, observer) {
+                            for (let mutation of mutationsList) {
+                                if (mutation.type === 'attributes' && mutation.attributeName === 'data-token') {
+                                    mutation.target.parentNode.dataset.token = mutation.target.dataset.token;
+                                }
+                            }
+                        });
+
+                        observer.observe(document.getElementById('commentsDiv'), { attributes: true, attributeOldValue: true, attributeFilter: ['data-token'] });
                     }
                 }
+
+                transformCommentsToCollapsible(null);
 
                 // collapsible players
                 let elemsHeader = document.getElementsByClassName("h-t-v-a");
