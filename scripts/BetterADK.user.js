@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.40
+// @version      1.41
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -15,6 +15,8 @@
 // @match        https://*.adkami.com/*
 // @match        https://www.mavanimes.co/*
 // @match        http://www.mavanimes.co/*
+// @match        https://franime.fr/*
+// @match        http://franime.fr/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @updateURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
@@ -32,8 +34,31 @@
     var statusCorrelationADKToMal = [-1, 1, 3, 5, 4, 2, 2]
     var malContent = null;
 
+    /**
+    * Allows to wait for an element to exist
+    */
+    function waitForElm(selector) {
+        return new Promise(resolve => {
+            if (document.querySelector(selector)) {
+                return resolve(document.querySelector(selector));
+            }
+
+            const observer = new MutationObserver(mutations => {
+                if (document.querySelector(selector)) {
+                    resolve(document.querySelector(selector));
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        });
+    }
+
     // small part designed for mavanime only
-    if (document.location.href.includes("mavanimes") && document.location.href.includes("?adk=true")) {
+    if (document.location.href.includes("mavanimes") && document.location.href.includes("adk=true")) {
         var r = document.getElementsByTagName('script');
 
         for (var i = (r.length-1); i >= 0; i--) {
@@ -63,7 +88,26 @@
 
         return;
     }
-    else {
+    // small part designed for franime only
+    else if (document.location.href.includes("franime.fr") && document.location.href.includes("adk=true")) {
+        var monTimeout = setTimeout(function() {
+            document.body.innerHTML = "<div style=\"display:flex;justify-content: center;height: 500px;\"><img src=\"https://i.imgur.com/Fg9J6uA.png\" /></div>";
+        }, 3000);
+
+        waitForElm('#play_button').then((elm) => {
+            clearTimeout(monTimeout);
+            elm.click();
+        });
+        waitForElm("iframe.aspect-video").then((elm) => {
+            document.body.innerHTML = elm.outerHTML;
+            let mavframes = document.getElementsByTagName("iframe");
+            for (let i = 0; i < mavframes.length; i++) {
+                mavframes[i].style.maxHeight = "100vh";
+            }
+        });
+        return;
+    }
+    else if (document.location.href.includes("adkami")) {
          GM_config.init("BetterADK Configuration", {
              "syncadklist" : {
                 "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
@@ -119,6 +163,16 @@
                 "type" : "checkbox",
                 "default" : true
             },
+             "lecteursfra" : {
+                "label" : "Ajouter lecteurs FRAnime",
+                "type" : "checkbox",
+                "default" : true
+            },
+             "lecteursvoiranime" : {
+                "label" : "Ajouter lecteurs Voiranime",
+                "type" : "checkbox",
+                "default" : false
+            },
             "addmalmain" : {
                 "label" : "Icones MAL (sur la page principale)",
                 "type" : "checkbox",
@@ -144,6 +198,16 @@
                 "type" : "checkbox",
                 "default" : true
             },
+            "addfraanime" : {
+                "label" : "Icones FRAnime (sur les pages d'animé)",
+                "type" : "checkbox",
+                "default" : true
+            },
+            "addvoiranimeanime" : {
+                "label" : "Icones Voiranime (sur les pages d'animé)",
+                "type" : "checkbox",
+                "default" : true
+            },
             "customnyaasearch" : {
                 "label" : "Filtre recherche Nyaa",
                 "type" : "text",
@@ -159,17 +223,16 @@
                  }
              }
         },
-        'body { background-color: grey !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
+        'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
         {
           save: function() { location.reload() },
         });
 
         addGlobalStyle(`
             #GM_config {
-              height: 60% !important;
+              height: 650px !important;
               width: 50% !important;
               opacity: 0.90 !important;
-              background-color: grey !important;
 
             }`)
 
@@ -273,7 +336,7 @@
                 return 0;
             }
             while ((activedElement = activedElement.previousSibling) != null ) {
-                if (!activedElement.innerHTML.includes('000') && (!multiLanguages || activedElement.innerHTML.includes('vostfr'))) {
+                if (activedElement.innerHTML.includes('Episode') && !activedElement.innerHTML.includes('000') && (!multiLanguages || activedElement.innerHTML.includes('vostfr'))) {
                    i++;
                 }
             }
@@ -398,29 +461,6 @@
 			  overflow: hidden;
 			  transition: max-height 0.2s ease-out;
 			}`);
-        }
-
-        /**
-    * Allows to wait for an element to exist
-    */
-        function waitForElm(selector) {
-            return new Promise(resolve => {
-                if (document.querySelector(selector)) {
-                    return resolve(document.querySelector(selector));
-                }
-
-                const observer = new MutationObserver(mutations => {
-                    if (document.querySelector(selector)) {
-                        resolve(document.querySelector(selector));
-                        observer.disconnect();
-                    }
-                });
-
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-            });
         }
 
         // --- CODE ---
@@ -680,22 +720,11 @@
                 let film = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/film (\d+)/);
 
                 title = title.replace(/[^a-zA-Z0-9!?:-_]/g, "-");
+                title = title.replace(/[^a-zA-Z0-9-]/g, '');
+                let titleWithDashes = title;
 
-                if (saison) {
-                    title += "-" + saison[1];
-                }
-                if (ep) {
-                    title += "-" + (parseInt(ep[1]) > 9 ? parseInt(ep[1]) : "0" + parseInt(ep[1]));
-                }
-                if (oav) {
-                    title += "-oav-" + parseInt(oav[1]);
-                }
-                if (film) {
-                    title += "-film-" + parseInt(film[1]);
-                }
-                title += "-vostfr";
-                let urlNormal = "https://www.mavanimes.co/" + title;
-                let url = urlNormal + "/?adk=true";
+                let activedElement = document.getElementsByClassName("actived")[0];
+                let newEpElement = calculateEpisodeNumberFromActived(activedElement, false);
                 let ici = document.getElementsByClassName("anime-information-icon")[0];
 
                 var currentSeason = 1
@@ -709,6 +738,62 @@
                 if (!seasonNumber) {
                     seasonNumber = document.getElementsByClassName("saison").length.toString()
                 }
+
+                // Build MAV url
+                let titleMav = title;
+                if (saison) {
+                    titleMav += "-" + saison[1];
+                }
+                if (newEpElement) {
+                    titleMav += "-" + (parseInt(newEpElement) > 9 ? parseInt(newEpElement) : "0" + parseInt(newEpElement));
+                }
+                if (oav) {
+                    titleMav += "-oav-" + parseInt(oav[1]);
+                }
+                if (film) {
+                    titleMav += "-film-" + parseInt(film[1]);
+                }
+                titleMav += "-vostfr";
+                let urlNormalMav = "https://www.mavanimes.co/" + titleMav;
+                let urlMav = urlNormalMav + "/?adk=true";
+
+                // Build FRAnime url
+                let titleFra = title;
+                if (oav) {
+                    titleFra += `-oav?s=${currentSeason}&ep=` + parseInt(oav[1]);
+                }
+                else if (film) {
+                    titleFra += `-film?s=${currentSeason}&ep=` + parseInt(film[1]);
+                }
+                else {
+                    titleFra += "?s=" + currentSeason;
+                    if (newEpElement) {
+                        titleFra += "&ep=" + parseInt(newEpElement);
+                    }
+                }
+                titleFra += "&lang=vo"
+                let urlNormalFra = "https://franime.fr/anime/" + titleFra;
+                let urlFra = urlNormalFra + "&adk=true";
+
+                // Build Voiranime url
+                let titleVoa = title;
+                if (currentSeason > 1) {
+                    titleVoa += `-${currentSeason}/${title}-${currentSeason}`;
+                } else {
+                    titleVoa += "/" + title;
+                }
+                if (oav) {
+                    titleVoa += `-oav` + parseInt(oav[1]);
+                }
+                else if (film) {
+                    titleVoa += `-film` + parseInt(film[1]);
+                }
+                else if (newEpElement) {
+                    titleVoa += "-" + (parseInt(newEpElement) > 9 ? parseInt(newEpElement) : "0" + parseInt(newEpElement));
+                }
+                titleVoa += "-vostfr"
+                let urlNormalVoa = "https://v5.voiranime.com/anime/" + titleVoa;
+                let urlVoa = urlNormalVoa; // + "/?adk=true";
 
                 // Add MAL Icon
                 if (GM_config.get('addmalanime') || GM_config.get('calculateRealEpisodeNumber') || GM_config.get('syncadklist')) {
@@ -727,7 +812,6 @@
                         }
                         if (!GM_config.get('addmalanime')) return;
                         let url = data.data.find(el => el["anime_id"] == adk_id);
-                        let ici = document.getElementsByClassName("anime-information-icon")[0];
                         let malElement = data.data.filter(el => el["anime_id"] == adk_id);
                         if (saison) {
                             let malElementSeason = malElement.filter(el => el["saison"] == saison[1]);
@@ -757,8 +841,6 @@
                     if (ep) {
                         let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        let activedElement = document.getElementsByClassName("actived")[0];
-                        let newEpElement = calculateEpisodeNumberFromActived(activedElement, false);
                         let epStr = newEpElement.toString().padStart(2, '0');
                         clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                         if (epBeforeStr != epStr) {
@@ -776,27 +858,14 @@
                     ici.appendChild(clickableNyaa);
                 }
 
-                // Add Mav Icon
-                if (GM_config.get('addmavanime')) {
-                    let clickable = document.createElement("a");
-                    clickable.href = urlNormal;
-                    clickable.target = "_blank"
-                    let el = document.createElement("img");
-                    clickable.appendChild(el);
-                    el.style = "width: 40px";
-                    el.src = "https://i.imgur.com/xSHwElF.png"
-                    ici.appendChild(clickable);
-                }
-
-                // Add MAV players
-                if (GM_config.get('lecteursmav')) {
+                function AddPlayer(title, urlNormal, url, openAtStart) {
                     let iframeLink = document.createElement("iframe");
                     let main = document.createElement("p");
                     main.classList.add("h-t-v-a");
                     let link = document.createElement("a");
                     link.target = "_blank"
                     link.href = urlNormal;
-                    link.innerText = " Mavanimes.co";
+                    link.innerText = " " + title;
                     let team = document.createElement("a");
                     team.target = "_blank"
                     team.href = urlNormal;
@@ -807,13 +876,22 @@
                     iframeLink.classList.add("lecteur-video");
                     iframeLink.classList.add("row");
                     iframeLink.classList.add("active");
+                    iframeLink.classList.add("external-players-betteradk");
                     iframeLink.classList.add("content");
                     iframeLink.setAttribute("allowfullscreen", "true");
                     iframeLink.src = url;
-                    iframeLink.style = "width: 100%; height: 500px; border: none;";
+                    iframeLink.style.width = "100%";
+                    iframeLink.style.height = "500px";
+                    iframeLink.style.border = "none";
+                    iframeLink.style.display = "none";
+                    iframeLink.addEventListener("load", function() {
+                        setTimeout(function() {
+                            iframeLink.style.display = "block"; // Ou une autre valeur d'affichage appropriée
+                        }, 1000); // 1s
+                    });
 
                     // if 4 players or less and licensed or no player
-                    if ((document.getElementsByClassName("h-t-v-a").length < 5 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
+                    if (openAtStart && (document.getElementsByClassName("h-t-v-a").length < 5 && document.getElementsByClassName("licensier-text")[0] !== undefined) || document.getElementsByClassName("h-t-v-a").length < 1) {
                         iframeLink.style.maxHeight = "2500px";
                     } else {
                         iframeLink.style.maxHeight = "0px";
@@ -827,6 +905,47 @@
                     video.appendChild(playerparent);
                 }
 
+                function AddIcon(urlNormal, image) {
+                    let clickable = document.createElement("a");
+                    clickable.href = urlNormal;
+                    clickable.target = "_blank"
+                    let el = document.createElement("img");
+                    clickable.appendChild(el);
+                    el.style = "width: 40px";
+                    el.src = image
+                    ici.appendChild(clickable);
+                }
+
+                // Add Mav Icon
+                if (GM_config.get('addmavanime')) {
+                    AddIcon(urlNormalMav, "https://i.imgur.com/xSHwElF.png")
+                }
+
+                // Add MAV players
+                if (GM_config.get('lecteursmav')) {
+                    AddPlayer("Mavanimes.co", urlNormalMav, urlMav, true)
+                }
+
+                // Add FRAnime Icon
+                if (GM_config.get('addfraanime')) {
+                    AddIcon(urlNormalFra, "https://i.imgur.com/f9PElxF.png")
+                }
+
+                // Add FRAnime players
+                if (GM_config.get('lecteursfra')) {
+                    AddPlayer("FRAnime.fr", urlNormalFra, urlFra, true)
+                }
+
+                // Add Voiranime Icon
+                if (GM_config.get('addvoiranimeanime')) {
+                    AddIcon(urlNormalVoa, "https://i.imgur.com/xqi8s1S.png")
+                }
+
+                // Add Voiranime players
+                if (GM_config.get('lecteursvoiranime')) {
+                    AddPlayer("Voiranime.com", urlNormalVoa, urlVoa, !GM_config.get('lecteursfra') && !GM_config.get('lecteursmav'))
+                }
+
                 if (GM_config.get('syncadklist')) {
                     waitForElm('#malEpisodes').then((elm) => {
                         var adklistInput = document.getElementById("watchlist-episode");
@@ -837,6 +956,34 @@
                         if (adklistSeasonInput) {
                             adklistSeasonInput.disabled = true;
                         }
+                        waitForElm('#watchlist-actuel').then((elmButton) => {
+                            var newElem = elmButton.cloneNode(true);
+                            var newElemRemove = elmButton.cloneNode(true);
+                            elmButton.parentNode.replaceChild(newElem, elmButton);
+                            newElem.parentNode.insertBefore(newElemRemove, newElem)
+                            newElem.innerText = "+1 Episode";
+                            newElemRemove.innerText = "-1 Episode";
+                            newElemRemove.style.backgroundColor = "rgba(255,0,0,.65)";
+                            newElem.addEventListener('click', function() {
+                                let maxEpisodes = parseInt(document.getElementById("malTotal").innerText);
+                                let toSet = Math.min(maxEpisodes, parseInt(elm.value) + 1)
+                                if (elm.value != toSet) {
+                                    elm.value = toSet;
+                                    if (elm.value == maxEpisodes) {
+                                        document.getElementById("malStatus").value = 2;
+                                    }
+                                    elm.dispatchEvent(new Event('change'));
+                                }
+                            });
+                            newElemRemove.addEventListener('click', function() {
+                                let toSet = Math.max(parseInt(elm.value) - 1, 0);
+                                if (elm.value != toSet) {
+                                    elm.value = toSet;
+                                    elm.dispatchEvent(new Event('change'));
+                                }
+
+                            });
+                        });
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
                             document.getElementById("watchlist").click()
