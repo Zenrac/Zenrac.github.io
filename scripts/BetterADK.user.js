@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.42
+// @version      1.43
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -17,6 +17,8 @@
 // @match        http://www.mavanimes.co/*
 // @match        https://franime.fr/*
 // @match        http://franime.fr/*
+// @match        https://nyaa.si/*
+// @match        http://nyaa.si/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @updateURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
@@ -33,6 +35,161 @@
     var connected = document.getElementById("headerprofil") != null
     var statusCorrelationADKToMal = [-1, 1, 3, 5, 4, 2, 2]
     var malContent = null;
+
+    GM_config.init("BetterADK Configuration", {
+        "syncadklist" : {
+            "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "removednswarning" : {
+            "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "alreadywatchedonagenda" : {
+            "label" : "Affiche par défaut seulement les animés en cours de visionnage dans l'agenda",
+            "type" : "select",
+            "options" : {
+                "yes" : "Oui",
+                "no" : "Non",
+                "disable" : "Désactivé"
+            }
+        },
+        "addprofiletomenu" : {
+            "label" : "Ajoute une option mon profile au menu en haut à droite",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "removevfepisode" : {
+            "label" : "Retirer les épisodes VF",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "removevfagenda" : {
+            "label" : "Retirer les épisodes VF sur l'agenda",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "removeteamnames" : {
+            "label" : "Retirer l'affichage des noms des teams de sub",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "removeopedpv" : {
+            "label" : "Retirer les ED, OP et PV des listes d'épisodes",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "calculateRealEpisodeNumber" : {
+            "label" : "Recalcul du numéro d'épisode à partir de 1 à chaque nouvelle saison",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "lecteursmav" : {
+            "label" : "Ajouter lecteurs MAV",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "lecteursfra" : {
+            "label" : "Ajouter lecteurs FRAnime",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "lecteursvoiranime" : {
+            "label" : "Ajouter lecteurs Voiranime",
+            "type" : "checkbox",
+            "default" : false
+        },
+        "addmalmain" : {
+            "label" : "Icones MAL (sur la page principale)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addnyaamain" : {
+            "label" : "Icones Nyaa (sur la page principale)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addmalanime" : {
+            "label" : "Icones MAL (sur les pages d'animé)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addnyaaanime" : {
+            "label" : "Icones Nyaa (sur les pages d'animé)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addmavanime" : {
+            "label" : "Icones MAV (sur les pages d'animé)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addfraanime" : {
+            "label" : "Icones FRAnime (sur les pages d'animé)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "addvoiranimeanime" : {
+            "label" : "Icones Voiranime (sur les pages d'animé)",
+            "type" : "checkbox",
+            "default" : true
+        },
+        "customnyaasearch" : {
+            "label" : "Filtre recherche Nyaa",
+            "type" : "text",
+            "default" : "(vostfr|multi) 1080p"
+        },
+        "removecomments" : {
+            "label" : "Masquer par défaut les commentaires sur les pages d'animé",
+            "type" : "select",
+            "options" : {
+                "never" : "Jamais",
+                "always" : "Toujours",
+                "current" : "Seulement si en train de regarder"
+            }
+        },
+        "magnetpriority" : {
+            "label" : "Mots séparés par une virgule, dans l'odre de priorité, pour la selection automatique du magnet",
+            "type" : "text",
+            "default" : "Tsundere-Raws,Erai-Raws"
+        },
+    },
+                   'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
+                   {
+        save: function() { location.reload() },
+    });
+
+    addGlobalStyle(`
+            #GM_config {
+              height: 680px !important;
+              width: 50% !important;
+              opacity: 0.90 !important;
+
+            }`)
+
+    function openSettingPanel(event) {
+        if (!event.ctrlKey) {
+            event.preventDefault();
+            GM_config.open();
+        }
+    }
+
+        /**
+    * Enables to add a custom global css style.
+    */
+        function addGlobalStyle(css) {
+            var head, style;
+            head = document.getElementsByTagName('head')[0];
+            if (!head) {
+                return;
+            }
+            style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = css;
+            head.appendChild(style);
+        }
 
     /**
     * Allows to wait for an element to exist
@@ -57,7 +214,27 @@
         });
     }
 
-    // small part designed for mavanime only
+    function getMostCompatibleMagnet() {
+        let magnetElement = document.getElementsByClassName("fa-magnet")
+        if (magnetElement.length > 0) {
+
+            let configMagnet = GM_config.get('magnetpriority');
+            if (configMagnet) {
+                for (let magnet of magnetElement) {
+                    for (let word of configMagnet.split(',')) {
+                        if (magnet.parentNode.parentNode.parentNode.innerHTML.toString().toLowerCase().includes(word.toLowerCase())) {
+                            return magnet;
+                        }
+                    }
+                }
+            }
+            return magnetElement[0];
+        }
+        else {
+            alert("Aucun magnet trouvé !");
+        }
+    }
+
     if (document.location.href.includes("mavanimes") && document.location.href.includes("adk=true")) {
         var r = document.getElementsByTagName('script');
 
@@ -88,6 +265,10 @@
 
         return;
     }
+    else if (document.location.href.includes("nyaa.si") && document.location.href.includes("adk=true")) {
+        let magnetElement = getMostCompatibleMagnet();
+        magnetElement.click();
+    }
     // small part designed for franime only
     else if (document.location.href.includes("franime.fr") && document.location.href.includes("adk=true")) {
         var monTimeout = setTimeout(function() {
@@ -116,154 +297,6 @@
         return;
     }
     else if (document.location.href.includes("adkami")) {
-         GM_config.init("BetterADK Configuration", {
-             "syncadklist" : {
-                "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
-                "type" : "checkbox",
-                "default" : true
-            },
-             "removednswarning" : {
-                "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "alreadywatchedonagenda" : {
-                "label" : "Affiche par défaut seulement les animés en cours de visionnage dans l'agenda",
-                "type" : "select",
-                 "options" : {
-                     "yes" : "Oui",
-                     "no" : "Non",
-                     "disable" : "Désactivé"
-                 }
-            },
-            "addprofiletomenu" : {
-                "label" : "Ajoute une option mon profile au menu en haut à droite",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "removevfepisode" : {
-                "label" : "Retirer les épisodes VF",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "removevfagenda" : {
-                "label" : "Retirer les épisodes VF sur l'agenda",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "removeteamnames" : {
-                "label" : "Retirer l'affichage des noms des teams de sub",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "removeopedpv" : {
-                "label" : "Retirer les ED, OP et PV des listes d'épisodes",
-                "type" : "checkbox",
-                "default" : true
-            },
-             "calculateRealEpisodeNumber" : {
-                "label" : "Recalcul du numéro d'épisode à partir de 1 à chaque nouvelle saison",
-                "type" : "checkbox",
-                "default" : true
-            },
-             "lecteursmav" : {
-                "label" : "Ajouter lecteurs MAV",
-                "type" : "checkbox",
-                "default" : true
-            },
-             "lecteursfra" : {
-                "label" : "Ajouter lecteurs FRAnime",
-                "type" : "checkbox",
-                "default" : true
-            },
-             "lecteursvoiranime" : {
-                "label" : "Ajouter lecteurs Voiranime",
-                "type" : "checkbox",
-                "default" : false
-            },
-            "addmalmain" : {
-                "label" : "Icones MAL (sur la page principale)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addnyaamain" : {
-                "label" : "Icones Nyaa (sur la page principale)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addmalanime" : {
-                "label" : "Icones MAL (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addnyaaanime" : {
-                "label" : "Icones Nyaa (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addmavanime" : {
-                "label" : "Icones MAV (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addfraanime" : {
-                "label" : "Icones FRAnime (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addvoiranimeanime" : {
-                "label" : "Icones Voiranime (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "customnyaasearch" : {
-                "label" : "Filtre recherche Nyaa",
-                "type" : "text",
-                "default" : "(vostfr|multi) 1080p"
-            },
-             "removecomments" : {
-                 "label" : "Masquer par défaut les commentaires sur les pages d'animé",
-                 "type" : "select",
-                 "options" : {
-                     "never" : "Jamais",
-                     "always" : "Toujours",
-                     "current" : "Seulement si en train de regarder"
-                 }
-             }
-        },
-        'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
-        {
-          save: function() { location.reload() },
-        });
-
-        addGlobalStyle(`
-            #GM_config {
-              height: 650px !important;
-              width: 50% !important;
-              opacity: 0.90 !important;
-
-            }`)
-
-        function openSettingPanel(event) {
-            if (!event.ctrlKey) {
-                event.preventDefault();
-                GM_config.open();
-            }
-        }
-        /**
-    * Enables to add a custom global css style.
-    */
-        function addGlobalStyle(css) {
-            var head, style;
-            head = document.getElementsByTagName('head')[0];
-            if (!head) {
-                return;
-            }
-            style = document.createElement('style');
-            style.type = 'text/css';
-            style.innerHTML = css;
-            head.appendChild(style);
-        }
 
         /**
     * Recalculates right episode number starting from 1 at each new season.
@@ -655,6 +688,43 @@
                         }
                     });
                     elems[i].insertBefore(clickableNyaa, after.nextSibling);
+
+                    // Magnet icon
+                    let clickableNyaaMagnet = document.createElement("img");
+                    clickableNyaaMagnet.addEventListener('click', function() {
+                        var alreadyIframe = clickableNyaaMagnet.getElementsByClassName("nyaaMagnet")[0];
+                        var urlNyaa = "";
+                        if (ep) {
+                            let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
+                            let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                            let epStr = ep.toString().padStart(2, '0');
+                            urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                            if (epBeforeStr != epStr) {
+                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                            }
+                        }
+                        else {
+                            urlNyaa = "https://nyaa.si/?q=" + title + " " + GM_config.get('customnyaasearch');
+                        }
+                        urlNyaa += "&adk=true";
+                        let frameMagnet = document.createElement("iframe");
+                        frameMagnet.src = urlNyaa;
+                        frameMagnet.classList.add("nyaaMagnet");
+                        if (alreadyIframe) {
+                            clickableNyaaMagnet.replaceChild(frameMagnet, alreadyIframe);
+                        }
+                        else {
+                            clickableNyaaMagnet.appendChild(frameMagnet);
+                        }
+                    });
+                    clickableNyaaMagnet.classList.add("lecteur-icon");
+                    clickableNyaaMagnet.style.marginRight = "5px";
+                    clickableNyaaMagnet.style.opacity = ".6";
+                    clickableNyaaMagnet.style.float = "right";
+                    clickableNyaaMagnet.style.width = "40px";
+                    clickableNyaaMagnet.style.cursor = "pointer";
+                    clickableNyaaMagnet.src = "https://i.imgur.com/rVlVnkH.png"
+                    elems[i].insertBefore(clickableNyaaMagnet, after.nextSibling);
                 }
             }
         }
@@ -845,6 +915,7 @@
 
                 // Add Nyaa.si Icon
                 if (GM_config.get('addnyaaanime')) {
+                    // Nyaa icon
                     let clickableNyaa = document.createElement("a");
                     if (ep) {
                         let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
@@ -864,6 +935,40 @@
                     elNyaa.style = "width: 40px";
                     elNyaa.src = "https://i.imgur.com/c8dv9WI.png"
                     ici.appendChild(clickableNyaa);
+
+                    // Magnet icon
+                    let clickableNyaaMagnet = document.createElement("img");
+                    clickableNyaaMagnet.addEventListener('click', function() {
+                        var alreadyIframe = clickableNyaaMagnet.getElementsByClassName("nyaaMagnet")[0];
+                        var urlNyaa = "";
+                        if (ep) {
+                            let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
+                            let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
+                            let epStr = newEpElement.toString().padStart(2, '0');
+                            urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                            if (epBeforeStr != epStr) {
+                                urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                            }
+                        }
+                        else {
+                            urlNyaa = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
+                        }
+                        urlNyaa += "&adk=true";
+                        let frameMagnet = document.createElement("iframe");
+                        frameMagnet.src = urlNyaa;
+                        frameMagnet.classList.add("nyaaMagnet");
+                        if (alreadyIframe) {
+                            clickableNyaaMagnet.replaceChild(frameMagnet, alreadyIframe);
+                        }
+                        else {
+                            clickableNyaaMagnet.appendChild(frameMagnet);
+                        }
+                    });
+
+                    clickableNyaaMagnet.style.width = "40px";
+                    clickableNyaaMagnet.style.cursor = "pointer";
+                    clickableNyaaMagnet.src = "https://i.imgur.com/rVlVnkH.png"
+                    ici.appendChild(clickableNyaaMagnet);
                 }
 
                 function AddPlayer(title, urlNormal, url, openAtStart) {
