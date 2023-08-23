@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.45
+// @version      1.46
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -217,55 +217,55 @@
                 "type" : "checkbox",
                 "default" : true
             },
-            "lecteursmav" : {
-                "label" : "Ajouter lecteurs MAV",
-                "type" : "checkbox",
-                "default" : true
+            "malicon" : {
+                "label" : "Afficher l'icone MAL",
+                "type" : "select",
+                "options" : {
+                    "both" : "Les deux",
+                    "main" : "Seulement page principale",
+                    "anime" : "Seulement page animé",
+                    "never" : "Jamais"
+                }
             },
-            "lecteursfra" : {
-                "label" : "Ajouter lecteurs FRAnime",
-                "type" : "checkbox",
-                "default" : true
+            "nyaaicon" : {
+                "label" : "Afficher l'icone Nyaa",
+                "type" : "select",
+                "options" : {
+                    "both" : "Les deux",
+                    "main" : "Seulement page principale",
+                    "anime" : "Seulement page animé",
+                    "never" : "Jamais"
+                }
             },
-            "lecteursvoiranime" : {
-                "label" : "Ajouter lecteurs Voiranime",
-                "type" : "checkbox",
-                "default" : false
+            "mavanime" : {
+                "label" : "Ajouter Mavanime (sur les pages d'animé)",
+                "type" : "select",
+                "options" : {
+                    "both" : "Les deux",
+                    "icon" : "Seulement icone",
+                    "player" : "Seulement lecteurs",
+                    "never" : "Jamais"
+                }
             },
-            "addmalmain" : {
-                "label" : "Icones MAL (sur la page principale)",
-                "type" : "checkbox",
-                "default" : true
+            "franime" : {
+                "label" : "Ajouter FRAnime (sur les pages d'animé)",
+                "type" : "select",
+                "options" : {
+                    "both" : "Les deux",
+                    "icon" : "Seulement icone",
+                    "player" : "Seulement lecteurs",
+                    "never" : "Jamais"
+                }
             },
-            "addnyaamain" : {
-                "label" : "Icones Nyaa (sur la page principale)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addmalanime" : {
-                "label" : "Icones MAL (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addnyaaanime" : {
-                "label" : "Icones Nyaa (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addmavanime" : {
-                "label" : "Icones MAV (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addfraanime" : {
-                "label" : "Icones FRAnime (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "addvoiranimeanime" : {
-                "label" : "Icones Voiranime (sur les pages d'animé)",
-                "type" : "checkbox",
-                "default" : true
+            "voiranime" : {
+                "label" : "Ajouter Voiranime (sur les pages d'animé)",
+                "type" : "select",
+                "options" : {
+                    "both" : "Les deux",
+                    "icon" : "Seulement icone",
+                    "player" : "Seulement lecteurs",
+                    "never" : "Jamais"
+                }
             },
             "customnyaasearch" : {
                 "label" : "Filtre recherche Nyaa",
@@ -276,9 +276,9 @@
                 "label" : "Masquer par défaut les commentaires sur les pages d'animé",
                 "type" : "select",
                 "options" : {
+                    "current" : "Seulement si en train de regarder",
                     "never" : "Jamais",
-                    "always" : "Toujours",
-                    "current" : "Seulement si en train de regarder"
+                    "always" : "Toujours"
                 }
             },
             "magnetpriority" : {
@@ -303,7 +303,7 @@
 
         addGlobalStyle(`
             #GM_config {
-              height: 710px !important;
+              height: 600px !important;
               width: 50% !important;
               opacity: 0.90 !important;
 
@@ -609,6 +609,7 @@
 
         addGlobalStyle(`@media screen and (min-width: 800px) { #beelzebub { background-image: url(${ZENRAC_AVATAR}) !important; }}`);
         addGlobalStyle('@media screen and (min-width: 800px) { #beelzebub:after { content: "EZ EZ EZ EZ" !important; bottom: 7px; }}');
+        addGlobalStyle('#video { margin-bottom: 10px; }');
 
         let zenrac = document.createElement("a");
         zenrac.target = "_blank"
@@ -652,7 +653,7 @@
         // on main page
         if (elems.length > 0) {
             // add mal icons
-            if (GM_config.get('addmalmain')) {
+            if (["both", "main"].includes(GM_config.get('malicon'))) {
                 let req = new Request("https://adkami.com/api/main?objet=adk-mal-all", {
                     method: 'GET',
                     credentials: 'include',
@@ -695,7 +696,7 @@
                     .catch(console.error);
             }
 
-            if (GM_config.get('addnyaamain')) {
+            if (["both", "main"].includes(GM_config.get('nyaaicon'))) {
                 // add nyaa icons
                 for (let i = 0; i < elems.length; i++) {
                     let after = elems[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
@@ -941,7 +942,8 @@
                 let urlVoa = urlNormalVoa; // + "/?adk=true";
 
                 // Add MAL Icon
-                if (GM_config.get('addmalanime') || GM_config.get('calculateRealEpisodeNumber') || GM_config.get('syncadklist')) {
+
+                if ((["both", "anime"].includes(GM_config.get('malicon'))) || GM_config.get('calculateRealEpisodeNumber') || GM_config.get('syncadklist')) {
                     let req = new Request("https://adkami.com/api/main?objet=adk-mal-all", {
                         method: 'GET',
                         credentials: 'include',
@@ -958,7 +960,7 @@
                                 recalculateEpisodeNumbers("vf", adk_id);
                             }
                         }
-                        if (!GM_config.get('addmalanime')) return;
+                        if (!["both", "anime"].includes(GM_config.get('malicon'))) return;
                         let url = data.data.find(el => el["anime_id"] == adk_id);
                         let malElement = data.data.filter(el => el["anime_id"] == adk_id);
                         if (saison) {
@@ -984,7 +986,7 @@
                 }
 
                 // Add Nyaa.si Icon
-                if (GM_config.get('addnyaaanime')) {
+                if (["both", "anime"].includes(GM_config.get('nyaaicon'))) {
                     // Nyaa icon
                     let clickableNyaa = document.createElement("a");
                     if (ep) {
@@ -1116,33 +1118,33 @@
                 }
 
                 // Add Mav Icon
-                if (GM_config.get('addmavanime')) {
+                if (['both', 'icon'].includes(GM_config.get('mavanime'))) {
                     AddIcon(urlNormalMav, MAV_ICON)
                 }
 
                 // Add MAV players
-                if (GM_config.get('lecteursmav')) {
+                if (['both', 'player'].includes(GM_config.get('mavanime'))) {
                     AddPlayer("Mavanimes.co", urlNormalMav, urlMav, true)
                 }
 
                 // Add FRAnime Icon
-                if (GM_config.get('addfraanime')) {
+                if (['both', 'icon'].includes(GM_config.get('franime'))) {
                     AddIcon(urlNormalFra, FRA_ICON)
                 }
 
                 // Add FRAnime players
-                if (GM_config.get('lecteursfra')) {
+                if (['both', 'player'].includes(GM_config.get('franime'))) {
                     AddPlayer("FRAnime.fr", urlNormalFra, urlFra, true)
                 }
 
                 // Add Voiranime Icon
-                if (GM_config.get('addvoiranimeanime')) {
+                if (['both', 'icon'].includes(GM_config.get('voiranime'))) {
                     AddIcon(urlNormalVoa, VOA_ICON)
                 }
 
                 // Add Voiranime players
-                if (GM_config.get('lecteursvoiranime')) {
-                    AddPlayer("Voiranime.com", urlNormalVoa, urlVoa, !GM_config.get('lecteursfra') && !GM_config.get('lecteursmav'))
+                if (['both', 'player'].includes(GM_config.get('voiranime'))) {
+                    AddPlayer("Voiranime.com", urlNormalVoa, urlVoa, !['both', 'player'].includes(GM_config.get('mavanime')) && !['both', 'icon'].includes(GM_config.get('franime')))
                 }
 
                 if (GM_config.get('syncadklist')) {
