@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.46
+// @version      1.47
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -99,7 +99,7 @@
 
     }
 
-    if (document.location.href.includes("mavanimes") && document.location.href.includes("adk=true")) {
+    if (window.location.href.includes("mavanimes") && window.location.href.includes("adk=true")) {
         var r = document.getElementsByTagName('script');
 
         for (var i = (r.length-1); i >= 0; i--) {
@@ -129,14 +129,14 @@
 
         return;
     }
-    else if (document.location.href.includes("nyaa.si") && document.location.href.includes("adk=true")) {
+    else if (window.location.href.includes("nyaa.si") && window.location.href.includes("adk=true")) {
         let magnetElement = getMostCompatibleMagnet();
         magnetElement.click();
 
         return;
     }
     // small part designed for franime only
-    else if (document.location.href.includes("franime.fr") && document.location.href.includes("adk=true")) {
+    else if (window.location.href.includes("franime.fr") && window.location.href.includes("adk=true")) {
         var monTimeout = setTimeout(function() {
             document.body.innerHTML = NO_RESULT_PLAYER;
         }, 3000);
@@ -155,21 +155,16 @@
         waitForElm(".art-layer-play").then((elm) => {
             elm.click();
             waitForElm("video.art-video").then((elm) => {
-                document.location.href = elm.src;
+                window.location.href = elm.src;
             });
         });
 
         return;
     }
-    else if (document.location.href.includes("adkami")) {
+    else if (window.location.href.includes("adkami")) {
         GM_config.init("BetterADK Configuration", {
             "syncadklist" : {
                 "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
-                "type" : "checkbox",
-                "default" : true
-            },
-            "autoredirectwithoutwww" : {
-                "label" : "Redirection automatique sans WWW (parfois nécessaire pour éviter problème CORS avec MAL)",
                 "type" : "checkbox",
                 "default" : true
             },
@@ -540,18 +535,11 @@
         // --- CODE ---
 
         // All pages
-        if (GM_config.get('autoredirectwithoutwww')) {
-            if (window.location.hostname.startsWith("www.")) {
-                var path = window.location.pathname + window.location.search;
-                window.location.replace("https://" + window.location.hostname.replace("www.", "") + path);
-            }
-            else {
-                let tousLesLiens = document.querySelectorAll('a');
 
-                tousLesLiens.forEach(lien => {
-                    lien.href = lien.href.replace('www.adkami', 'adkami');
-                });
-            }
+        // auto redirect to www.
+        if (!window.location.hostname.startsWith("www.")) {
+            const newURL = "https://www." + window.location.hostname + window.location.pathname + window.location.search;
+            window.location.replace(newURL);
         }
 
         var connected = document.getElementById("headerprofil") != null
@@ -633,15 +621,9 @@
                     var profileFirstChild = profileContent.getElementsByTagName("li")[0];
                     if (profileFirstChild) {
                         var newProfileElement = profileFirstChild.cloneNode(true);
-                        /* $.get('https://adkami.com/profil/', null, function(text){
-                            var username = $(text).find('#username')[0].value;
-                            newProfileElement.firstChild.href = `https://adkami.com/profil/${username}`;
-                            newProfileElement.firstChild.innerText = "Mon profile";
-                            profileContent.insertBefore(newProfileElement, profileFirstChild)
-                        }); */
                         var username = document.head.querySelector("[name~=pseudo_member][content]").content;
                         if (username) {
-                            newProfileElement.firstChild.href = `https://adkami.com/profil/${username}`;
+                            newProfileElement.firstChild.href = `https://${window.location.hostname}/profil/${username}`;
                             newProfileElement.firstChild.innerText = "Mon profile";
                             profileContent.insertBefore(newProfileElement, profileFirstChild)
                         }
@@ -654,7 +636,7 @@
         if (elems.length > 0) {
             // add mal icons
             if (["both", "main"].includes(GM_config.get('malicon'))) {
-                let req = new Request("https://adkami.com/api/main?objet=adk-mal-all", {
+                let req = new Request(`https://${window.location.hostname}/api/main?objet=adk-mal-all`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -944,7 +926,7 @@
                 // Add MAL Icon
 
                 if ((["both", "anime"].includes(GM_config.get('malicon'))) || GM_config.get('calculateRealEpisodeNumber') || GM_config.get('syncadklist')) {
-                    let req = new Request("https://adkami.com/api/main?objet=adk-mal-all", {
+                    let req = new Request(`https://${window.location.hostname}/api/main?objet=adk-mal-all`, {
                         method: 'GET',
                         credentials: 'include',
                     });
@@ -1376,7 +1358,7 @@
             }
 
             if (GM_config.get('alreadywatchedonagenda') != "disable") {
-                $.get('https://adkami.com/api/main?objet=anime-list', null, function(text){
+                $.get(`https://${window.location.hostname}/api/main?objet=anime-list`, null, function(text){
                     if (text && text["data"] && text["data"]["items"]) {
                         var currentAnimes = text["data"]["items"]
                         var currentWatchingAnimes = currentAnimes.filter(m => !["4", "2"].includes(m["genre"]))
