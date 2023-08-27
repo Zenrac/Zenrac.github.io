@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.47
+// @version      1.48
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1360,7 +1360,7 @@
             if (GM_config.get('alreadywatchedonagenda') != "disable") {
                 $.get(`https://${window.location.hostname}/api/main?objet=anime-list`, null, function(text){
                     if (text && text["data"] && text["data"]["items"]) {
-                        var currentAnimes = text["data"]["items"]
+                        var currentAnimes = text["data"]["items"];
                         var currentWatchingAnimes = currentAnimes.filter(m => !["4", "2"].includes(m["genre"]))
                         var currentWatchingAnimesIds = currentWatchingAnimes.map(m => m["anime"]);
 
@@ -1370,15 +1370,34 @@
                         checkbox.parentNode.replaceChild(newCheckbox, checkbox);
                         checkbox = newCheckbox;
 
+                        // already viewed
+                        var pannelList = document.getElementById("pannel-list");
+                        var legendeDiv = document.getElementsByClassName("legende")[0];
+                        var alreadyViewed = checkbox.parentNode.cloneNode(true);
+                        alreadyViewed.id = "agenda-filter-watch-one";
+                        alreadyViewed.innerHTML = alreadyViewed.innerHTML.replace("En visionnage", "Déjà vu");
+                        alreadyViewed.title = "Afficher les épisodes déjà visionnés";
+                        alreadyViewed.style.backgroundColor = "#ff7c2b";
+                        alreadyViewed.style.display = "inline-flex";
+                        alreadyViewed.style.alignItems = "center";
+                        legendeDiv.insertBefore(alreadyViewed, pannelList);
+                        alreadyViewed = alreadyViewed.firstElementChild;
+
+                        alreadyViewed.addEventListener('change', function() {
+                            for (let u = 0; u < agenda.length; u++) {
+                                agenda.item(u).style.display = "initial";
+                            }
+                            var event = new Event('change');
+                            checkbox.dispatchEvent(event);
+                        });
+
+                        // episode one
                         var epOne = checkbox.parentNode.cloneNode(true);
                         epOne.id = "agenda-filter-watch-one";
-                        epOne.innerHTML = epOne.innerHTML.replace("En visionnage", "Premier episode")
-                        epOne.title = "Toujours afficher les premiers épisodes (même si filtre)"
-                        checkbox.parentNode.parentNode.insertBefore(epOne, checkbox.parentNode.nextSibling);
+                        epOne.innerHTML = epOne.innerHTML.replace("En visionnage", "Premier episode");
+                        epOne.title = "Toujours afficher les premiers épisodes (même si filtre)";
+                        checkbox.parentNode.parentNode.insertBefore(epOne, checkbox.parentNode);
                         epOne = epOne.firstElementChild;
-
-                        checkbox.checked = GM_config.get('alreadywatchedonagenda') == "yes";
-                        epOne.checked = GM_config.get('alreadywatchedonagenda') == "yes";
 
                         epOne.addEventListener('change', function() {
                             for (let u = 0; u < agenda.length; u++) {
@@ -1388,18 +1407,14 @@
                             checkbox.dispatchEvent(event);
                         });
 
-                        var pannelList = document.getElementById("pannel-list");
-                        var legendeDiv = document.getElementsByClassName("legende")[0];
-                        var newElementLegende = legendeDiv.firstElementChild.cloneNode(true);
-                        newElementLegende.id = "already-seen-legend";
-                        newElementLegende.innerText = "Déjà vu";
-                        newElementLegende.style.backgroundColor = "#ff7c2b";
-                        legendeDiv.insertBefore(newElementLegende, pannelList);
+                        epOne.checked = checkbox.checked = GM_config.get('alreadywatchedonagenda') == "yes";
+                        alreadyViewed.checked = true;
 
                         addGlobalStyle('.agenda a .episode.vu .date_hour::before { content: "" !important; }');
 
                         checkbox.addEventListener('change', function() {
                             if (this.checked) {
+                                epOne.parentNode.style.display = "flex";
                                 for (let u = 0; u < agenda.length; u++) {
                                     var animeId = agenda.item(u).dataset.info.split(',')[0];
                                     if (!currentWatchingAnimesIds.includes(animeId)) {
@@ -1409,6 +1424,9 @@
                                         agenda.item(u).style.display = "none";
                                     }
                                     else {
+                                        if (agenda.item(u).classList.contains("vu") && !alreadyViewed.checked) {
+                                            agenda.item(u).style.display = "none";
+                                        }
                                         var animeElement = currentAnimes.find(anime => anime["anime"] == animeId)
                                         if (animeElement && animeElement["genre"] == 3 && agenda.item(u).dataset.info.split(',')[2] > animeElement["saison"]) {
                                             agenda.item(u).style.display = "none";
@@ -1416,6 +1434,7 @@
                                     }
                                 }
                             } else {
+                                epOne.parentNode.style.display = "none";
                                 for (let u = 0; u < agenda.length; u++) {
                                     agenda.item(u).style.display = "initial";
                                 }
