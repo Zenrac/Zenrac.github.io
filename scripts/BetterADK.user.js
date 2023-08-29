@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.48
+// @version      1.49
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -689,6 +689,7 @@
                     let oav = episode.innerText.toLowerCase().match(/oav (\d+)/);
                     let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
                     title = title.textContent.replace(',', '').replace('.', '').split(':')[0].split('-')[0].trim()
+                    title = encodeURIComponent(title)
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
@@ -842,14 +843,15 @@
                 let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
                 let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join(' ').trim();
 
+                originalTitle = encodeURIComponent(originalTitle)
+
                 let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/);
                 let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/);
                 let saison = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/saison (\d+)/);
                 let film = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].match(/film (\d+)/);
 
-                title = title.replace(/[^a-zA-Z0-9!?:-_]/g, "-");
+                title = title.replace(/[^a-zA-Z0-9!?&'":-_]/g, "-");
                 title = title.replace(/[^a-zA-Z0-9-]/g, '');
-                let titleWithDashes = title;
 
                 let activedElement = document.getElementsByClassName("actived")[0];
                 let newEpElement = calculateEpisodeNumberFromActived(activedElement, false);
