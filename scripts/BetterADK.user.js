@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.50
+// @version      1.50.1
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -131,7 +131,9 @@
     }
     else if (window.location.href.includes("nyaa.si") && window.location.href.includes("adk=true")) {
         let magnetElement = getMostCompatibleMagnet();
-        magnetElement.click();
+        if (magnetElement) {
+            magnetElement.click();
+        }
 
         return;
     }
@@ -291,8 +293,8 @@
                 }
             }
         },
-                       'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
-                       {
+        'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
+        {
             save: function() { location.reload() },
         });
 
@@ -736,16 +738,49 @@
                     let nyaaShortcutMod = GM_config.get('nyaashortcut');
                     if (nyaaShortcutMod != "disable") {
                         let clickableNyaaMagnet = document.createElement("img");
-                        clickableNyaaMagnet.addEventListener('click', function() {
+                        clickableNyaaMagnet.addEventListener('click', (event) => {
+                            event.preventDefault();
                             var alreadyIframe = clickableNyaaMagnet.getElementsByClassName("nyaaMagnet")[0];
                             var urlNyaa = "";
                             if (ep) {
                                 let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                                let epStr = ep.toString().padStart(2, '0');
-                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                if (epBeforeStr != epStr) {
-                                    urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                                let epStr = ep[1].toString().padStart(2, '0');
+                                if (saison) {
+                                    var url = elems[i].getElementsByClassName("img")[0].href;
+                                    $.get(url, null, function(text) {
+                                        var actived = $(text).find('.actived')[0];
+                                        if (actived) {
+                                            var newEp = calculateEpisodeNumberFromActived(actived, true);
+                                            let newEpStr = newEp.toString().padStart(2, '0');
+                                            let epStr = parseInt(ep[1]).toString().padStart(2, '0');
+                                            if (epStr != newEpStr) {
+                                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                            }
+                                            else {
+                                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                            }
+                                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}`;
+                                        } else {
+                                            urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                        }
+                                        let frameMagnet = document.createElement("iframe");
+                                        frameMagnet.src = urlNyaa;
+                                        frameMagnet.classList.add("nyaaMagnet");
+                                        if (alreadyIframe) {
+                                            clickableNyaaMagnet.replaceChild(frameMagnet, alreadyIframe);
+                                        }
+                                        else {
+                                            clickableNyaaMagnet.appendChild(frameMagnet);
+                                        }
+                                    });
+                                    return;
+                                }
+                                else {
+                                    urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                    if (epBeforeStr != epStr) {
+                                        urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
+                                    }
                                 }
                             }
                             else if (oav) {
@@ -767,6 +802,7 @@
                                 clickableNyaaMagnet.appendChild(frameMagnet);
                             }
                         });
+
                         clickableNyaaMagnet.classList.add("lecteur-icon");
                         clickableNyaaMagnet.style.marginRight = "5px";
                         clickableNyaaMagnet.style.opacity = ".6";
