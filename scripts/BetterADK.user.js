@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.52
+// @version      1.53
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -900,11 +900,13 @@
 
                 var allSeasonStartWithOne = checkIfAllSeasonStartWithOne();
 
-                var seasonNumber = document.getElementById("watchlist-saison").dataset.max
-                if (!seasonNumber) {
-                    seasonNumber = document.getElementsByClassName("saison").length.toString()
+                var seasonElementNumber = document.getElementById("watchlist-saison");
+                if (seasonElementNumber) {
+                    var seasonNumber = seasonElementNumber.dataset.max
+                    if (!seasonNumber) {
+                        seasonNumber = document.getElementsByClassName("saison").length.toString()
+                    }
                 }
-
                 // Build MAV url
                 let titleMav = title;
                 if (saison) {
@@ -1211,7 +1213,11 @@
                         });
                         setInterval(() => {
                             var toSave = false;
-                            var valueToSet = Math.min(document.getElementById("watchlist-episode").dataset.max, elm.value)
+                            var watchlistEpisodeElement = document.getElementById("watchlist-episode");
+                            if (!watchlistEpisodeElement) {
+                                return;
+                            }
+                            var valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
                             if (adklistSeasonInput && adklistSeasonInput.type != "hidden" && valueToSet != 0) {
                                 var seasonToSet = Math.min(document.getElementById("watchlist-saison").dataset.max, currentSeason);
                                 if (adklistSeasonInput.value > currentSeason) {
@@ -1240,7 +1246,12 @@
                     waitForElm('#malStatus').then((elm) => {
                         var adklistInput = document.getElementById("watchlist_look");
                         var adklistSeasonInput = document.getElementById("watchlist-saison");
-                        adklistInput.disabled = true;
+                        if (adklistInput) {
+                            adklistInput.disabled = true;
+                        }
+                        else {
+                            return;
+                        }
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = (elm.value != 23) ? CORRELATION_ADK_MAL[elm.value] : 1;
                             document.getElementById("watchlist").click()
@@ -1261,8 +1272,11 @@
                     waitForElm('#malUserRating').then((elm) => {
                         var adklistInput = document.getElementById("watchlist-note");
                         var adklistSeasonInput = document.getElementById("watchlist-saison");
-                        adklistInput.disabled = true;
-
+                        if (adklistInput) {
+                            adklistInput.disabled = true;
+                        } else {
+                            return;
+                        }
                         elm.addEventListener('change', (event) => {
                             adklistInput.value = Math.round(event.target.value / 10)
                             document.getElementById("watchlist").click()
