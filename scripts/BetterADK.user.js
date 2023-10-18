@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.53
+// @version      1.54
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1188,7 +1188,7 @@
                             newElemRemove.innerText = "-1 Episode";
                             newElemRemove.style.backgroundColor = "rgba(255,0,0,.65)";
                             newElem.addEventListener('click', function() {
-                                let maxEpisodes = parseInt(document.getElementById("malTotal").innerText);
+                                let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
                                 let toSet = Math.min(maxEpisodes, parseInt(elm.value) + 1)
                                 if (elm.value != toSet) {
                                     elm.value = toSet;
