@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
-// @namespace    http://tampermonkey.net/
-// @version      1.55
+// @namespace    http://adkami.com/
+// @version      1.56
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1196,6 +1196,7 @@
                                     elm.value = toSet;
                                     if (elm.value == maxEpisodes) {
                                         document.getElementById("malStatus").value = 2;
+                                        document.getElementById("watchlist_look").value = CORRELATION_ADK_MAL[2];
                                     }
                                     elm.dispatchEvent(new Event('change'));
                                 }
@@ -1225,6 +1226,7 @@
                                     elm.value = toSet;
                                     if (elm.value == maxEpisodes) {
                                         document.getElementById("malStatus").value = 2;
+                                        document.getElementById("watchlist_look").value = CORRELATION_ADK_MAL[2];
                                     }
                                     elm.dispatchEvent(new Event('change'));
                                 }
@@ -1311,8 +1313,18 @@
                         setInterval(() => {
                             var valueToSet = (elm.value != 23) ? CORRELATION_ADK_MAL[elm.value] : 1
                             if (!document.querySelector("#AddMal") && valueToSet && valueToSet != -1 && adklistInput.value != valueToSet) {
+                                // no rollback on previous season
                                 if (adklistSeasonInput.value > currentSeason) {
                                     return;
+                                }
+
+                                // no rollback on previous "part" of same season
+                                let currentEpSet = parseInt(document.getElementById("malEpisodes").value);
+                                let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
+                                if (currentEpSet == maxEpisodes) {
+                                    if (document.getElementById("watchlist-episode").value > currentEpSet && allSeasonStartWithOne) {
+                                        return;
+                                    }
                                 }
                                 adklistInput.value = valueToSet;
                                 document.getElementById("watchlist").click()
@@ -1339,8 +1351,10 @@
                                 if (adklistSeasonInput.value > currentSeason) {
                                     return;
                                 }
-                                if (valueToSet == maxEpisodes) {
-                                    if (watchlistEpisodeElement.value > valueToSet && allSeasonStartWithOne) {
+                                let currentEpSet = parseInt(document.getElementById("malEpisodes").value);
+                                let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
+                                if (currentEpSet == maxEpisodes) {
+                                    if (document.getElementById("watchlist-episode").value > currentEpSet && allSeasonStartWithOne) {
                                         return;
                                     }
                                 }
