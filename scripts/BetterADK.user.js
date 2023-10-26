@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://tampermonkey.net/
-// @version      1.54
+// @version      1.55
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -873,6 +873,7 @@
                     $(elem).remove();
                 });
                 let adk_id = res[1];
+                let mal_id = 0;
 
                 // Mavanime.co
                 let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
@@ -985,6 +986,7 @@
                         if (!["both", "anime"].includes(GM_config.get('malicon'))) return;
                         let url = data.data.find(el => el["anime_id"] == adk_id);
                         let malElement = data.data.filter(el => el["anime_id"] == adk_id);
+
                         if (saison) {
                             let malElementSeason = malElement.filter(el => el["saison"] == saison[1]);
                             if (malElementSeason && malElementSeason.length > 0) {
@@ -1179,6 +1181,35 @@
                         if (adklistSeasonInput) {
                             adklistSeasonInput.disabled = true;
                         }
+                        waitForElm('#watchlist_end').then((elmButton) => {
+                            var newElem = elmButton.cloneNode(true);
+                            var newElemRemove = elmButton.cloneNode(true);
+                            elmButton.parentNode.replaceChild(newElem, elmButton);
+                            newElem.parentNode.insertBefore(newElemRemove, newElem)
+                            newElem.innerText = "+1 Episode";
+                            newElemRemove.innerText = "-1 Episode";
+                            newElem.style.backgroundColor = "rgba(155,211,0,.43)";
+                            newElem.addEventListener('click', function() {
+                                let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
+                                let toSet = Math.min(maxEpisodes, parseInt(elm.value) + 1)
+                                if (elm.value != toSet) {
+                                    elm.value = toSet;
+                                    if (elm.value == maxEpisodes) {
+                                        document.getElementById("malStatus").value = 2;
+                                    }
+                                    elm.dispatchEvent(new Event('change'));
+                                }
+                            });
+                            newElemRemove.addEventListener('click', function() {
+                                let toSet = Math.max(parseInt(elm.value) - 1, 0);
+                                if (elm.value != toSet) {
+                                    elm.value = toSet;
+                                    elm.dispatchEvent(new Event('change'));
+                                }
+
+                            });
+                        });
+
                         waitForElm('#watchlist-actuel').then((elmButton) => {
                             var newElem = elmButton.cloneNode(true);
                             var newElemRemove = elmButton.cloneNode(true);
@@ -1208,16 +1239,27 @@
                             });
                         });
                         elm.addEventListener('change', (event) => {
-                            adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
+                            // adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
                             document.getElementById("watchlist").click()
                         });
                         setInterval(() => {
                             var toSave = false;
                             var watchlistEpisodeElement = document.getElementById("watchlist-episode");
-                            if (!watchlistEpisodeElement) {
-                                return;
-                            }
                             var valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
+                            if (!watchlistEpisodeElement) return;
+                            if (!malContent) return;
+                            if (mal_id == 0) return;
+
+                            let seasonsTest = malContent.filter(a => Number(a.saison) == currentSeason && Number(a.anime_id) == adk_id).sort((a, b) => Number(a.mal_id) - Number(b.mal_id))
+                            if (seasonsTest.length > 1) {
+                                for (let season of seasonsTest) {
+                                    let total = Number(season.total);
+                                    if (total == 0) break;
+                                    if (season.mal_id == mal_id) break;
+                                    valueToSet += total;
+                                }
+                            }
+
                             if (adklistSeasonInput && adklistSeasonInput.type != "hidden" && valueToSet != 0) {
                                 var seasonToSet = Math.min(document.getElementById("watchlist-saison").dataset.max, currentSeason);
                                 if (adklistSeasonInput.value > currentSeason) {
@@ -1228,10 +1270,19 @@
                                     toSave = true;
                                 }
                             }
+
+                            let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
+                            if (valueToSet == maxEpisodes) {
+                                if (watchlistEpisodeElement.value > valueToSet && !toSave && allSeasonStartWithOne) {
+                                    return;
+                                }
+                            }
                             if (seasonToSet > 1 && !allSeasonStartWithOne) {
                                 let activedElement = document.getElementsByClassName("actived")[0];
                                 let episodesSameSeason = document.getElementsByClassName("actived")[0].parentNode.getElementsByTagName("li");
-                                valueToSet = episodesSameSeason[valueToSet - 1].dataset.epnumber;
+                                if (episodesSameSeason[valueToSet - 1]) {
+                                    valueToSet = episodesSameSeason[valueToSet - 1].dataset.epnumber;
+                                }
                             }
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
                                 adklistInput.value = valueToSet
@@ -1288,6 +1339,11 @@
                                 if (adklistSeasonInput.value > currentSeason) {
                                     return;
                                 }
+                                if (valueToSet == maxEpisodes) {
+                                    if (watchlistEpisodeElement.value > valueToSet && allSeasonStartWithOne) {
+                                        return;
+                                    }
+                                }
                                 adklistInput.value = valueToSet
                                 document.getElementById("watchlist").click()
                             }
@@ -1295,15 +1351,21 @@
                     });
 
                     waitForElm('#malRating').then((elm) => {
-                        setInterval(() => {
-                            if (elm && elm.href && elm.href.includes("myanimelist")) {
-                                var malicon = document.getElementById("malicon");
-                                if (malicon && malicon.href != elm.href) {
-                                    malicon.href = elm.href;
-                                    clearInterval(this)
+                        if (["both", "anime"].includes(GM_config.get('malicon'))) {
+                            setInterval(() => {
+                                if (elm && elm.href && elm.href.includes("myanimelist")) {
+                                    let resMal = elm.href.match(/anime\/(\d+)/);
+                                    mal_id = resMal[1];
+                                    var malicon = document.getElementById("malicon");
+                                    if (malicon) {
+                                        if (malicon.href != elm.href) {
+                                            malicon.href = elm.href;
+                                        }
+                                        clearInterval(this);
+                                    }
                                 }
-                            }
-                        }, 100);
+                            }, 100);
+                        }
                     });
                 }
 
