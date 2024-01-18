@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.57
+// @version      1.58
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -184,6 +184,11 @@
                     "no" : "Non",
                     "disable" : "Désactivé"
                 }
+            },
+            "agendacounters" : {
+                "label" : "Ajoute des compteurs sur l'agenda, sur les jours et un global pour savoir combien d'animés sont affichés avec les filtres",
+                "type" : "checkbox",
+                "default" : true
             },
             "addprofiletomenu" : {
                 "label" : "Ajoute une option mon profile au menu en haut à droite",
@@ -1563,6 +1568,16 @@
                             checkbox.dispatchEvent(event);
                         });
 
+                        var titleParentElement = document.getElementsByClassName("blocm");
+                        if (titleParentElement.length > 0) {
+                            var titleElements = titleParentElement[0].getElementsByTagName("h1")
+                            if (titleElements.length > 0) {
+                                var titleElement = titleElements[0];
+                            }
+                        }
+
+                        var colones = document.getElementsByClassName("colone");
+
                         addGlobalStyle('.agenda a .episode.vu .date_hour::before { content: "" !important; }');
 
                         checkbox.addEventListener('change', function() {
@@ -1608,6 +1623,31 @@
                                     agenda.item(u).style.display = (agenda.item(u).style.display == "none") ? "initial" : "none";
                                 }
                             }
+
+                            if (GM_config.get('agendacounters')) {
+                                if (titleElement) {
+                                    var agendaArray = Array.from(agenda);
+                                    titleElement.innerText = `Agenda - ${agendaArray.filter(m => m.style.display == "initial").length}/${agenda.length}`;
+                                }
+
+                                for (let u = 0; u < colones.length; u++) {
+                                    var currentCol = colones.item(u);
+                                    var titleCols = currentCol.getElementsByTagName("h3")
+                                    if (titleCols.length > 0) {
+                                        var titleCol = titleCols[0];
+                                    }
+                                    var allEpCol = currentCol.getElementsByClassName("episode");
+                                    var allEpColArray = Array.from(allEpCol);
+                                    if (titleCol.innerText.includes("-")) {
+                                        console.log("change!");
+                                        titleCol.innerText = `${titleCol.innerText.split('-')[0]} - ${allEpColArray.filter(m => m.style.display == "initial").length}/${allEpColArray.length}`;
+                                    }
+                                    else {
+                                        titleCol.innerText += ` - ${allEpColArray.filter(m => m.style.display == "initial").length}/${allEpColArray.length}`;
+                                    }
+                                }
+                            }
+
                         });
 
                         var event = new Event('change');
