@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.56
+// @version      1.57
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -164,7 +164,7 @@
         return;
     }
     else if (window.location.href.includes("adkami")) {
-        GM_config.init("BetterADK Configuration", {
+        GM_config.init("betteradkconfiguration", {
             "syncadklist" : {
                 "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
                 "type" : "checkbox",
@@ -178,6 +178,7 @@
             "alreadywatchedonagenda" : {
                 "label" : "Affiche par défaut seulement les animés en cours de visionnage dans l'agenda",
                 "type" : "select",
+                "default" : "yes",
                 "options" : {
                     "yes" : "Oui",
                     "no" : "Non",
@@ -217,6 +218,7 @@
             "malicon" : {
                 "label" : "Afficher l'icone MAL",
                 "type" : "select",
+                "default" : "both",
                 "options" : {
                     "both" : "Les deux",
                     "main" : "Seulement page principale",
@@ -227,6 +229,7 @@
             "nyaaicon" : {
                 "label" : "Afficher l'icone Nyaa",
                 "type" : "select",
+                "default" : "both",
                 "options" : {
                     "both" : "Les deux",
                     "main" : "Seulement page principale",
@@ -237,6 +240,7 @@
             "mavanime" : {
                 "label" : "Ajouter Mavanime (sur les pages d'animé)",
                 "type" : "select",
+                "default": "both",
                 "options" : {
                     "both" : "Les deux",
                     "icon" : "Seulement icone",
@@ -247,6 +251,7 @@
             "franime" : {
                 "label" : "Ajouter FRAnime (sur les pages d'animé)",
                 "type" : "select",
+                "default": "both",
                 "options" : {
                     "both" : "Les deux",
                     "icon" : "Seulement icone",
@@ -257,6 +262,7 @@
             "voiranime" : {
                 "label" : "Ajouter Voiranime (sur les pages d'animé)",
                 "type" : "select",
+                "default": "both",
                 "options" : {
                     "both" : "Les deux",
                     "icon" : "Seulement icone",
@@ -272,6 +278,7 @@
             "removecomments" : {
                 "label" : "Masquer par défaut les commentaires sur les pages d'animé",
                 "type" : "select",
+                "default" : "current",
                 "options" : {
                     "current" : "Seulement si en train de regarder",
                     "never" : "Jamais",
@@ -285,6 +292,7 @@
             },
             "nyaashortcut" : {
                 "label" : "Raccourci préféré Nyaa",
+                "default": "magnet",
                 "type" : "select",
                 "options" : {
                     "magnet" : "Magnet",
@@ -537,6 +545,10 @@
         // --- CODE ---
 
         // All pages
+
+        if (localStorage.getItem("betteradkconfiguration") === null) {
+            GM_config.save();
+        }
 
         // auto redirect to www.
         if (!window.location.hostname.startsWith("www.")) {
@@ -1538,9 +1550,28 @@
                         epOne.checked = checkbox.checked = GM_config.get('alreadywatchedonagenda') == "yes";
                         alreadyViewed.checked = true;
 
+                        // reverse button
+                        var reverseButton = checkbox.parentNode.cloneNode(true);
+                        reverseButton.id = "agenda-filter-reverse";
+                        reverseButton.innerHTML = reverseButton.innerHTML.replace("En visionnage", "Inverser");
+                        reverseButton.title = "Inverser les animés affichés";
+                        checkbox.parentNode.parentNode.insertBefore(reverseButton, checkbox.parentNode);
+                        reverseButton = reverseButton.firstElementChild;
+
+                        reverseButton.addEventListener('change', function() {
+                            var event = new Event('change');
+                            checkbox.dispatchEvent(event);
+                        });
+
                         addGlobalStyle('.agenda a .episode.vu .date_hour::before { content: "" !important; }');
 
                         checkbox.addEventListener('change', function() {
+
+                            // Reset all filters
+                            for (let u = 0; u < agenda.length; u++) {
+                                agenda.item(u).style.display = "initial";
+                            }
+
                             if (this.checked) {
                                 epOne.parentNode.style.display = "flex";
                                 for (let u = 0; u < agenda.length; u++) {
@@ -1572,11 +1603,13 @@
                                     }
                                 }
                             }
+                            if (reverseButton.checked) {
+                                for (let u = 0; u < agenda.length; u++) {
+                                    agenda.item(u).style.display = (agenda.item(u).style.display == "none") ? "initial" : "none";
+                                }
+                            }
                         });
 
-                        for (let u = 0; u < agenda.length; u++) {
-                            agenda.item(u).style.display = "initial";
-                        }
                         var event = new Event('change');
                         checkbox.dispatchEvent(event);
                     }
