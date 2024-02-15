@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.58
+// @version      1.59
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -184,6 +184,11 @@
                     "no" : "Non",
                     "disable" : "Désactivé"
                 }
+            },
+            "quickadd" : {
+                "label" : "Permet d'ajouter à sa liste un épisode sur la page d'accueil en cliquant sur \"A voir\".",
+                "type" : "checkbox",
+                "default" : true
             },
             "agendacounters" : {
                 "label" : "Ajoute des compteurs sur l'agenda, sur les jours et un global pour savoir combien d'animés sont affichés avec les filtres",
@@ -640,9 +645,9 @@
                     var profileFirstChild = profileContent.getElementsByTagName("li")[0];
                     if (profileFirstChild) {
                         var newProfileElement = profileFirstChild.cloneNode(true);
-                        var username = document.head.querySelector("[name~=pseudo_member][content]").content;
+                        var username = document.head.querySelector("[name~=pseudo_member][content]");
                         if (username) {
-                            newProfileElement.firstChild.href = `https://${window.location.hostname}/profil/${username}`;
+                            newProfileElement.firstChild.href = `https://${window.location.hostname}/profil/${username.content}`;
                             newProfileElement.firstChild.innerText = "Mon profile";
                             profileContent.insertBefore(newProfileElement, profileFirstChild)
                         }
@@ -653,6 +658,42 @@
 
         // on main page
         if (elems.length > 0) {
+            if (GM_config.get('quickadd')) {
+                for (let i = 0; i < elems.length; i++) {
+                    var spans = elems[i].getElementsByTagName("span");
+                    for (let span of spans) {
+                        if (span.textContent == "A voir") {
+                            span.style.cursor = "pointer";
+                            span.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                let img = elems[i].getElementsByClassName("img");
+                                if (img && img.length > 0) {
+                                    let url = img[0].href;
+                                    url += `?updatelist=true`;
+
+                                    if (GM_config.get('syncadklist')) {
+                                        window.open(url, '_blank');
+                                    }
+                                    else {
+                                        let frameUpdate = document.createElement("iframe");
+                                        frameUpdate.src = url;
+                                        frameUpdate.classList.add("updateFrame");
+                                        elems[i].appendChild(frameUpdate);
+                                        frameUpdate.style.display = "none";
+                                    }
+
+                                    span.style.display = "none";
+                                    let viewed = elems[i].getElementsByClassName("look-now");
+                                    if (viewed && viewed.length > 0) {
+                                        viewed[0].classList.add("vue");
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
             // add mal icons
             if (["both", "main"].includes(GM_config.get('malicon'))) {
                 let req = new Request(`https://${window.location.hostname}/api/main?objet=adk-mal-all`, {
@@ -1256,6 +1297,20 @@
                                 }
 
                             });
+                            if (window.location.href.includes("updatelist=true")) {
+                                let interval = setInterval(() => {
+                                    if (elm.value != 0) {
+                                        newElem.dispatchEvent(new Event('click'));
+                                        clearInterval(interval);
+                                        let intervalAgain = setInterval(() => {
+                                            if (document.getElementById("watchlist-loading").style.display == "none") {
+                                                window.close();
+                                                clearInterval(intervalAgain);
+                                            }
+                                        }, 100);
+                                    }
+                                }, 100);
+                            }
                         });
                         elm.addEventListener('change', (event) => {
                             // adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
@@ -1398,6 +1453,16 @@
                             }, 100);
                         }
                     });
+                }
+
+                // update without MAL sync
+                else if (window.location.href.includes("updatelist=true")) {
+                    var watchlistEpisodeElement = document.getElementById("watchlist-episode");
+                    if (watchlistEpisodeElement) {
+                        let toSet = parseInt(watchlistEpisodeElement.value) + 1;
+                        watchlistEpisodeElement.value = toSet;
+                        document.getElementById("watchlist").click()
+                    }
                 }
 
                 // collapsible comments
@@ -1639,7 +1704,6 @@
                                     var allEpCol = currentCol.getElementsByClassName("episode");
                                     var allEpColArray = Array.from(allEpCol);
                                     if (titleCol.innerText.includes("-")) {
-                                        console.log("change!");
                                         titleCol.innerText = `${titleCol.innerText.split('-')[0]} - ${allEpColArray.filter(m => m.style.display == "initial").length}/${allEpColArray.length}`;
                                     }
                                     else {
