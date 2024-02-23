@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.59
+// @version      1.60
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1320,17 +1320,19 @@
                             var toSave = false;
                             var watchlistEpisodeElement = document.getElementById("watchlist-episode");
                             var valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
+
                             if (!watchlistEpisodeElement) return;
                             if (!malContent) return;
-                            if (mal_id == 0) return;
-
-                            let seasonsTest = malContent.filter(a => Number(a.saison) == currentSeason && Number(a.anime_id) == adk_id).sort((a, b) => Number(a.mal_id) - Number(b.mal_id))
-                            if (seasonsTest.length > 1) {
-                                for (let season of seasonsTest) {
-                                    let total = Number(season.total);
-                                    if (total == 0) break;
-                                    if (season.mal_id == mal_id) break;
-                                    valueToSet += total;
+                            if (mal_id != 0) {
+                                // more accurate calcul of episode if mal sync is in mal mod
+                                let seasonsTest = malContent.filter(a => Number(a.saison) == currentSeason && Number(a.anime_id) == adk_id).sort((a, b) => Number(a.mal_id) - Number(b.mal_id))
+                                if (seasonsTest.length > 1) {
+                                    for (let season of seasonsTest) {
+                                        let total = Number(season.total);
+                                        if (total == 0) break;
+                                        if (season.mal_id == mal_id) break;
+                                        valueToSet += total;
+                                    }
                                 }
                             }
 
@@ -1413,12 +1415,12 @@
                             return;
                         }
                         elm.addEventListener('change', (event) => {
-                            adklistInput.value = Math.round(event.target.value / 10)
+                            adklistInput.value = Math.round(event.target.value > 10 ? event.target.value / 10 : event.target.value);
                             document.getElementById("watchlist").click()
                         });
 
                         setInterval(() => {
-                            var valueToSet = Math.round(elm.value / 10)
+                            var valueToSet = Math.round(elm.value > 10 ? elm.value / 10 : elm.value);
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
                                 if (adklistSeasonInput.value > currentSeason) {
                                     return;
