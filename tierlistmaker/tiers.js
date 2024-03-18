@@ -174,11 +174,12 @@ window.addEventListener('load', () => {
 	});
 });
 
-function create_img_with_src(src) {
+function create_img_with_src(src, title = "") {
 	let img = document.createElement('img');
 	img.src = src;
 	img.style.userSelect = 'none';
 	img.classList.add('draggable');
+	img.title = title;
 	img.draggable = true;
 	img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
 	img.addEventListener('mousedown', (evt) => {
@@ -284,7 +285,7 @@ function load_from_anime(animes, title) {
 	document.getElementById('title-label').innerText = "Tierlist " + title;
 	let images = document.querySelector('.images');
     for (let anime of animes) {
-		let img = create_img_with_src(anime.img);
+		let img = create_img_with_src(anime.img, anime.title);
 		images.appendChild(img);
 	}
 }
