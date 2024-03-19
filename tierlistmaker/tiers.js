@@ -182,7 +182,7 @@ window.addEventListener('load', () => {
 	});
 });
 
-function create_img_with_src(src, title = "") {
+function create_img_with_src(src, title = "", url = "") {
 	let img = document.createElement('img');
 	img.src = src;
 	img.style.userSelect = 'none';
@@ -194,6 +194,15 @@ function create_img_with_src(src, title = "") {
 		dragged_image = evt.target;
 		dragged_image.classList.add("dragged");
 	});
+	if (url != "") {
+		img.addEventListener("click", function(event) {
+			// Check if the CTRL key is pressed
+			if (event.ctrlKey || event.metaKey) {
+				// Open the link in a new tab/window
+				window.open(url, "_blank");
+			}
+		});
+	}
 	return img;
 }
 
@@ -293,7 +302,7 @@ function load_from_anime(animes, title) {
 	document.getElementById('title-label').innerText = "Tierlist " + title;
 	let images = document.querySelector('.images');
     for (let anime of animes) {
-		let img = create_img_with_src(anime.img, anime.title);
+		let img = create_img_with_src(anime.img, anime.title, anime.url);
 		let items = document.createElement('span');
 		items.classList.add('item');
 		items.appendChild(img)
@@ -561,4 +570,4 @@ function bind_trash_events() {
 	});
 }
 
-load_from_anime(winter2023, "Winter 2023");
+load_from_anime(winter2024, "Winter 2024");
