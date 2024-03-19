@@ -58,7 +58,11 @@
     <link rel='stylesheet' href='tiers.css'/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-    <script src='animes/winter-2024.js'></script>
+    <script src='animes/fall2023.js'></script>
+    <script src='animes/spring2023.js'></script>
+    <script src='animes/summer2023.js'></script>
+    <script src='animes/winter2023.js'></script>
+    <script src='animes/winter2024.js'></script>
     <script src='tiers.js' async></script>
   </head>
   <body>
@@ -67,37 +71,32 @@
         <input type='text' id='title-input' />
     </div>
     <section class='main-content'>
-        <div id='tierlist' class='tierlist'>
-        </div>
-        <div class='bottom-container'>
-            <div class='buttons-container'>
-                <div class='button'>
-                    <label for='load-img-input'>
-                        <img src='img/plus.png' title='Add images'/>
-                    </label>
-                    <input id='load-img-input' type='file' accept='image/*' multiple/>
-                </div>
-                <div class='button'>
-                    <label for='reset-list-input'>
-                        <img src='img/reset.png' title='Reset list'>
-                    </label>
-                    <input id='reset-list-input' type='button' />
-                </div>
-                <div class='button'>
-                    <label for='export-input' id='title'>
-                        <img src='img/export.png' title='Export'>
-                    </label>
-                    <input id='export-input' type='button' />
-                </div>
-                <div class='button'>
-                    <label for='import-input'>
-                        <img src='img/import.png' title='Import'/>
-                    </label>
-                    <input id='import-input' type='file' accept='.json' multiple/>
+        <div class="first-container">
+            <div id='tierlist' class='tierlist'></div>
+            <div class='bottom-container'>
+                <div class='buttons-container'>
+                    <div class='button'>
+                        <label for='load-img-input'>
+                            <img src='img/plus.png' title='Add images'/>
+                        </label>
+                        <input id='load-img-input' type='file' accept='image/*' multiple/>
+                    </div>
+                    <div class='button'>
+                        <label for='reset-list-input'>
+                            <img src='img/reset.png' title='Reset list'>
+                        </label>
+                        <input id='reset-list-input' type='button' />
+                    </div>
+                    <div class='button'>
+                        <label for='export-input' id='title'>
+                            <img src='img/export.png' title='Export'>
+                        </label>
+                        <input id='export-input' type='button' />
+                    </div>
                 </div>
             </div>
-            <section class='images'></section>
         </div>
+        <section class='images bank'></section>
     </section>
     <img id='trash' src='img/trash_bin.png' title='Delete image (drag it over here)'></img>
   </body>

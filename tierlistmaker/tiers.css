@@ -31,6 +31,7 @@ body {
 
 .main-content {
 	display: flex;
+	flex-direction: column !important;
 	flex-flow: row;
 }
 
@@ -40,7 +41,7 @@ body {
 
 .tierlist span {
 	min-width: 100px;
-	min-height: 100px;
+	min-height: 120px;
 	display: flex;
 	align-items: center;
 	flex-flow: row;
@@ -102,15 +103,13 @@ span.item {
 
 .images {
 	display: flex;
-	border: 1px solid #666;
-	height: 200px;
+	height: 100%;
 	overflow-y: auto;
 	flex-wrap: wrap;
 	flex-grow: 1;
 	width: 100%;
 	align-content: flex-start;
 	margin-top: 10px;
-	margin-left: 10px;
 }
 
 .images.drag-entered {
@@ -120,7 +119,7 @@ span.item {
 img.draggable {
 	cursor: grab;
 	width: 100px;
-	height: 100px;
+	height: 120px;
 }
 
 img.draggable:hover, .button:hover {
@@ -133,6 +132,10 @@ img.draggable.dragged, .button:active {
 
 .button img {
 	user-select: none;
+}
+
+.first-container {
+	display: flex;
 }
 
 .bottom-container {
@@ -186,7 +189,7 @@ img.draggable.dragged, .button:active {
 }
 
 #trash {
-	position: absolute;
+	position: fixed;
 	bottom: 5px;
 	right: 5px;
 	height: 80px;
@@ -195,6 +198,10 @@ img.draggable.dragged, .button:active {
 
 #trash:hover {
 	opacity: 1;
+}
+
+.bank {
+	width: 95%;
 }
 
 .hint {

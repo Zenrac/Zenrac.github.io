@@ -1,7 +1,7 @@
 'use strict';
 
 const MAX_NAME_LEN = 200;
-const DEFAULT_TIERS = ['S','A','B','C','D','E','F'];
+const DEFAULT_TIERS = ['S','A','B','C','D'];
 const TIER_COLORS = [
 	// from S to F
 	'#ff6666',
@@ -63,7 +63,15 @@ function reset_row(row) {
 		for (let i = 0; i < item.children.length; ++i) {
 			let img = item.children[i];
 			item.removeChild(img);
-			untiered_images.appendChild(img);
+			let firstChild = untiered_images.firstChild;
+			// Check if firstChild exists
+			if (firstChild) {
+				// If firstChild exists, prepend the new element before it
+				untiered_images.insertBefore(img, firstChild);
+			} else {
+				// If firstChild does not exist (empty list), simply append the new element to the container
+				untiered_images.appendChild(img);
+			}
 		}
 		item.parentNode.removeChild(item);
 	});
@@ -93,7 +101,7 @@ window.addEventListener('load', () => {
 
 	headers_orig_min_width = all_headers[0][0].clientWidth;
 
-	make_accept_drop(document.querySelector('.images'));
+	make_accept_drop(document.querySelector('.images'), false);
 
 	bind_title_events();
 
@@ -145,7 +153,7 @@ window.addEventListener('load', () => {
 		}*/
 	});
 
-	document.getElementById('import-input').addEventListener('input', (evt) => {
+	/* document.getElementById('import-input').addEventListener('input', (evt) => {
 		if (!evt.target.files) {
 			return;
 		}
@@ -162,7 +170,7 @@ window.addEventListener('load', () => {
 			load_tierlist(parsed);
 		});
 		reader.readAsText(file);
-	});
+	}); */
 
 	bind_trash_events();
 
@@ -286,7 +294,10 @@ function load_from_anime(animes, title) {
 	let images = document.querySelector('.images');
     for (let anime of animes) {
 		let img = create_img_with_src(anime.img, anime.title);
-		images.appendChild(img);
+		let items = document.createElement('span');
+		items.classList.add('item');
+		items.appendChild(img)
+		images.appendChild(items);
 	}
 }
 
@@ -298,11 +309,13 @@ function end_drag(evt) {
 window.addEventListener('mouseup', end_drag);
 window.addEventListener('dragend', end_drag);
 
-function make_accept_drop(elem) {
+function make_accept_drop(elem, hover = true) {
 	elem.classList.add('droppable');
 
 	elem.addEventListener('dragenter', (evt) => {
-		evt.target.classList.add('drag-entered');
+		if (hover) {
+			evt.target.classList.add('drag-entered');
+		}
 	});
 	elem.addEventListener('dragleave', (evt) => {
 		evt.target.classList.remove('drag-entered');
@@ -319,24 +332,24 @@ function make_accept_drop(elem) {
 		}
 
 		const targetImage = evt.target.closest('span.item');
-
 		let dragged_image_parent = dragged_image.parentNode;
+
+		if (targetImage === dragged_image_parent) {
+			return;
+		}
+
 		if (dragged_image_parent.tagName.toUpperCase() === 'SPAN' &&
 				dragged_image_parent.classList.contains('item')) {
 			// We were already in a tier
 			let containing_tr = dragged_image_parent.parentNode;
-			if (targetImage !== dragged_image_parent) {
-				containing_tr.removeChild(dragged_image_parent);
-			}
-			else {
-				return;
-			}
+			containing_tr.removeChild(dragged_image_parent);
 		} else {
 			dragged_image_parent.removeChild(dragged_image);
 		}
 		let td = document.createElement('span');
 		td.classList.add('item');
 		td.appendChild(dragged_image);
+		let bank = document.querySelector('.bank');
 		let items_container = elem.querySelector('.items');
 		if (!items_container) {
 			// Quite lazy hack for <section class='images'>
@@ -354,7 +367,20 @@ function make_accept_drop(elem) {
 			}
 		}
 		else {
-			items_container.appendChild(td);
+			if (evt.target == bank || evt.target.parentNode == bank) {
+				let firstChild = items_container.firstChild;
+				// Check if firstChild exists
+				if (firstChild) {
+					// If firstChild exists, prepend the new element before it
+					items_container.insertBefore(td, firstChild);
+				} else {
+					// If firstChild does not exist (empty list), simply append the new element to the container
+					items_container.appendChild(td);
+				}
+			}
+			else {
+				items_container.appendChild(td);
+			}
 		}
 
 		unsaved_changes = true;
@@ -436,7 +462,7 @@ function add_row(index, name) {
 		let rows = Array.from(tierlist_div.children);
 		let idx = rows.indexOf(parent_div);
 		console.assert(idx >= 0);
-		add_row(idx, '');
+		add_row(idx, name);
 		recompute_header_colors();
 	});
 	let btn_rm = document.createElement('input');
@@ -507,6 +533,10 @@ function bind_trash_events() {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin_open.png';
 	});
+	trash.addEventListener('dragleave', (evt) => {
+		evt.preventDefault();
+		evt.target.src = 'img/trash_bin.png';
+	});
 	trash.addEventListener('dragexit', (evt) => {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin.png';
@@ -531,4 +561,4 @@ function bind_trash_events() {
 	});
 }
 
-load_from_anime(winter2024, "Winter 2024");
+load_from_anime(winter2023, "Winter 2023");
