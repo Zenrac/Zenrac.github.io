@@ -201,6 +201,10 @@ function create_img_with_src(src, title = "", url = "") {
 				// Open the link in a new tab/window
 				window.open(url, "_blank");
 			}
+			if (event.altKey && title) {
+				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " opening";
+				window.open(youtubeUrl, "_blank");
+			}
 		});
 	}
 	return img;
