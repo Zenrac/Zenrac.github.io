@@ -1,12 +1,12 @@
 'use strict';
 
 var seasonData = {
-    "Winter 2023": winter2023,
-    "Spring 2023": spring2023,
-    "Summer 2023": summer2023,
-    "Fall 2023": fall2023,
+    "Spring 2024": spring2024,
     "Winter 2024": winter2024,
-    "Spring 2024": spring2024
+    "Fall 2023": fall2023,
+    "Summer 2023": summer2023,
+    "Spring 2023": spring2023,
+    "Winter 2023": winter2023
 };
 
 const MAX_NAME_LEN = 200;
@@ -185,7 +185,7 @@ function initialize_dropdown_tierlists() {
 		load_from_anime(seasonData[selectedSeason], selectedSeason);
 	});
 
-	dropdown.selectedIndex = dropdown.options.length - 1;
+	dropdown.selectedIndex = 0;
 	dropdown.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
