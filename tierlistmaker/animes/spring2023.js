@@ -240,11 +240,6 @@ var spring2023 = [
     "url": "https://myanimelist.net/anime/49387/Vinland_Saga_Season_2"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/7/75199.webp",
-    "title": "Meitantei Conan",
-    "url": "https://myanimelist.net/anime/235/Meitantei_Conan"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1369/139553.webp",
     "title": "Maou Gakuin no Futekigousha: Shijou Saikyou no Maou no Shiso, Tensei shite Shison-tachi no Gakkou e Kayou II",
     "url": "https://myanimelist.net/anime/48417/Maou_Gakuin_no_Futekigousha__Shijou_Saikyou_no_Maou_no_Shiso_Tensei_shite_Shison-tachi_no_Gakkou_e_Kayou_II"
@@ -263,11 +258,6 @@ var spring2023 = [
     "img": "https://cdn.myanimelist.net/images/anime/1855/128059.webp",
     "title": "Golden Kamuy 4th Season",
     "url": "https://myanimelist.net/anime/50528/Golden_Kamuy_4th_Season"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/10/59897.webp",
-    "title": "Crayon Shin-chan",
-    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1078/131921.webp",

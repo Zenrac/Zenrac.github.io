@@ -1,5 +1,14 @@
 'use strict';
 
+var seasonData = {
+    "Winter 2023": winter2023,
+    "Spring 2023": spring2023,
+    "Summer 2023": summer2023,
+    "Fall 2023": fall2023,
+    "Winter 2024": winter2024,
+    "Spring 2024": spring2024
+};
+
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
 const TIER_COLORS = [
@@ -146,33 +155,11 @@ window.addEventListener('load', () => {
 
 	document.getElementById('export-input').addEventListener('click', () => {
 		save_tierlist_png();
-		/*
-		let name = prompt('Please give a name to this tierlist');
-		if (name) {
-			save_tierlist(`${name}.json`);
-		}*/
 	});
 
-	/* document.getElementById('import-input').addEventListener('input', (evt) => {
-		if (!evt.target.files) {
-			return;
-		}
-		let file = evt.target.files[0];
-		let reader = new FileReader();
-		reader.addEventListener('load', (load_evt) => {
-			let raw = load_evt.target.result;
-			let parsed = JSON.parse(raw);
-			if (!parsed) {
-				alert("Failed to parse data");
-				return;
-			}
-			hard_reset_list();
-			load_tierlist(parsed);
-		});
-		reader.readAsText(file);
-	}); */
-
 	bind_trash_events();
+
+	initialize_dropdown_tierlists();
 
 	window.addEventListener('beforeunload', (evt) => {
 		if (!unsaved_changes) return null;
@@ -181,6 +168,26 @@ window.addEventListener('load', () => {
 		return msg;
 	});
 });
+
+function initialize_dropdown_tierlists() {
+	var dropdown = document.getElementById("dropdown");
+
+	for (var season in seasonData) {
+		var option = document.createElement("option");
+		option.text = season;
+		option.value = season;
+		dropdown.add(option);
+	}
+
+	dropdown.addEventListener("change", function() {
+		var selectedSeason = this.value;
+		soft_reset_list();
+		load_from_anime(seasonData[selectedSeason], selectedSeason);
+	});
+
+	dropdown.selectedIndex = dropdown.options.length - 1;
+	dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+}
 
 function create_img_with_src(src, title = "", url = "") {
 	let img = document.createElement('img');
@@ -303,6 +310,7 @@ function load_tierlist(serialized_tierlist) {
 }
 
 function load_from_anime(animes, title) {
+	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;
 	let images = document.querySelector('.images');
     for (let anime of animes) {
@@ -573,5 +581,3 @@ function bind_trash_events() {
 		}
 	});
 }
-
-load_from_anime(winter2024, "Winter 2024");

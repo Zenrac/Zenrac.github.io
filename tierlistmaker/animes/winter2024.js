@@ -240,11 +240,6 @@ var winter2024 = [
       "url": "https://myanimelist.net/anime/52991/Sousou_no_Frieren"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/7/75199.webp",
-      "title": "Meitantei Conan",
-      "url": "https://myanimelist.net/anime/235/Meitantei_Conan"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1708/138033.webp",
       "title": "Kusuriya no Hitorigoto",
       "url": "https://myanimelist.net/anime/54492/Kusuriya_no_Hitorigoto"
@@ -263,11 +258,6 @@ var winter2024 = [
       "img": "https://cdn.myanimelist.net/images/anime/1763/140359.webp",
       "title": "Ragna Crimson",
       "url": "https://myanimelist.net/anime/51297/Ragna_Crimson"
-    },
-    {
-      "img": "https://cdn.myanimelist.net/images/anime/10/59897.webp",
-      "title": "Crayon Shin-chan",
-      "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan"
     },
     {
       "img": "https://cdn.myanimelist.net/images/anime/1229/141256.webp",

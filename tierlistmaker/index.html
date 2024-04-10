@@ -60,6 +60,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src='animes/fall2023.js'></script>
     <script src='animes/spring2023.js'></script>
+    <script src='animes/spring2024.js'></script>
     <script src='animes/summer2023.js'></script>
     <script src='animes/winter2023.js'></script>
     <script src='animes/winter2024.js'></script>
@@ -94,7 +95,13 @@
                         <input id='export-input' type='button' />
                     </div>
                 </div>
-                <p class="hint">Hint: press CTRL + Click on image to open MAL link</p>
+                <p class="hint">
+                    CTRL + Click : Open MAL link
+                    <br />
+                    ALT + Click : Open Youtube link
+                </p>
+                <select id="dropdown">
+                </select>
             </div>
         </div>
         <section class='images bank'></section>

@@ -275,11 +275,6 @@ var winter2023 = [
     "url": "https://myanimelist.net/anime/48316/Kage_no_Jitsuryokusha_ni_Naritakute"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/7/75199.webp",
-    "title": "Meitantei Conan",
-    "url": "https://myanimelist.net/anime/235/Meitantei_Conan"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1743/125204.webp",
     "title": "Isekai Ojisan",
     "url": "https://myanimelist.net/anime/49220/Isekai_Ojisan"
@@ -308,11 +303,6 @@ var winter2023 = [
     "img": "https://cdn.myanimelist.net/images/anime/1123/134677.webp",
     "title": "Cool Doji Danshi",
     "url": "https://myanimelist.net/anime/51680/Cool_Doji_Danshi"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/10/59897.webp",
-    "title": "Crayon Shin-chan",
-    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1907/135109.webp",

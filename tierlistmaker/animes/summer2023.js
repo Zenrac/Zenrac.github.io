@@ -210,19 +210,9 @@ var summer2023 = [
     "url": "https://myanimelist.net/anime/55166/Yami_Shibai_11"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/7/75199.webp",
-    "title": "Meitantei Conan",
-    "url": "https://myanimelist.net/anime/235/Meitantei_Conan"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1369/139553.webp",
     "title": "Maou Gakuin no Futekigousha: Shijou Saikyou no Maou no Shiso, Tensei shite Shison-tachi no Gakkou e Kayou II",
     "url": "https://myanimelist.net/anime/48417/Maou_Gakuin_no_Futekigousha__Shijou_Saikyou_no_Maou_no_Shiso_Tensei_shite_Shison-tachi_no_Gakkou_e_Kayou_II"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/10/59897.webp",
-    "title": "Crayon Shin-chan",
-    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1397/133339.webp",
