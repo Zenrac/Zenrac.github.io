@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.60
+// @version      1.61
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -403,10 +403,21 @@
                         let episodes = season.getElementsByTagName("ul");
                         let realEpisodes = season.getElementsByTagName("a");
                         if (realEpisodes && realEpisodes.length > 0) {
-                            for (let ep of realEpisodes) {
+                            for (let i = 0; i < realEpisodes.length - 1; i++) {
+                                let ep = realEpisodes[i];
                                 if (ep.innerText.includes("Episode")) {
                                     let episodeNameMatch = ep.innerText.toLowerCase().match(/episode (\d+)/);
                                     let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : 99;
+                                    if (episodeNumber < 2) {
+                                        if (realEpisodes.length > 1) {
+                                            let nextEpisode = realEpisodes[i + 1];
+                                            if (nextEpisode.innerText.includes("Episode")) {
+                                                let nextEpisodeNameMatch = nextEpisode.innerText.toLowerCase().match(/episode (\d+)/);
+                                                let nextEpisodeNumber = episodeNameMatch ? parseInt(nextEpisodeNameMatch[1]) : 99;
+                                                check = check && nextEpisodeNumber < 3;
+                                            }
+                                        }
+                                    }
                                     check = check && episodeNumber < 2;
                                     break;
                                 }
@@ -1356,6 +1367,10 @@
                             if (seasonToSet > 1 && !allSeasonStartWithOne) {
                                 let activedElement = document.getElementsByClassName("actived")[0];
                                 let episodesSameSeason = document.getElementsByClassName("actived")[0].parentNode.getElementsByTagName("li");
+                                episodesSameSeason = Array.from(episodesSameSeason).filter(episode => {
+                                    let episodeName = episode.innerText.toLowerCase();
+                                    return !episodeName.match(/episode (\d+)/) || parseInt(episodeName.match(/episode (\d+)/)[1]) !== 0;
+                                });
                                 if (episodesSameSeason[valueToSet - 1]) {
                                     valueToSet = episodesSameSeason[valueToSet - 1].dataset.epnumber;
                                 }
