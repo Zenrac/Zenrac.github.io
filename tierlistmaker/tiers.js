@@ -114,7 +114,6 @@ function soft_reset_list(resetRows = false) {
 
 // Function to save JavaScript objects in a cookie
 function saveToCookie(key, value) {
-	console.log("Saving cookie: " + JSON.stringify(value))
 	document.cookie = key + "=" + JSON.stringify(value) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 }
 
@@ -295,9 +294,6 @@ function save_tierlist(filename) {
 			if (match) {
 				serialized_tierlist.rows[i].imgs.push(match[1]);
 			}
-			else {
-				serialized_tierlist.rows[i].imgs.push(img.src);
-			}
 		});
 	});
 
@@ -308,9 +304,6 @@ function save_tierlist(filename) {
 			let match = img.src.match(regex);
 			if (match) {
 				serialized_tierlist.untiered.push(match[1]);
-			}
-			else {
-				serialized_tierlist.untiered.push(img.src);
 			}
 		});
 	}
