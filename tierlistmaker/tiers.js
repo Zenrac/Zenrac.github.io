@@ -22,6 +22,10 @@ const TIER_COLORS = [
 	'#f45bed'
 ];
 
+const saveTierListsCookieName = "saveTierlistsData";
+
+let cookieData = {}
+
 let unique_id = 0;
 
 let unsaved_changes = false;
@@ -84,6 +88,8 @@ function reset_row(row) {
 		}
 		item.parentNode.removeChild(item);
 	});
+	// dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+	// save_tierlist(dropdown.value);
 }
 
 // Removes all rows from the tierlist, alongside their content.
@@ -94,12 +100,42 @@ function hard_reset_list() {
 }
 
 // Places back all the tierlist content into the untiered pool.
-function soft_reset_list() {
+function soft_reset_list(resetRows = false) {
 	tierlist_div.querySelectorAll('.row').forEach(reset_row);
+	if (resetRows) {
+		tierlist_div.innerHTML = '';
+		for (let i = 0; i < DEFAULT_TIERS.length; ++i) {
+			add_row(i, DEFAULT_TIERS[i]);
+		}
+		recompute_header_colors();
+	}
 	unsaved_changes = true;
 }
 
+// Function to save JavaScript objects in a cookie
+function saveToCookie(key, value) {
+	console.log("Saving cookie: " + JSON.stringify(value))
+	document.cookie = key + "=" + JSON.stringify(value) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+}
+
+// Function to load JavaScript objects from a cookie
+function loadFromCookie(key) {
+	var cookies = document.cookie.split(';');
+	try {
+	for (var i = 0; i < cookies.length; i++) {
+		var cookie = cookies[i].trim();
+		if (cookie.startsWith(key + "=")) {
+			return JSON.parse(cookie.substring(key.length + 1)) ?? {};
+		}
+	}
+	} catch {}
+	return {}
+}
+
+// Called when page is loaded
 window.addEventListener('load', () => {
+	cookieData = loadFromCookie(saveTierListsCookieName);
+
 	untiered_images =  document.querySelector('.images');
 	tierlist_div =  document.querySelector('.tierlist');
 
@@ -149,7 +185,10 @@ window.addEventListener('load', () => {
 
 	document.getElementById('reset-list-input').addEventListener('click', () => {
 		if (confirm('Reset Tierlist? (this will place all images back in the pool)')) {
-			soft_reset_list();
+			soft_reset_list(true);
+			var dropdown = document.getElementById("dropdown");
+			load_from_anime(seasonData[dropdown.value], dropdown.value, false);
+			save_tierlist(dropdown.value);
 		}
 	});
 
@@ -162,7 +201,8 @@ window.addEventListener('load', () => {
 	initialize_dropdown_tierlists();
 
 	window.addEventListener('beforeunload', (evt) => {
-		if (!unsaved_changes) return null;
+		return null;
+		// if (!unsaved_changes) return null;
 		var msg = "You have unsaved changes. Leave anyway?";
 		(evt || window.event).returnValue = msg;
 		return msg;
@@ -217,18 +257,6 @@ function create_img_with_src(src, title = "", url = "") {
 	return img;
 }
 
-function save(filename, text) {
-	unsaved_changes = false;
-
-	var el = document.createElement('a');
-	el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
-	el.setAttribute('download', filename);
-	el.style.display = 'none';
-	document.body.appendChild(el);
-	el.click();
-	document.body.removeChild(el);
-}
-
 function save_tierlist_png() {
     const tierlist = document.getElementById('tierlist');
 	let title = document.getElementById('title-label');
@@ -252,6 +280,7 @@ function save_tierlist_png() {
 }
 
 function save_tierlist(filename) {
+	let regex = /\/(\d+\/\d+)\.webp$/;
 	let serialized_tierlist = {
 		title: document.querySelector('.title-label').innerText,
 		rows: [],
@@ -262,7 +291,13 @@ function save_tierlist(filename) {
 		});
 		serialized_tierlist.rows[i].imgs = [];
 		row.querySelectorAll('img').forEach((img) => {
-			serialized_tierlist.rows[i].imgs.push(img.src);
+			let match = img.src.match(regex);
+			if (match) {
+				serialized_tierlist.rows[i].imgs.push(match[1]);
+			}
+			else {
+				serialized_tierlist.rows[i].imgs.push(img.src);
+			}
 		});
 	});
 
@@ -270,20 +305,31 @@ function save_tierlist(filename) {
 	if (untiered_imgs.length > 0) {
 		serialized_tierlist.untiered = [];
 		untiered_imgs.forEach((img) => {
-			serialized_tierlist.untiered.push(img.src);
+			let match = img.src.match(regex);
+			if (match) {
+				serialized_tierlist.untiered.push(match[1]);
+			}
+			else {
+				serialized_tierlist.untiered.push(img.src);
+			}
 		});
 	}
 
-	save(filename, JSON.stringify(serialized_tierlist));
+	cookieData[filename] = serialized_tierlist;
+	saveToCookie(saveTierListsCookieName, cookieData);
 }
 
 function load_tierlist(serialized_tierlist) {
+	hard_reset_list()
 	document.querySelector('.title-label').innerText = serialized_tierlist.title;
 	for (let idx in serialized_tierlist.rows) {
 		let ser_row = serialized_tierlist.rows[idx];
 		let elem = add_row(idx, ser_row.name);
 
 		for (let img_src of ser_row.imgs ?? []) {
+			if (!img_src.includes('http')) {
+				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+			}
 			let img = create_img_with_src(img_src);
 			let td = document.createElement('span');
 			td.classList.add('item');
@@ -299,6 +345,9 @@ function load_tierlist(serialized_tierlist) {
 	if (serialized_tierlist.untiered) {
 		let images = document.querySelector('.images');
 		for (let img_src of serialized_tierlist.untiered) {
+			if (!img_src.includes('http')) {
+				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+			}
 			let img = create_img_with_src(img_src);
 			images.appendChild(img);
 		}
@@ -309,7 +358,7 @@ function load_tierlist(serialized_tierlist) {
 	unsaved_changes = false;
 }
 
-function load_from_anime(animes, title) {
+function load_from_anime(animes, title, cookie = true) {
 	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;
 	let images = document.querySelector('.images');
@@ -319,6 +368,10 @@ function load_from_anime(animes, title) {
 		items.classList.add('item');
 		items.appendChild(img)
 		images.appendChild(items);
+	}
+
+	if (cookie && cookieData !== undefined && title in cookieData) {
+		load_tierlist(cookieData[title]);
 	}
 }
 
@@ -404,6 +457,8 @@ function make_accept_drop(elem, hover = true) {
 			}
 		}
 
+		var dropdown = document.getElementById("dropdown");
+		save_tierlist(dropdown.value);
 		unsaved_changes = true;
 	});
 }
@@ -413,6 +468,7 @@ function enable_edit_on_click(container, input, label) {
 		input.style.display = 'none';
 		label.innerText = input.value;
 		label.style.display = 'inline';
+		save_tierlist(dropdown.value);
 		unsaved_changes = true;
 	}
 
