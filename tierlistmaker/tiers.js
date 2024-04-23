@@ -9,6 +9,11 @@ var seasonData = {
     "Winter 2023": winter2023
 };
 
+var seasonType = {
+    "Opening": 1,
+	"Ending": 2
+};
+
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
 const TIER_COLORS = [
@@ -89,7 +94,7 @@ function reset_row(row) {
 		item.parentNode.removeChild(item);
 	});
 	// dropdown.dispatchEvent(new Event('change', { bubbles: true }));
-	// save_tierlist(dropdown.value);
+	// save_tierlist();
 }
 
 // Removes all rows from the tierlist, alongside their content.
@@ -112,9 +117,14 @@ function soft_reset_list(resetRows = false) {
 	unsaved_changes = true;
 }
 
-// Function to save JavaScript objects in a cookie
+// Function to save in a cookie
 function saveToCookie(key, value) {
 	document.cookie = key + "=" + JSON.stringify(value) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+}
+
+// Function to save in localstorage
+function saveToLocalStorage(key, value) {
+	localStorage.setItem(key, JSON.stringify(value));
 }
 
 // Function to load JavaScript objects from a cookie
@@ -131,9 +141,17 @@ function loadFromCookie(key) {
 	return {}
 }
 
+// Function to load JavaScript objects from localstorage
+function loadFromLocalStorage(key) {
+	try {
+		return JSON.parse(localStorage.getItem(key)) ?? {};
+	} catch {}
+	return {}
+}
+
 // Called when page is loaded
 window.addEventListener('load', () => {
-	cookieData = loadFromCookie(saveTierListsCookieName);
+	cookieData = loadFromLocalStorage(saveTierListsCookieName);
 
 	untiered_images =  document.querySelector('.images');
 	tierlist_div =  document.querySelector('.tierlist');
@@ -186,8 +204,9 @@ window.addEventListener('load', () => {
 		if (confirm('Reset Tierlist? (this will place all images back in the pool)')) {
 			soft_reset_list(true);
 			var dropdown = document.getElementById("dropdown");
-			load_from_anime(seasonData[dropdown.value], dropdown.value, false);
-			save_tierlist(dropdown.value);
+			var dropdownType = document.getElementById("dropdowntype");
+			load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false);
+			save_tierlist();
 		}
 	});
 
@@ -199,6 +218,16 @@ window.addEventListener('load', () => {
 
 	initialize_dropdown_tierlists();
 
+	initialize_dropdown_type();
+
+	var dropdown = document.getElementById("dropdown");
+	var dropdownType = document.getElementById("dropdowntype");
+
+	dropdown.selectedIndex = 0;
+	dropdownType.selectedIndex = 0;
+
+	dropdownType.dispatchEvent(new Event('change', { bubbles: true }));
+
 	window.addEventListener('beforeunload', (evt) => {
 		return null;
 		// if (!unsaved_changes) return null;
@@ -208,8 +237,32 @@ window.addEventListener('load', () => {
 	});
 });
 
-function initialize_dropdown_tierlists() {
+function initialize_dropdown_type() {
+	var dropdownType = document.getElementById("dropdowntype");
 	var dropdown = document.getElementById("dropdown");
+
+	dropdown.selectedIndex = 0;
+	dropdownType.selectedIndex = 0;
+
+	for (var season in seasonType) {
+		var option = document.createElement("option");
+		option.text = season;
+		option.value = season;
+		dropdownType.add(option);
+	}
+
+	dropdownType.addEventListener("change", function() {
+		soft_reset_list();
+		load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+	});
+}
+
+function initialize_dropdown_tierlists() {
+	var dropdownType = document.getElementById("dropdowntype");
+	var dropdown = document.getElementById("dropdown");
+
+	dropdown.selectedIndex = 0;
+	dropdownType.selectedIndex = 0;
 
 	for (var season in seasonData) {
 		var option = document.createElement("option");
@@ -219,16 +272,23 @@ function initialize_dropdown_tierlists() {
 	}
 
 	dropdown.addEventListener("change", function() {
-		var selectedSeason = this.value;
 		soft_reset_list();
-		load_from_anime(seasonData[selectedSeason], selectedSeason);
+		load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
 	});
-
-	dropdown.selectedIndex = 0;
-	dropdown.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 function create_img_with_src(src, title = "", url = "") {
+	var dropdownType = document.getElementById("dropdowntype");
+	var dropdown = document.getElementById("dropdown");
+
+	console.log(seasonData[dropdown.value])
+	if (title == "" || url == "" && seasonData[dropdown.value]) {
+		let anime = seasonData[dropdown.value].filter(m => m.img.includes(src))
+		if (anime && anime.length > 0) {
+			title = anime[0].title;
+			url = anime[0].url;
+		}
+	}
 	let img = document.createElement('img');
 	img.src = src;
 	img.style.userSelect = 'none';
@@ -248,7 +308,8 @@ function create_img_with_src(src, title = "", url = "") {
 				window.open(url, "_blank");
 			}
 			if (event.altKey && title) {
-				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " opening";
+				var dropdownType = document.getElementById("dropdowntype");
+				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " " + dropdownType.value ?? "Opening";
 				window.open(youtubeUrl, "_blank");
 			}
 		});
@@ -278,7 +339,7 @@ function save_tierlist_png() {
 
 }
 
-function save_tierlist(filename) {
+function save_tierlist() {
 	let regex = /\/(\d+\/\d+)\.webp$/;
 	let serialized_tierlist = {
 		title: document.querySelector('.title-label').innerText,
@@ -307,9 +368,13 @@ function save_tierlist(filename) {
 			}
 		});
 	}
-
-	cookieData[filename] = serialized_tierlist;
-	saveToCookie(saveTierListsCookieName, cookieData);
+	var dropdown = document.getElementById("dropdown");
+	var dropdownType = document.getElementById("dropdowntype");
+	var filename = dropdown.value
+	if (!cookieData[filename])
+		cookieData[filename] = {};
+	cookieData[filename][dropdownType.value] = serialized_tierlist;
+	saveToLocalStorage(saveTierListsCookieName, cookieData);
 }
 
 function load_tierlist(serialized_tierlist) {
@@ -363,8 +428,11 @@ function load_from_anime(animes, title, cookie = true) {
 		images.appendChild(items);
 	}
 
-	if (cookie && cookieData !== undefined && title in cookieData) {
-		load_tierlist(cookieData[title]);
+	var dropdown = document.getElementById("dropdown");
+	var dropdownType = document.getElementById("dropdowntype");
+
+	if (cookie && cookieData && dropdown.value in cookieData && dropdownType.value in cookieData[dropdown.value]) {
+		load_tierlist(cookieData[dropdown.value][dropdownType.value]);
 	}
 }
 
@@ -450,8 +518,7 @@ function make_accept_drop(elem, hover = true) {
 			}
 		}
 
-		var dropdown = document.getElementById("dropdown");
-		save_tierlist(dropdown.value);
+		save_tierlist();
 		unsaved_changes = true;
 	});
 }
@@ -461,7 +528,7 @@ function enable_edit_on_click(container, input, label) {
 		input.style.display = 'none';
 		label.innerText = input.value;
 		label.style.display = 'inline';
-		save_tierlist(dropdown.value);
+		save_tierlist();
 		unsaved_changes = true;
 	}
 
