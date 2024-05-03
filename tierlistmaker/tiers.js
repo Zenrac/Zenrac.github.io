@@ -10,8 +10,9 @@ var seasonData = {
 };
 
 var seasonType = {
+	"Anime" : 0,
     "Opening": 1,
-	"Ending": 2
+	"Ending": 2,
 };
 
 const MAX_NAME_LEN = 200;
@@ -281,7 +282,6 @@ function create_img_with_src(src, title = "", url = "") {
 	var dropdownType = document.getElementById("dropdowntype");
 	var dropdown = document.getElementById("dropdown");
 
-	console.log(seasonData[dropdown.value])
 	if (title == "" || url == "" && seasonData[dropdown.value]) {
 		let anime = seasonData[dropdown.value].filter(m => m.img.includes(src))
 		if (anime && anime.length > 0) {
@@ -309,7 +309,8 @@ function create_img_with_src(src, title = "", url = "") {
 			}
 			if (event.altKey && title) {
 				var dropdownType = document.getElementById("dropdowntype");
-				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " " + dropdownType.value ?? "Opening";
+				let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " " + tierListType;
 				window.open(youtubeUrl, "_blank");
 			}
 		});

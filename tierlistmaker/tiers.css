@@ -77,7 +77,7 @@ body {
 }
 
 .tierlist div.row:hover {
-	background-color: #666;
+	opacity: 1;
 }
 
 .tierlist div.row.drag-entered {
@@ -136,7 +136,8 @@ img.draggable {
 }
 
 img.draggable:hover, .button:hover {
-	filter: brightness(0.6);
+	opacity: .4;
+	transition: 200ms linear;
 }
 
 img.draggable.dragged, .button:active {
@@ -156,7 +157,9 @@ img.draggable.dragged, .button:active {
 	flex-flow: column;
 	align-items: center;
 	width: 310px;
-	margin-left: 15px;
+	flex: 1;
+	padding: 0px 5px;
+	align-self: center;
 }
 
 .bottom-container input {
@@ -170,8 +173,9 @@ img.draggable.dragged, .button:active {
 }
 
 .button {
-	border: 1px solid #666;
 	height: 100px;
+	border: 1px solid #666;
+	margin: 1px;
 }
 
 .row-buttons {
@@ -191,7 +195,8 @@ img.draggable.dragged, .button:active {
 .buttons-container {
 	display: flex;
 	flex-wrap: wrap;
-	width: 206px;
+	flex-direction: column;
+	height: 220px;
 }
 
 .gh-link {
@@ -202,19 +207,18 @@ img.draggable.dragged, .button:active {
 }
 
 #trash {
-	position: fixed;
-	bottom: 5px;
-	right: 5px;
-	height: 80px;
+	height: 90px;
 	opacity: 0.4;
+	padding: 5px;
 }
 
 #trash:hover {
 	opacity: 1;
+	transition: 200ms linear;
 }
 
 .bank {
-	width: 95%;
+	width: 100%;
 }
 
 .hint {
