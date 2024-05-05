@@ -408,7 +408,10 @@ function load_tierlist(serialized_tierlist) {
 				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
 			}
 			let img = create_img_with_src(img_src);
-			images.appendChild(img);
+			let items = document.createElement('span');
+			items.classList.add('item');
+			items.appendChild(img)
+			images.appendChild(items);
 		}
 	}
 
