@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.61
+// @version      1.62
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -73,6 +73,7 @@
     function getMostCompatibleMagnet() {
         let configNyaaShortcut = urlParams.get('nyaashortcut');
         let configMagnet = urlParams.get('magnetpriority');
+        let configMagnetMaxAge = urlParams.get('magnetprioritymaxage');
         let searchClass = configNyaaShortcut == "download" ? "fa-download" : "fa-magnet";
         let magnetElements = document.getElementsByClassName(searchClass)
         if (magnetElements.length > 0) {
@@ -83,6 +84,16 @@
                         for (let word of words.split(' ')) {
                             if (!magnet.parentNode.parentNode.parentNode.innerHTML.toString().toLowerCase().includes(word.toLowerCase())) {
                                 all_words = false;
+                            }
+                            else {
+                                try {
+                                    let timestamp = [...magnet.parentNode.parentNode.parentNode.getElementsByTagName('td')].find(td => td.hasAttribute('data-timestamp'))?.getAttribute('data-timestamp');
+                                    let daysAgo = new Date(Date.now() - (configMagnetMaxAge * 24 * 60 * 60 * 1000));
+                                    let timestampToDate = new Date(parseInt(timestamp) * 1000)
+                                    all_words = (timestampToDate > daysAgo);
+                                }
+                                catch {
+                                }
                             }
                         }
                         if (all_words) {
@@ -168,12 +179,8 @@
             "syncadklist" : {
                 "label" : "Synchronisation automatique entre liste ADKami et MAL-Sync",
                 "type" : "checkbox",
-                "default" : true
-            },
-            "removednswarning" : {
-                "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
-                "type" : "checkbox",
-                "default" : true
+                "default" : true,
+                "section" : ["Options Principales"]
             },
             "alreadywatchedonagenda" : {
                 "label" : "Affiche par défaut seulement les animés en cours de visionnage dans l'agenda",
@@ -185,15 +192,31 @@
                     "disable" : "Désactivé"
                 }
             },
+            "calculateRealEpisodeNumber" : {
+                "label" : "Recalcul du numéro d'épisode à partir de 1 à chaque nouvelle saison",
+                "type" : "checkbox",
+                "default" : true
+            },
+            "removecomments" : {
+                "label" : "Masquer par défaut les commentaires sur les pages d'animé",
+                "type" : "select",
+                "default" : "current",
+                "options" : {
+                    "current" : "Seulement si animé en cours de visionnage",
+                    "never" : "Jamais",
+                    "always" : "Toujours"
+                }
+            },
             "quickadd" : {
-                "label" : "Permet d'ajouter à sa liste un épisode sur la page d'accueil en cliquant sur \"A voir\".",
+                "label" : "Permettre d'ajouter à sa liste un épisode sur la page d'accueil en cliquant sur \"A voir\"",
                 "type" : "checkbox",
                 "default" : true
             },
             "agendacounters" : {
                 "label" : "Ajoute des compteurs sur l'agenda, sur les jours et un global pour savoir combien d'animés sont affichés avec les filtres",
                 "type" : "checkbox",
-                "default" : true
+                "default" : true,
+                "section" : ["Ajouts & Suppressions"]
             },
             "addprofiletomenu" : {
                 "label" : "Ajoute une option mon profile au menu en haut à droite",
@@ -220,8 +243,8 @@
                 "type" : "checkbox",
                 "default" : true
             },
-            "calculateRealEpisodeNumber" : {
-                "label" : "Recalcul du numéro d'épisode à partir de 1 à chaque nouvelle saison",
+            "removednswarning" : {
+                "label" : "Retire le message rouge d'information sur le blocage DNS des lecteurs",
                 "type" : "checkbox",
                 "default" : true
             },
@@ -230,75 +253,56 @@
                 "type" : "select",
                 "default" : "both",
                 "options" : {
-                    "both" : "Les deux",
-                    "main" : "Seulement page principale",
-                    "anime" : "Seulement page animé",
+                    "both" : "Page principale & Page animé",
+                    "main" : "Seulement Page principale",
+                    "anime" : "Seulement Page animé",
                     "never" : "Jamais"
-                }
+                },
+                "section" : ["Lecteurs & Icones"]
             },
             "nyaaicon" : {
                 "label" : "Afficher l'icone Nyaa",
                 "type" : "select",
                 "default" : "both",
                 "options" : {
-                    "both" : "Les deux",
+                    "both" : "Page principale & Page animé",
                     "main" : "Seulement page principale",
                     "anime" : "Seulement page animé",
                     "never" : "Jamais"
                 }
             },
             "mavanime" : {
-                "label" : "Ajouter Mavanime (sur les pages d'animé)",
+                "label" : "Ajouter Mavanime",
                 "type" : "select",
                 "default": "both",
                 "options" : {
-                    "both" : "Les deux",
-                    "icon" : "Seulement icone",
-                    "player" : "Seulement lecteurs",
+                    "both" : "Icones & Lecteurs",
+                    "icon" : "Seulement Icones",
+                    "player" : "Seulement Lecteurs",
                     "never" : "Jamais"
                 }
             },
             "franime" : {
-                "label" : "Ajouter FRAnime (sur les pages d'animé)",
+                "label" : "Ajouter FRAnime",
                 "type" : "select",
                 "default": "both",
                 "options" : {
-                    "both" : "Les deux",
-                    "icon" : "Seulement icone",
-                    "player" : "Seulement lecteurs",
+                    "both" : "Icones & Lecteurs",
+                    "icon" : "Seulement Icones",
+                    "player" : "Seulement Lecteurs",
                     "never" : "Jamais"
                 }
             },
             "voiranime" : {
-                "label" : "Ajouter Voiranime (sur les pages d'animé)",
+                "label" : "Ajouter Voiranime",
                 "type" : "select",
                 "default": "both",
                 "options" : {
-                    "both" : "Les deux",
-                    "icon" : "Seulement icone",
-                    "player" : "Seulement lecteurs",
+                    "both" : "Icones & Lecteurs",
+                    "icon" : "Seulement Icones",
+                    "player" : "Seulement Lecteurs",
                     "never" : "Jamais"
                 }
-            },
-            "customnyaasearch" : {
-                "label" : "Filtre recherche Nyaa",
-                "type" : "text",
-                "default" : "(vostfr|multi) 1080p"
-            },
-            "removecomments" : {
-                "label" : "Masquer par défaut les commentaires sur les pages d'animé",
-                "type" : "select",
-                "default" : "current",
-                "options" : {
-                    "current" : "Seulement si en train de regarder",
-                    "never" : "Jamais",
-                    "always" : "Toujours"
-                }
-            },
-            "magnetpriority" : {
-                "label" : "Mots séparés par une virgule, dans l'odre de priorité, pour la selection automatique du magnet/téléchargement",
-                "type" : "text",
-                "default" : "Tsundere-Raws,Erai-Raws"
             },
             "nyaashortcut" : {
                 "label" : "Raccourci préféré Nyaa",
@@ -308,17 +312,60 @@
                     "magnet" : "Magnet",
                     "download" : "Téléchargement",
                     "disable" : "Désactivé"
-                }
+                },
+                "section" : ["Nyaa"]
+            },
+            "customnyaasearch" : {
+                "label" : "Filtre recherche Nyaa",
+                "type" : "text",
+                "default" : "(vostfr|multi) 1080p"
+            },
+            "magnetpriority" : {
+                "label" : "Filtre de mots séparés par une virgule, dans l'odre de priorité, pour le magnet/telechargement",
+                "type" : "text",
+                "default" : "Tsundere-Raws,Erai-Raws"
+            },
+            "magnetprioritymaxage" : {
+                "label" : "Age maximum (en jours) des résultats pour la prise en compte du filtre pour le magnet/telechargement",
+                "type" : "text",
+                "default" : "30"
             }
         },
-        'body { background-color: #99aab5 !important; } #saveBtn, #cancelBtn { background-color: white !important; color: black !important; }',
+        `
+        body {
+           background-color: #99aab5 !important;
+        }
+        #saveBtn, #cancelBtn {
+           background-color: white !important;
+           color: black !important;
+        }
+        #header {
+            background-image: url(${BETTER_ADK_LOGO});
+            background-size: 30%;
+            height: 50px;
+            filter: brightness(0) saturate(100%) invert(18%) sepia(0%) saturate(52%) hue-rotate(271deg) brightness(98%) contrast(76%);
+            font-size: 0;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .section_header_holder:not(:first-child) {
+            padding-top: 15px;
+        }
+        .reset_holder a {
+            font-size: 0px;
+        }
+        .reset_holder a::after {
+            content: "Rétablir les paramètres par défaut";
+            font-size: 14px;
+        }
+        `,
         {
             save: function() { location.reload() },
         });
 
         addGlobalStyle(`
             #GM_config {
-              height: 600px !important;
+              height: 800px !important;
               width: 50% !important;
               opacity: 0.90 !important;
 
@@ -829,7 +876,7 @@
                                             else {
                                                 urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                                             }
-                                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}`;
+                                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
                                         } else {
                                             urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
                                         }
@@ -860,7 +907,7 @@
                             else {
                                 urlNyaa = "https://nyaa.si/?q=" + title + " " + GM_config.get('customnyaasearch');
                             }
-                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}`;
+                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
                             let frameMagnet = document.createElement("iframe");
                             frameMagnet.src = urlNyaa;
                             frameMagnet.classList.add("nyaaMagnet");
@@ -1133,7 +1180,7 @@
                             else {
                                 urlNyaa = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
                             }
-                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}`;
+                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
                             let frameMagnet = document.createElement("iframe");
                             frameMagnet.src = urlNyaa;
                             frameMagnet.classList.add("nyaaMagnet");
