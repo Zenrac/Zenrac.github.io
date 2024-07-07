@@ -230,7 +230,7 @@ var spring2024 = [
       "url": "https://myanimelist.net/anime/51461/Tonari_no_Youkai-san"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1630/141499.webp",
+      "img": "https://cdn.myanimelist.net/images/anime/1084/142685.webp",
       "title": "Karasu wa Aruji wo Erabanai",
       "url": "https://myanimelist.net/anime/56980/Karasu_wa_Aruji_wo_Erabanai"
     },
