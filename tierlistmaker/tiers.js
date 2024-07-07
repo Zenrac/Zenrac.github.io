@@ -674,6 +674,35 @@ function bind_trash_events() {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin_open.png';
 	});
+	trash.addEventListener('click', (evt) => {
+		evt.preventDefault();
+		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
+			let animes = seasonData[dropdown.value];
+			let alreadyAdded = Array.from(document.getElementsByClassName('item'));
+			for (let anime of animes) {
+				let isAlreadyAdded = alreadyAdded.some(span => {
+					let img = span.querySelector('img');
+					return img && img.src === anime.img;
+				});
+
+				if (isAlreadyAdded) {
+					console.log("Contained");
+				}
+				else {
+					let images = document.querySelector('.images');
+					if (!anime.img.includes('http')) {
+						anime.img = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+					}
+					let img = create_img_with_src(anime.img);
+					let items = document.createElement('span');
+					items.classList.add('item');
+					items.appendChild(img)
+					images.appendChild(items);
+				}
+			}
+			save_tierlist();
+		}
+	});
 	trash.addEventListener('dragleave', (evt) => {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin.png';

@@ -219,6 +219,8 @@ img.draggable.dragged, .button:active {
 
 .bank {
 	width: 100%;
+	min-height: 120px;
+	border: 1px solid #666;
 }
 
 .hint {
