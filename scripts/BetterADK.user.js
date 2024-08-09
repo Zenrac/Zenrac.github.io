@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.62
+// @version      1.63
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -806,7 +806,7 @@
                     let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
                     let oav = episode.innerText.toLowerCase().match(/oav (\d+)/);
                     let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
-                    title = title.textContent.replace(',', '').replace('.', '').split(':')[0].split('-')[0].trim()
+                    title = title.textContent.replace(',', ' ').replace('.', ' ').split(':')[0].split('-')[0].trim()
                     title = encodeURIComponent(title)
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
@@ -993,8 +993,8 @@
 
                 // Mavanime.co
                 let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
-                let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
-                let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', '').replace('.', '').split(':')[0].split('-').slice(0, nb).join(' ').trim();
+                let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', ' ').replace('.', ' ').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
+                let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', ' ').replace('.', ' ').split(':')[0].split('-').slice(0, nb).join(' ').trim();
 
                 originalTitle = encodeURIComponent(originalTitle)
 
