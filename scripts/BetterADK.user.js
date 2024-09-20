@@ -1303,7 +1303,7 @@
                             elmButton.parentNode.replaceChild(newElem, elmButton);
                             newElem.parentNode.insertBefore(newElemRemove, newElem)
                             newElem.innerText = "+1 Episode";
-                            newElemRemove.innerText = "-1 Episode";
+                            newElemRemove.innerText = "-1 Episode"; 
                             newElem.style.backgroundColor = "rgba(155,211,0,.43)";
                             newElem.addEventListener('click', function() {
                                 let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
