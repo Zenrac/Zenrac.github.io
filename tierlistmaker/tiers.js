@@ -1,19 +1,34 @@
 'use strict';
 
-var seasonData = {
-    "Spring 2024": spring2024,
-    "Winter 2024": winter2024,
-    "Fall 2023": fall2023,
-    "Summer 2023": summer2023,
-    "Spring 2023": spring2023,
-    "Winter 2023": winter2023
-};
-
 var seasonType = {
 	"Anime" : 0,
     "Opening": 1,
 	"Ending": 2,
 };
+
+const seasons = ['winter', 'spring', 'summer', 'fall'];
+const startYear = 2023;
+const endYear = 2024;
+
+const scripts = [];
+
+for (let year = startYear; year <= endYear; year++) {
+    for (const season of seasons) {
+        scripts.push(`animes/${season}${year}.js`);
+    }
+}
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => resolve();
+        document.head.appendChild(script);
+    });
+}
+
+Promise.all(scripts.map(loadScript));
 
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
@@ -54,19 +69,24 @@ function getElementsFromMal() {
 		if (memberCount.includes('K')) {
 			var count = memberCount.replace("K", "") * 1000;
 			if (count > 5000) {
-				let imgDiv = video.querySelectorAll("img")[0];
-				let img = imgDiv.src;
-				let url = imgDiv.parentNode.href;
-				let title = video.querySelectorAll(".link-title")[0].innerText;
-				if (img != undefined && img.trim().length != 0) {
-					// Create an object with img, title, and url properties
-					var videoInfo = {
-						img: img,
-						title: title,
-						url: url
-					};
-					// Push the videoInfo object into the videoList array
-					videoList.push(videoInfo);
+				let date = video.getElementsByClassName('prodsrc')[0].getElementsByClassName('info')[0].getElementsByClassName('item')[0].innerHTML
+				let animeDate = new Date(date);
+				let lastYearDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+				if (animeDate > lastYearDate) {
+					let imgDiv = video.querySelectorAll("img")[0];
+					let img = imgDiv.src;
+					let url = imgDiv.parentNode.href;
+					let title = video.querySelectorAll(".link-title")[0].innerText;
+					if (img != undefined && img.trim().length != 0) {
+						// Create an object with img, title, and url properties
+						var videoInfo = {
+							img: img,
+							title: title,
+							url: url
+						};
+						// Push the videoInfo object into the videoList array
+						videoList.push(videoInfo);
+					}
 				}
 			}
 		}
@@ -206,7 +226,7 @@ window.addEventListener('load', () => {
 			soft_reset_list(true);
 			var dropdown = document.getElementById("dropdown");
 			var dropdownType = document.getElementById("dropdowntype");
-			load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false);
+			load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false);
 			save_tierlist();
 		}
 	});
@@ -254,7 +274,7 @@ function initialize_dropdown_type() {
 
 	dropdownType.addEventListener("change", function() {
 		soft_reset_list();
-		load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+		load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
 	});
 }
 
@@ -265,7 +285,7 @@ function initialize_dropdown_tierlists() {
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
 
-	for (var season in seasonData) {
+	for (var season in window.animeSeasons) {
 		var option = document.createElement("option");
 		option.text = season;
 		option.value = season;
@@ -274,7 +294,7 @@ function initialize_dropdown_tierlists() {
 
 	dropdown.addEventListener("change", function() {
 		soft_reset_list();
-		load_from_anime(seasonData[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+		load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
 	});
 }
 
@@ -282,8 +302,8 @@ function create_img_with_src(src, title = "", url = "") {
 	var dropdownType = document.getElementById("dropdowntype");
 	var dropdown = document.getElementById("dropdown");
 
-	if (title == "" || url == "" && seasonData[dropdown.value]) {
-		let anime = seasonData[dropdown.value].filter(m => m.img.includes(src))
+	if (title == "" || url == "" && window.animeSeasons[dropdown.value]) {
+		let anime = window.animeSeasons[dropdown.value].filter(m => m.img.includes(src))
 		if (anime && anime.length > 0) {
 			title = anime[0].title;
 			url = anime[0].url;
@@ -677,7 +697,7 @@ function bind_trash_events() {
 	trash.addEventListener('click', (evt) => {
 		evt.preventDefault();
 		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
-			let animes = seasonData[dropdown.value];
+			let animes = window.animeSeasons[dropdown.value];
 			let alreadyAdded = Array.from(document.getElementsByClassName('item'));
 			for (let anime of animes) {
 				let isAlreadyAdded = alreadyAdded.some(span => {

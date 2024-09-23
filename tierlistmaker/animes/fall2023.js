@@ -1,4 +1,5 @@
-var fall2023 = [
+window.animeSeasons = window.animeSeasons || {};
+window.animeSeasons['Fall 2023'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1015/138006.webp",
     "title": "Sousou no Frieren",
