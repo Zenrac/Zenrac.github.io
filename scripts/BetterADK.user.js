@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.63
+// @version      1.64
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -631,14 +631,14 @@
         const elems = document.getElementsByClassName("video-item-list");
         let to_remove = [];
         for (let i = 0; i < elems.length; i++) {
-            if (elems.item(i).textContent.toLocaleLowerCase().includes(' vf ')) {
+            if (elems.item(i).textContent.toLocaleLowerCase().includes(' vf')) {
                 to_remove.push(elems.item(i));
-            } else if (elems.item(i).textContent.toLocaleLowerCase().includes(' vostfr ')) {
+            } else if (elems.item(i).textContent.toLocaleLowerCase().includes(' vostfr')) {
                 let epVostfr = elems.item(i).getElementsByClassName("episode").item(0);
                 if (epVostfr) {
                     epVostfr.innerText = epVostfr.innerText.replace(' vostfr', '')
                 }
-            } else if (GM_config.get('removevfepisode') && elems.item(i).textContent.toLocaleLowerCase().includes(' multi ')) {
+            } else if (GM_config.get('removevfepisode') && elems.item(i).textContent.toLocaleLowerCase().includes(' multi')) {
                 let epMulti = elems.item(i).getElementsByClassName("episode").item(0);
                 if (epMulti) {
                     epMulti.innerText = epMulti.innerText.replace(' multi', '')
