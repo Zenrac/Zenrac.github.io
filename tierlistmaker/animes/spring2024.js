@@ -11,7 +11,7 @@ window.animeSeasons['Spring 2024'] = [
       "url": "https://myanimelist.net/anime/55701/Kimetsu_no_Yaiba__Hashira_Geiko-hen"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1587/141789.webp",
+      "img": "https://cdn.myanimelist.net/images/anime/1211/143476.jpg",
       "title": "Tensei shitara Slime Datta Ken 3rd Season",
       "url": "https://myanimelist.net/anime/53580/Tensei_shitara_Slime_Datta_Ken_3rd_Season"
     },
