@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.64
+// @version      1.65
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -392,6 +392,23 @@
             style.innerHTML = css;
             head.appendChild(style);
         }
+
+        /**
+    * Creates an url friendly title for nyaa search
+    */
+        function createNyaaUrlFromTitle(titleText) {
+            console.log(titleText)
+            let title = titleText.replace(',', ' ').replace('.', ' ').replace('  ', ' ').split(':')[0].split('-')[0].trim()
+            let firstBiggerWord = titleText.replace(',', ' ').replace('.', ' ').replace(title, '').replace(':', '').replace('-', '').trim().split(' ')[0]
+            if (firstBiggerWord != "" && firstBiggerWord.includes(title)) {
+                console.log("REPLACING");
+                console.log(title)
+                console.log(firstBiggerWord)
+                title = firstBiggerWord
+            }
+            return encodeURIComponent(title)
+        }
+
 
         /**
     * Recalculates right episode number starting from 1 at each new season.
@@ -800,14 +817,12 @@
                 // add nyaa icons
                 for (let i = 0; i < elems.length; i++) {
                     let after = elems[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
-                    let title = elems[i].getElementsByClassName("title")[0];
                     let episode = elems[i].getElementsByClassName("episode")[0];
                     let clickableNyaa = document.createElement("a");
                     let ep = episode.innerText.toLowerCase().match(/episode (\d+)/);
                     let oav = episode.innerText.toLowerCase().match(/oav (\d+)/);
                     let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
-                    title = title.textContent.replace(',', ' ').replace('.', ' ').split(':')[0].split('-')[0].trim()
-                    title = encodeURIComponent(title)
+                    let title = createNyaaUrlFromTitle(elems[i].getElementsByClassName("title")[0].textContent)
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
@@ -994,9 +1009,8 @@
                 // Mavanime.co
                 let nb = document.getElementsByClassName("title-header-video")[0].innerText.split('-').length - 1;
                 let title = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', ' ').replace('.', ' ').split(':')[0].split('-').slice(0, nb).join('-').trim().toLowerCase().split(' ').join('-');
-                let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', ' ').replace('.', ' ').split(':')[0].split('-').slice(0, nb).join(' ').trim();
-
-                originalTitle = encodeURIComponent(originalTitle)
+                let originalTitle = document.getElementsByClassName("title-header-video")[0].innerText.replace(',', ' ').replace('.', ' ').split('-').slice(0, nb).join(' ').trim();
+                originalTitle = createNyaaUrlFromTitle(originalTitle)
 
                 let ep = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/episode (\d+)/);
                 let oav = document.getElementsByClassName("title-header-video")[0].innerText.split('-')[nb].toLowerCase().match(/oav (\d+)/);
