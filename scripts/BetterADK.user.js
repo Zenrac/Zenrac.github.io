@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.65
+// @version      1.66
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1071,7 +1071,7 @@
                     }
                 }
                 titleFra += "&lang=vo"
-                let urlNormalFra = "https://franime.fr/anime/" + titleFra;
+                let urlNormalFra = "https://franime.fr/anime2/" + titleFra;
                 let urlFra = urlNormalFra + "&adk=true";
 
                 // Build Voiranime url

@@ -1,9 +1,85 @@
-exclude:
-  - README.md
-  - LICENSE
-  
-logo: /images/avatar.gif
+title: Zenrac's scripts
+description: >- # this means to ignore newlines until "baseurl:"
+  All Zenrac's scripts, including BetterADK and BetterMAV
+baseurl: /
+github_username: zenrac
+minimal_mistakes_skin: dark
+search: false
 
-description: Random scripts I wanna share
+# Build settings
+remote_theme: mmistakes/minimal-mistakes
+# Outputting
+permalink: /scripts/
+paginate: 5 # amount of posts to show
+paginate_path: /scripts/
+timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
-theme: jekyll-theme-midnight
+atom_feed:
+  hide: true
+
+include:
+  - scripts
+
+# Plugins (previously gems:)
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-include-cache
+
+author:
+  name   : "Zenrac"
+  avatar : "/images/avatar.gif"
+  bio    : ".NET Dev, also doing Python, Ruby and JS..."
+  links:
+    - label: "Website"
+      icon: "fas fa-fw fa-link"
+      url: "/"
+    - label: "Paypal"
+      icon: "fab fa-fw fa-paypal"
+      url: "https://www.paypal.com/paypalme/ZenracZenrac"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/zenrac"
+    - label: "Discord"
+      icon: "fab fa-fw fa-discord"
+      url: "https://zenrac.github.io/images/discord.png"
+
+footer:
+  links:
+    - label: "Home"
+      icon: "fa fa-fw fa-house"
+      url: "/"
+    - label: "Paypal"
+      icon: "fab fa-fw fa-paypal"
+      url: "https://www.paypal.com/paypalme/ZenracZenrac"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/zenrac"
+    - label: "Discord"
+      icon: "fab fa-fw fa-discord"
+      url: "https://zenrac.github.io/images/discord.png"
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      canonical_url: "/scripts"
+  # _pages
+  - scope:
+      path: "scripts"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+      canonical_url: "/scripts"
