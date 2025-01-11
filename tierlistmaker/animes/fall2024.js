@@ -151,11 +151,6 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/56400/Maou-sama_Retry_R"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1910/144517.webp",
-      "title": "Houkago Shounen Hanako-kun Part 2",
-      "url": "https://myanimelist.net/anime/57102/Houkago_Shounen_Hanako-kun_Part_2"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1037/145338.webp",
       "title": "MF Ghost 2nd Season",
       "url": "https://myanimelist.net/anime/57559/MF_Ghost_2nd_Season"
@@ -231,11 +226,6 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/56967/Kamierabi_2nd_Season"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1713/144761.webp",
-      "title": "Hamidashi Creative",
-      "url": "https://myanimelist.net/anime/56461/Hamidashi_Creative"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1507/145670.webp",
       "title": "Shin Tennis no Oujisama: U-17 World Cup Semifinal",
       "url": "https://myanimelist.net/anime/55570/Shin_Tennis_no_Oujisama__U-17_World_Cup_Semifinal"
@@ -256,21 +246,6 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/53802/25-jigen_no_Ririsa"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1660/143460.webp",
-      "title": "Kimi to Boku no Saigo no Senjou, Aruiwa Sekai ga Hajimaru Seisen Season II",
-      "url": "https://myanimelist.net/anime/49981/Kimi_to_Boku_no_Saigo_no_Senjou_Aruiwa_Sekai_ga_Hajimaru_Seisen_Season_II"
-    },
-    {
-      "img": "https://cdn.myanimelist.net/images/anime/1455/141858.webp",
-      "title": "Sasayaku You ni Koi wo Utau",
-      "url": "https://myanimelist.net/anime/54233/Sasayaku_You_ni_Koi_wo_Utau"
-    },
-    {
-      "img": "https://cdn.myanimelist.net/images/anime/1106/145996.webp",
-      "title": "Delico's Nursery",
-      "url": "https://myanimelist.net/anime/56179/Delicos_Nursery"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1482/143629.webp",
       "title": "Tasuuketsu",
       "url": "https://myanimelist.net/anime/57945/Tasuuketsu"
@@ -281,8 +256,48 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/58488/Sengoku_Youko__Senma_Konton-hen"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1852/140786.webp",
-      "title": "Wonderful Precure!",
-      "url": "https://myanimelist.net/anime/57390/Wonderful_Precure"
+      "img": "https://cdn.myanimelist.net/images/anime/1683/145446.webp",
+      "title": "Saikyou no Shienshoku \"Wajutsushi\" de Aru Ore wa Sekai Saikyou Clan wo Shitagaeru",
+      "url": "https://myanimelist.net/anime/58714/Saikyou_no_Shienshoku_Wajutsushi_de_Aru_Ore_wa_Sekai_Saikyou_Clan_wo_Shitagaeru"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1877/145819.webp",
+      "title": "Kami no Tou: Koubou-sen",
+      "url": "https://myanimelist.net/anime/59989/Kami_no_Tou__Koubou-sen"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1572/145903.webp",
+      "title": "Kekkon suru tte, Hontou desu ka",
+      "url": "https://myanimelist.net/anime/55887/Kekkon_suru_tte_Hontou_desu_ka"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1917/144334.webp",
+      "title": "Kamonohashi Ron no Kindan Suiri 2nd Season",
+      "url": "https://myanimelist.net/anime/57635/Kamonohashi_Ron_no_Kindan_Suiri_2nd_Season"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1079/145918.webp",
+      "title": "Mecha-ude (TV)",
+      "url": "https://myanimelist.net/anime/53033/Mecha-ude_TV"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1198/145156.webp",
+      "title": "Goukon ni Ittara Onna ga Inakatta Hanashi",
+      "url": "https://myanimelist.net/anime/56843/Goukon_ni_Ittara_Onna_ga_Inakatta_Hanashi"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1314/145530.webp",
+      "title": "Rurouni Kenshin: Meiji Kenkaku Romantan - Kyoto Douran",
+      "url": "https://myanimelist.net/anime/57554/Rurouni_Kenshin__Meiji_Kenkaku_Romantan_-_Kyoto_Douran"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1270/145168.webp",
+      "title": "Natsume Yuujinchou Shichi",
+      "url": "https://myanimelist.net/anime/55823/Natsume_Yuujinchou_Shichi"
+    },
+    {
+      "img": "https://cdn.myanimelist.net/images/anime/1133/141311.webp",
+      "title": "Shinkalion: Change the World",
+      "url": "https://myanimelist.net/anime/57798/Shinkalion__Change_the_World"
     }
   ]
