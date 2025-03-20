@@ -61,40 +61,58 @@ let tierlist_div;
 let dragged_image;
 
 function getElementsFromMal() {
-	var videos = document.getElementsByClassName("js-anime-type-1");
-	var videoList = []; // Create an empty array to store video information
-	for (video of videos) {
-		var member = video.querySelectorAll("div.scormem-item.member");
-		var memberCount = member[0].innerText.trim();
-		if (memberCount.includes('K')) {
-			var count = memberCount.replace("K", "") * 1000;
-			if (count > 5000) {
-				let date = video.getElementsByClassName('prodsrc')[0].getElementsByClassName('info')[0].getElementsByClassName('item')[0].innerHTML
-				let animeDate = new Date(date);
-				let lastYearDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-				if (animeDate > lastYearDate) {
-					let imgDiv = video.querySelectorAll("img")[0];
-					let img = imgDiv.src;
-					let url = imgDiv.parentNode.href;
-					let title = video.querySelectorAll(".link-title")[0].innerText;
-					if (img != undefined && img.trim().length != 0) {
-						// Create an object with img, title, and url properties
-						var videoInfo = {
-							img: img,
-							title: title,
-							url: url
-						};
-						// Push the videoInfo object into the videoList array
-						videoList.push(videoInfo);
-					}
-				}
-			}
-		}
-	}
+    var videos = document.getElementsByClassName("js-anime-type-1");
+    var videoList = [];
 
-	// Convert the videoList array to JSON string
-	var jsonOutput = JSON.stringify(videoList, null, 2); // The second parameter for pretty-printing (indentation)
-	console.log(jsonOutput);
+    for (video of videos) {
+        var member = video.querySelectorAll("div.scormem-item.member");
+        var memberCount = member[0].innerText.trim();
+        var count = 0;
+
+        if (memberCount.includes('K')) {
+            count = parseFloat(memberCount.replace("K", "")) * 1000;
+        } else if (memberCount.includes('M')) {
+            count = parseFloat(memberCount.replace("M", "")) * 1000000;
+        } else {
+            count = parseInt(memberCount);
+        }
+
+        if (count > 5000) {
+            let date = video.getElementsByClassName('prodsrc')[0].getElementsByClassName('info')[0].getElementsByClassName('item')[0].innerHTML;
+            let animeDate = new Date(date);
+            let lastYearDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+
+            if (animeDate > lastYearDate) {
+                let imgDiv = video.querySelectorAll("img")[0];
+                let img = imgDiv.src;
+                let url = imgDiv.parentNode.href;
+                let title = video.querySelectorAll(".link-title")[0].innerText;
+
+                if (img != undefined && img.trim().length != 0) {
+                    var videoInfo = {
+                        img: img,
+                        title: title,
+                        url: url,
+                        count: count
+                    };
+                    videoList.push(videoInfo);
+                }
+            }
+        }
+    }
+
+    videoList.sort((a, b) => b.count - a.count);
+
+	var finalList = videoList.map(video => {
+        return {
+            img: video.img,
+            title: video.title,
+            url: video.url
+        };
+    });
+
+    var jsonOutput = JSON.stringify(finalList, null, 2);
+    console.log(jsonOutput);
 }
 
 function reset_row(row) {
