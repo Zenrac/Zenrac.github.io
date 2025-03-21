@@ -7,28 +7,8 @@ var seasonType = {
 };
 
 const seasons = ['winter', 'spring', 'summer', 'fall'];
-const startYear = 2023;
-const endYear = 2024;
 
-const scripts = [];
-
-for (let year = startYear; year <= endYear; year++) {
-    for (const season of seasons) {
-        scripts.push(`animes/${season}${year}.js`);
-    }
-}
-
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = () => resolve();
-        script.onerror = () => resolve();
-        document.head.appendChild(script);
-    });
-}
-
-Promise.all(scripts.map(loadScript));
+const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)$/i, '');
 
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
@@ -270,9 +250,9 @@ window.addEventListener('load', () => {
 	window.addEventListener('beforeunload', (evt) => {
 		return null;
 		// if (!unsaved_changes) return null;
-		var msg = "You have unsaved changes. Leave anyway?";
-		(evt || window.event).returnValue = msg;
-		return msg;
+		// var msg = "You have unsaved changes. Leave anyway?";
+		// (evt || window.event).returnValue = msg;
+		// return msg;
 	});
 });
 
@@ -357,6 +337,7 @@ function create_img_with_src(src, title = "", url = "") {
 }
 
 function save_tierlist_png() {
+	
     const tierlist = document.getElementById('tierlist');
 	let title = document.getElementById('title-label');
 	let elementsArray = tierlist.getElementsByClassName('row-buttons');
@@ -379,7 +360,7 @@ function save_tierlist_png() {
 }
 
 function save_tierlist() {
-	let regex = /\/(\d+\/\d+)\.webp$/;
+	let regex = /\/(\d+\/\d+)\.(webp|jpe?g)$/;
 	let serialized_tierlist = {
 		title: document.querySelector('.title-label').innerText,
 		rows: [],
@@ -716,17 +697,15 @@ function bind_trash_events() {
 		evt.preventDefault();
 		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
 			let animes = window.animeSeasons[dropdown.value];
+
 			let alreadyAdded = Array.from(document.getElementsByClassName('item'));
 			for (let anime of animes) {
 				let isAlreadyAdded = alreadyAdded.some(span => {
 					let img = span.querySelector('img');
-					return img && img.src === anime.img;
+					return img && removeExtension(img.src) === removeExtension(anime.img);
 				});
 
-				if (isAlreadyAdded) {
-					console.log("Contained");
-				}
-				else {
+				if (!isAlreadyAdded) {
 					let images = document.querySelector('.images');
 					if (!anime.img.includes('http')) {
 						anime.img = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
