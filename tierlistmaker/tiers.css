@@ -185,6 +185,28 @@ img.draggable.dragged, .button:active {
 	margin: 1px;
 }
 
+.title-img {
+    position: absolute;
+    opacity: 0;
+	left: 0px;
+	overflow: clip;
+	word-break: break-all;
+	font-size: 1px;
+}
+
+.highlight {
+    filter: none; /* Pas de grisage, image normale */
+}
+
+.image-container img.grayed {
+    filter: grayscale(100%) brightness(0.5); /* Grisage des autres images */
+}
+
+.image-container {
+    height: 120px;
+	width: 100px;
+}
+
 .row-buttons {
 	display: flex;
 	flex-direction: column;

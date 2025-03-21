@@ -156,7 +156,7 @@ window.animeSeasons['Summer 2024'] = [
     "url": "https://myanimelist.net/anime/53626/Bye_Bye_Earth"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1067/143885.webp",
+    "img": "https://cdn.myanimelist.net/images/anime/1101/143646.jpg",
     "title": "Boku no Tsuma wa Kanjou ga Nai",
     "url": "https://myanimelist.net/anime/58272/Boku_no_Tsuma_wa_Kanjou_ga_Nai"
   },

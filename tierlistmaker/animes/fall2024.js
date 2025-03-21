@@ -116,7 +116,7 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/55071/Amagami-san_Chi_no_Enmusubi"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1878/145376.webp",
+      "img": "https://cdn.myanimelist.net/images/anime/1018/146464.jpg",
       "title": "Yarinaoshi Reijou wa Ryuutei Heika wo Kouryakuchuu",
       "url": "https://myanimelist.net/anime/55150/Yarinaoshi_Reijou_wa_Ryuutei_Heika_wo_Kouryakuchuu"
     },

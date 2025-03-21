@@ -200,6 +200,26 @@ window.addEventListener('load', () => {
 		}
 	});
 
+	// Allow to search image with CTRL + F
+	document.addEventListener("selectionchange", function () {
+		let selectedText = window.getSelection().toString().toLowerCase();
+
+		let images = document.querySelectorAll('.image-container img');
+
+		images.forEach(img => {
+			let title = img.title.toLowerCase();
+			if (selectedText == "") {
+				img.classList.remove("highlight", "grayed");
+			} else if (title.includes(selectedText)) {
+				img.classList.remove("grayed");
+				img.classList.add("highlight");
+			} else {
+				img.classList.remove("highlight");
+				img.classList.add("grayed");
+			}
+		});
+	});
+
 	// Allow copy-pasting image from clipboard
 	document.onpaste = (evt) => {
 		let clip_data = evt.clipboardData || evt.originalEvent.clipboardData;
@@ -301,7 +321,7 @@ function create_img_with_src(src, title = "", url = "") {
 	var dropdown = document.getElementById("dropdown");
 
 	if (title == "" || url == "" && window.animeSeasons[dropdown.value]) {
-		let anime = window.animeSeasons[dropdown.value].filter(m => m.img.includes(src))
+		let anime = window.animeSeasons[dropdown.value].filter(m => removeExtension(m.img).includes(removeExtension(src)))
 		if (anime && anime.length > 0) {
 			title = anime[0].title;
 			url = anime[0].url;
@@ -312,6 +332,7 @@ function create_img_with_src(src, title = "", url = "") {
 	img.style.userSelect = 'none';
 	img.classList.add('draggable');
 	img.title = title;
+	img.alt = title;
 	img.draggable = true;
 	img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
 	img.addEventListener('mousedown', (evt) => {
@@ -332,8 +353,26 @@ function create_img_with_src(src, title = "", url = "") {
 				window.open(youtubeUrl, "_blank");
 			}
 		});
+	}	
+
+	let titleSpan = document.createElement('label');
+	titleSpan.classList.add('title-img');
+	titleSpan.textContent = title;
+
+	let container = document.createElement('div');
+	container.classList.add('image-container');
+	container.appendChild(img);
+	container.appendChild(titleSpan);
+
+	if (!title.includes(window.getSelection().toString().toLowerCase())) {
+		img.classList.add("grayed");
 	}
-	return img;
+
+	let item = document.createElement('span');
+	item.classList.add('item');
+	item.appendChild(container);
+
+	return item;
 }
 
 function save_tierlist_png() {
@@ -409,11 +448,8 @@ function load_tierlist(serialized_tierlist) {
 				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
 			}
 			let img = create_img_with_src(img_src);
-			let td = document.createElement('span');
-			td.classList.add('item');
-			td.appendChild(img);
 			let items_container = elem.querySelector('.items');
-			items_container.appendChild(td);
+			items_container.appendChild(img);
 		}
 
 		elem.querySelector('label').innerText = ser_row.name;
@@ -427,10 +463,7 @@ function load_tierlist(serialized_tierlist) {
 				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
 			}
 			let img = create_img_with_src(img_src);
-			let items = document.createElement('span');
-			items.classList.add('item');
-			items.appendChild(img)
-			images.appendChild(items);
+			images.appendChild(img);
 		}
 	}
 
@@ -445,10 +478,7 @@ function load_from_anime(animes, title, cookie = true) {
 	let images = document.querySelector('.images');
     for (let anime of animes) {
 		let img = create_img_with_src(anime.img, anime.title, anime.url);
-		let items = document.createElement('span');
-		items.classList.add('item');
-		items.appendChild(img)
-		images.appendChild(items);
+		images.appendChild(img);
 	}
 
 	var dropdown = document.getElementById("dropdown");
@@ -490,7 +520,8 @@ function make_accept_drop(elem, hover = true) {
 		}
 
 		const targetImage = evt.target.closest('span.item');
-		let dragged_image_parent = dragged_image.parentNode;
+		let dragged_image_parent_first = dragged_image.parentNode;
+		let dragged_image_parent = dragged_image.parentNode.parentNode;
 
 		if (targetImage === dragged_image_parent) {
 			return;
@@ -502,11 +533,9 @@ function make_accept_drop(elem, hover = true) {
 			let containing_tr = dragged_image_parent.parentNode;
 			containing_tr.removeChild(dragged_image_parent);
 		} else {
-			dragged_image_parent.removeChild(dragged_image);
+			dragged_image_parent.removeChild(dragged_image_parent_first)
 		}
-		let td = document.createElement('span');
-		td.classList.add('item');
-		td.appendChild(dragged_image);
+		let img = create_img_with_src(dragged_image.src)
 		let bank = document.querySelector('.bank');
 		let items_container = elem.querySelector('.items');
 		if (!items_container) {
@@ -518,10 +547,10 @@ function make_accept_drop(elem, hover = true) {
 			const mouseX = evt.clientX - rect.left; // Mouse position relative to the target image
 			if (mouseX < rect.width / 2) {
 				// If mouse is on the left half of the target image, insert before
-				items_container.insertBefore(td, targetImage);
+				items_container.insertBefore(img, targetImage);
 			} else {
 				// If mouse is on the right half of the target image, insert after
-				items_container.insertBefore(td, targetImage.nextSibling);
+				items_container.insertBefore(img, targetImage.nextSibling);
 			}
 		}
 		else {
@@ -530,14 +559,14 @@ function make_accept_drop(elem, hover = true) {
 				// Check if firstChild exists
 				if (firstChild) {
 					// If firstChild exists, prepend the new element before it
-					items_container.insertBefore(td, firstChild);
+					items_container.insertBefore(img, firstChild);
 				} else {
 					// If firstChild does not exist (empty list), simply append the new element to the container
-					items_container.appendChild(td);
+					items_container.appendChild(img);
 				}
 			}
 			else {
-				items_container.appendChild(td);
+				items_container.appendChild(img);
 			}
 		}
 
@@ -711,10 +740,7 @@ function bind_trash_events() {
 						anime.img = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
 					}
 					let img = create_img_with_src(anime.img);
-					let items = document.createElement('span');
-					items.classList.add('item');
-					items.appendChild(img)
-					images.appendChild(items);
+					images.appendChild(img);
 				}
 			}
 			save_tierlist();
