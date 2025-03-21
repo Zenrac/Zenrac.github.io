@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Placement Calculator</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <!-- Custom styles -->
+    <link rel='stylesheet' href='merger.css'/>
+    <h1>Average Placement Calculator</h1>
+    <p>Upload multiple JSON files containing tierlist rankings, and we'll calculate the average placements.</p>
+    <input type="file" id="fileInput" multiple accept=".json">
+    <button onclick="processFiles()">Calculate Averages</button>
+    <button onclick="exportResults()">Export Results</button>
+
+    <h2>Results</h2>
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Image</th>
+                <th>Average Placement</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="merger.js"></script>  <!-- Link to the external JS file -->
+
+</body>
+</html>

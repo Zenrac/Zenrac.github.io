@@ -1,0 +1,65 @@
+/* Dark Theme Applied to Everything */
+body {
+    background-color: #181818;
+    color: #ccc;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #242424;
+    color: #ccc;
+}
+
+table, th, td {
+    border: 1px solid #444;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+}
+
+td {
+    background-color: #242424;
+}
+
+button {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #444;
+}
+
+/* Form Inputs, Selects, and Textareas */
+input, select, textarea {
+    background-color: #333;
+    color: #ccc;
+    border: 1px solid #444;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #4CAF50;
+}
+
+/* Links */
+a {
+    color: #4CAF50;
+}
+
+a:hover {
+    color: #81c784;
+}

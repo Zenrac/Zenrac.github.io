@@ -72,10 +72,10 @@
                 <input type='text' id='search-input' placeholder="Search..." />
                 <div class='buttons-container'>
                     <div class='button'>
-                        <label for='load-img-input'>
-                            <img src='img/plus.png' title='Add images'/>
+                        <label for='load-file-input'>
+                            <img src='img/plus.png' title='Add images or JSON'/>
                         </label>
-                        <input id='load-img-input' type='file' accept='image/*' multiple/>
+                        <input id='load-file-input' type='file' accept='image/*,application/json' multiple/>
                     </div>
                     <div class='button'>
                         <label for='reset-list-input'>
@@ -84,10 +84,13 @@
                         <input id='reset-list-input' type='button' />
                     </div>
                     <div class='button export'>
-                        <label for='export-input' id='title'>
-                            <img src='img/export.png' title='Export'/>
+                        <label id='export-label'>
+                            <img src='img/export.png' title='Export' id="export-btn"/>
                         </label>
-                        <input id='export-input' type='button' />
+                        <div class="dropdown-content" id="export-menu">
+                            <button onclick="exportImages('PNG')">PNG</button>
+                            <button onclick="exportImages('JSON')">JSON</button>
+                        </div>
                     </div>
                     <div class='button'>
                         <img id='trash' src='img/trash_bin.png' title='Delete image (drag it over here)'></img>

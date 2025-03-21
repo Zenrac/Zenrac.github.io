@@ -40,6 +40,43 @@ let untiered_images;
 let tierlist_div;
 let dragged_image;
 
+function importTierlist(file) {
+	let reader = new FileReader();
+	reader.addEventListener('load', (load_evt) => {
+		let raw = load_evt.target.result;
+		let parsed = JSON.parse(raw);
+		if (!parsed) {
+			alert("Failed to parse data");
+			return;
+		}
+		hard_reset_list();
+		load_tierlist(parsed);
+	});
+	reader.readAsText(file);
+}
+
+function importImage(file) {
+	let images = document.querySelector('.images');
+	let reader = new FileReader();
+	reader.addEventListener('load', (load_evt) => {
+		let img = create_img_with_src(load_evt.target.result);
+		images.appendChild(img);
+		unsaved_changes = true;
+	});
+	reader.readAsDataURL(file);
+}
+
+function exportImages(format) {
+	save_tierlist();
+	if (format == "PNG") {
+		save_tierlist_png();
+	}
+	if (format == "JSON") {
+		save_tierlist_json();
+	}
+	document.getElementById("export-menu").style.display = "none";
+}
+
 function getElementsFromMal() {
     var videos = document.getElementsByClassName("js-anime-type-1");
     var videoList = [];
@@ -205,22 +242,24 @@ window.addEventListener('load', () => {
 
 	bind_title_events();
 
-	document.getElementById('load-img-input').addEventListener('input', (evt) => {
-		// @Speed: maybe we can do some async stuff to optimize this
-		let images = document.querySelector('.images');
-		for (let file of evt.target.files) {
-			let reader = new FileReader();
-			reader.addEventListener('load', (load_evt) => {
-				let img = create_img_with_src(load_evt.target.result);
-				images.appendChild(img);
-				unsaved_changes = true;
-			});
-			reader.readAsDataURL(file);
+	let search_input = document.getElementById('search-input');
+
+	document.addEventListener('keydown', function(event) {
+		console.log(event)
+		if (event.shiftKey && event.key === 'R') {
+			console.log("EZZZZZZZ")
+
+			event.preventDefault();
+			if (confirm('Randomize Tierlist? (this will shuffle all images in the tierlist)')) {
+				soft_reset_list(true);
+				var dropdown = document.getElementById("dropdown");
+				var dropdownType = document.getElementById("dropdowntype");
+				load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false, true);
+			}
 		}
 	});
 
-	let search_input = document.getElementById('search-input');
-
+	/*
 	// Allow to search image with CTRL + F (Firefox only)
 	if (navigator.userAgent.indexOf("Firefox") > 0) {
 		document.addEventListener("selectionchange", () => {
@@ -231,16 +270,16 @@ window.addEventListener('load', () => {
 
 	// Other navigators than firefox, manual search bar
 	else {
-		window.addEventListener("keydown",function (e) {
-			if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) { 
-				e.preventDefault();
-				search_input.focus();
-			}
-		})
-		search_input.addEventListener("input", (event) => {
-			changeImageColorBasedOnSearch(event.target.value.toLowerCase());
-		});
-	}
+	*/
+	window.addEventListener("keydown",function (e) {
+		if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) { 
+			e.preventDefault();
+			search_input.focus();
+		}
+	})
+	search_input.addEventListener("input", (event) => {
+		changeImageColorBasedOnSearch(event.target.value.toLowerCase());
+	});
 
 	// Allow copy-pasting image from clipboard
 	document.onpaste = (evt) => {
@@ -271,8 +310,31 @@ window.addEventListener('load', () => {
 		}
 	});
 
-	document.getElementById('export-input').addEventListener('click', () => {
-		save_tierlist_png();
+	document.getElementById("export-btn").addEventListener("click", function(event) {
+		event.stopPropagation();
+		const menu = document.getElementById("export-menu");
+		menu.style.display = (menu.style.display === "block") ? "none" : "block";
+	});
+	
+	document.addEventListener("click", function(event) {
+		const menu = document.getElementById("export-menu");
+		if (menu.style.display === "block" && !event.target.closest(".button.export")) {
+			menu.style.display = "none";
+		}
+	});
+
+	document.getElementById('load-file-input').addEventListener('change', function(event) {
+		const files = event.target.files;
+		
+		for (let file of files) {
+			if (file.type.startsWith('image/')) {
+				importImage(file);
+			} else if (file.type === 'application/json') {
+				importTierlist(file);
+			} else {
+				alert("Format non supporté !");
+			}
+		}
 	});
 
 	bind_trash_events();
@@ -411,7 +473,7 @@ function save_tierlist_png() {
     html2canvas(tierlist, { useCORS: true, onrendered: function(canvas) {
         const img = canvas.toDataURL('image/png');
         const link = document.createElement('a');
-        link.download = title?.innerText ?? 'tierlist.png';
+        link.download = title?.innerText ?? 'tierlist';
         link.href = img;
         link.click();
 
@@ -420,6 +482,20 @@ function save_tierlist_png() {
 		});
     }});
 
+}
+
+function save_tierlist_json() {
+	let title = document.getElementById('title-label');
+    var dropdown = document.getElementById("dropdown");
+    var dropdownType = document.getElementById("dropdowntype"); 
+	var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
+	console.log(animes)
+    var json = JSON.stringify(animes);
+	var blob = new Blob([json], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = title?.innerText ?? 'tierlist';
+    a.click();
 }
 
 function save_tierlist() {
@@ -460,6 +536,45 @@ function save_tierlist() {
 	saveToLocalStorage(saveTierListsCookieName, cookieData);
 }
 
+function convert_tierlist_from_json(json) {
+	result = {
+		title: json.title,
+		rows: [],
+		untiered: []
+	};
+	for (let idx in serialized_tierlist.rows) {
+		let ser_row = serialized_tierlist.rows[idx];
+		let elem = add_row(idx, ser_row.name);
+
+		for (let img_src of ser_row.imgs ?? []) {
+			if (!img_src.includes('http')) {
+				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+			}
+			let img = create_img_with_src(img_src);
+			let items_container = elem.querySelector('.items');
+			items_container.appendChild(img);
+		}
+
+		elem.querySelector('label').innerText = ser_row.name;
+	}
+	recompute_header_colors();
+
+	if (serialized_tierlist.untiered) {
+		let images = document.querySelector('.images');
+		for (let img_src of serialized_tierlist.untiered) {
+			if (!img_src.includes('http')) {
+				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+			}
+			let img = create_img_with_src(img_src);
+			images.appendChild(img);
+		}
+	}
+
+	resize_headers();
+
+	unsaved_changes = false;
+}
+
 function load_tierlist(serialized_tierlist) {
 	hard_reset_list()
 	document.querySelector('.title-label').innerText = serialized_tierlist.title;
@@ -496,14 +611,33 @@ function load_tierlist(serialized_tierlist) {
 	unsaved_changes = false;
 }
 
-function load_from_anime(animes, title, cookie = true) {
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function load_from_anime(animes, title, cookie = true, randomize = false) {
 	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;
-	let images = document.querySelector('.images');
-    for (let anime of animes) {
-		let img = create_img_with_src(anime.img, anime.title, anime.url);
-		images.appendChild(img);
+	if (randomize) {
+		shuffleArray(animes);
+		for (let anime of animes) {
+			let rows = Array.from(tierlist_div.querySelectorAll('.row')); 
+			let randomIndex = Math.floor(Math.random() * rows.length);
+			let items = rows[randomIndex].querySelectorAll(".items")[0]
+			let img = create_img_with_src(anime.img, anime.title, anime.url);
+			items.appendChild(img);
+		}
 	}
+	else {
+		let images = document.querySelector('.images');
+		for (let anime of animes) {
+			let img = create_img_with_src(anime.img, anime.title, anime.url);
+			images.appendChild(img);
+		}
+	}	
 
 	var dropdown = document.getElementById("dropdown");
 	var dropdownType = document.getElementById("dropdowntype");
@@ -602,7 +736,9 @@ function make_accept_drop(elem, hover = true) {
 function enable_edit_on_click(container, input, label) {
 	function change_label(evt) {
 		input.style.display = 'none';
-		label.innerText = input.value;
+		var dropdown = document.getElementById("dropdown");
+		var dropdownType = document.getElementById("dropdowntype");
+		label.innerText = input.value || `Tierlist ${dropdown.value} ${dropdownType.value}`;
 		label.style.display = 'inline';
 		save_tierlist();
 		unsaved_changes = true;
@@ -611,7 +747,7 @@ function enable_edit_on_click(container, input, label) {
 	input.addEventListener('change', change_label);
 	input.addEventListener('focusout', change_label);
 
-	container.addEventListener('click', (evt) => {
+	input.addEventListener('click', (evt) => {
 		label.style.display = 'none';
 		input.value = label.innerText.substr(0, MAX_NAME_LEN);
 		input.style.display = 'inline';
@@ -785,11 +921,10 @@ function bind_trash_events() {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin.png';
 		if (dragged_image) {
-			let dragged_image_parent = dragged_image.parentNode;
+			let dragged_image_parent = dragged_image.parentNode.parentNode;
 			if (dragged_image_parent.tagName.toUpperCase() === 'SPAN' &&
 					dragged_image_parent.classList.contains('item'))
 			{
-				// We were already in a tier
 				let containing_tr = dragged_image_parent.parentNode;
 				containing_tr.removeChild(dragged_image_parent);
 			}
