@@ -76,6 +76,9 @@ function displayResults(results, files) {
     const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
     const tableHeader = document.getElementById('resultsTable').getElementsByTagName('thead')[0];
 
+    const exportButton = document.querySelector("#exportBtn");  // Get the export button
+    const tierlistButton = document.querySelector("#tierlistBtn");  // Get the tierlist button
+
     // Clear previous table body and header
     tableBody.innerHTML = '';
     const headerRow = tableHeader.querySelector('tr');
@@ -117,9 +120,12 @@ function displayResults(results, files) {
 
         tableBody.appendChild(row);
     });
+
+    toggleExportButton();
+    toggleTierlistButton();
 }
 
-function exportResults() {
+function exportResults(redirect = false) {
     const resultJson = {
         title: "Merged - " + uploadedFiles.map(file => file.name.replace('.json', '')).join(", "),
         rows: [],  // This will hold the rows (S, A, B, etc.)
@@ -163,15 +169,21 @@ function exportResults() {
         }
     });
 
-    // Convert the JSON object to a Blob for download
-    const blob = new Blob([JSON.stringify(resultJson, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', resultJson.title + '.json');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (redirect) {
+        const jsonData = JSON.stringify(resultJson);
+        localStorage.setItem("mergedData", jsonData);
+        // window.location.href = "index.html?merged=true";
+    } else {
+        // Convert the JSON object to a Blob for download
+        const blob = new Blob([JSON.stringify(resultJson, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', resultJson.title + '.json');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 // Reset table when calculating averages again
@@ -182,4 +194,30 @@ function resetTable() {
     // Clear table body and header
     tableBody.innerHTML = '';
     tableHeader.querySelector('tr').innerHTML = '<th>Rank</th><th>Image ID</th><th>Average Rank</th>';
+}
+
+// Function to toggle the export button based on the table content
+function toggleExportButton() {
+    const tableBody = document.querySelector("#resultsTable tbody");
+    const exportButton = document.querySelector("#exportBtn");
+
+    // Check if the table body has any rows
+    if (tableBody.rows.length > 0) {
+        exportButton.disabled = false;  // Enable button if there's data
+    } else {
+        exportButton.disabled = true;   // Disable button if no data
+    }
+}
+
+// Function to toggle the tierlist button based on the table content
+function toggleTierlistButton() {
+    const tableBody = document.querySelector("#resultsTable tbody");
+    const tierlistButton = document.querySelector("#tierlistBtn");
+
+    // Check if the table body has any rows
+    if (tableBody.rows.length > 0) {
+        tierlistButton.disabled = false;  // Enable button if there's data
+    } else {
+        tierlistButton.disabled = true;   // Disable button if no data
+    }
 }

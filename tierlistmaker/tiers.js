@@ -245,10 +245,7 @@ window.addEventListener('load', () => {
 	let search_input = document.getElementById('search-input');
 
 	document.addEventListener('keydown', function(event) {
-		console.log(event)
 		if (event.shiftKey && event.key === 'R') {
-			console.log("EZZZZZZZ")
-
 			event.preventDefault();
 			if (confirm('Randomize Tierlist? (this will shuffle all images in the tierlist)')) {
 				soft_reset_list(true);
@@ -349,7 +346,22 @@ window.addEventListener('load', () => {
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
 
-	dropdownType.dispatchEvent(new Event('change', { bubbles: true }));
+	const urlParams = new URLSearchParams(window.location.search);
+    const merged = urlParams.get('merged');
+
+	if (merged === 'true') {
+		var mergedData = localStorage.getItem('mergedData');
+		if (mergedData) {
+			load_tierlist(mergedData)
+		}
+		else {
+			alert("No data to load");
+		}
+	}
+	else {
+		// Load from localstorage
+		dropdownType.dispatchEvent(new Event('change', { bubbles: true }));
+	}
 
 	window.addEventListener('beforeunload', (evt) => {
 		return null;

@@ -15,7 +15,8 @@
     <p>Upload multiple JSON files containing tierlist rankings, and we'll calculate the average placements.</p>
     <input type="file" id="fileInput" multiple accept=".json">
     <button onclick="processFiles()">Calculate Averages</button>
-    <button onclick="exportResults()">Export Results</button>
+    <button id="exportBtn" disabled onclick="exportResults()">Export Results</button>
+    <button id="tierlistBtn" disabled onclick="exportResults(true)">See tierlist</button>
 
     <h2>Results</h2>
     <table id="resultsTable">

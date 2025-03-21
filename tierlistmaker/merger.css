@@ -63,3 +63,9 @@ a {
 a:hover {
     color: #81c784;
 }
+
+button:disabled {
+    color: white;             /* Light gray text */
+    cursor: not-allowed;     /* Show not-allowed cursor */
+    opacity: 0.4;            /* Make the button slightly transparent */
+}
