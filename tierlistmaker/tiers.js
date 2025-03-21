@@ -217,16 +217,18 @@ window.addEventListener('load', () => {
 		}
 	});
 
+	let search_input = document.getElementById('search-input');
+
 	// Allow to search image with CTRL + F (Firefox only)
 	if (navigator.userAgent.indexOf("Firefox") > 0) {
 		document.addEventListener("selectionchange", () => {
 			changeImageColorBasedOnSearch(window.getSelection().toString().toLowerCase());
 		});
+		search_input.style.display = 'none';
 	}
 
 	// Other navigators than firefox, manual search bar
 	else {
-		let search_input = document.getElementById('search-input');
 		window.addEventListener("keydown",function (e) {
 			if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) { 
 				e.preventDefault();
