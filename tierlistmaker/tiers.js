@@ -366,7 +366,7 @@ function create_img_with_src(src, title = "", url = "") {
 
 	let selection = window.getSelection().toString().toLowerCase();
 
-	if (selection != "" && !title.includes(selection)) {
+	if (selection != "" && !title.toLowerCase().includes(selection)) {
 		img.classList.add("grayed");
 	}
 

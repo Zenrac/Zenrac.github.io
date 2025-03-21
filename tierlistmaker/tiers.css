@@ -137,13 +137,13 @@ img.draggable {
 
 img.draggable:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
+    transform: scale(1.1);
     transition: 200ms ease-in-out;
 }
 
 .button:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
+    transform: scale(1.1);
     transition: background-color 200ms linear, transform 200ms ease-in-out, box-shadow 200ms ease-in-out;
 }
 
@@ -195,16 +195,17 @@ img.draggable.dragged, .button:active {
 }
 
 .highlight {
-    filter: none; /* Pas de grisage, image normale */
+    filter: none;
 }
 
 .image-container img.grayed {
-    filter: grayscale(100%) brightness(0.5); /* Grisage des autres images */
+    filter: grayscale(100%) brightness(0.5);
 }
 
 .image-container {
     height: 120px;
 	width: 100px;
+	overflow: hidden;
 }
 
 .row-buttons {
