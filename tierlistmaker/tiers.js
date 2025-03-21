@@ -1,9 +1,9 @@
 'use strict';
 
 var seasonType = {
-	"Anime" : 0,
     "Opening": 1,
 	"Ending": 2,
+	"Anime" : 0,
 };
 
 const seasons = ['winter', 'spring', 'summer', 'fall'];
