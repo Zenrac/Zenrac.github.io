@@ -397,13 +397,9 @@
     * Creates an url friendly title for nyaa search
     */
         function createNyaaUrlFromTitle(titleText) {
-            console.log(titleText)
             let title = titleText.replace(',', ' ').replace('.', ' ').replace('  ', ' ').split(':')[0].split('-')[0].trim()
             let firstBiggerWord = titleText.replace(',', ' ').replace('.', ' ').replace(title, '').replace(':', '').replace('-', '').trim().split(' ')[0]
             if (firstBiggerWord != "" && firstBiggerWord.includes(title)) {
-                console.log("REPLACING");
-                console.log(title)
-                console.log(firstBiggerWord)
                 title = firstBiggerWord
             }
             return encodeURIComponent(title)

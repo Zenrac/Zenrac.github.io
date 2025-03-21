@@ -95,6 +95,23 @@ function getElementsFromMal() {
     console.log(jsonOutput);
 }
 
+function changeImageColorBasedOnSearch(selectedText) {
+	let images = document.querySelectorAll('.image-container img');
+
+	images.forEach(img => {
+		let title = img.title.toLowerCase();
+		if (selectedText == "") {
+			img.classList.remove("highlight", "grayed");
+		} else if (title.includes(selectedText)) {
+			img.classList.remove("grayed");
+			img.classList.add("highlight");
+		} else {
+			img.classList.remove("highlight");
+			img.classList.add("grayed");
+		}
+	});
+}
+
 function reset_row(row) {
 	row.querySelectorAll('span.item').forEach((item) => {
 		for (let i = 0; i < item.children.length; ++i) {
@@ -200,25 +217,26 @@ window.addEventListener('load', () => {
 		}
 	});
 
-	// Allow to search image with CTRL + F
-	document.addEventListener("selectionchange", function () {
-		let selectedText = window.getSelection().toString().toLowerCase();
-
-		let images = document.querySelectorAll('.image-container img');
-
-		images.forEach(img => {
-			let title = img.title.toLowerCase();
-			if (selectedText == "") {
-				img.classList.remove("highlight", "grayed");
-			} else if (title.includes(selectedText)) {
-				img.classList.remove("grayed");
-				img.classList.add("highlight");
-			} else {
-				img.classList.remove("highlight");
-				img.classList.add("grayed");
-			}
+	// Allow to search image with CTRL + F (Firefox only)
+	if (navigator.userAgent.indexOf("Firefox") > 0) {
+		document.addEventListener("selectionchange", () => {
+			changeImageColorBasedOnSearch(window.getSelection().toString().toLowerCase());
 		});
-	});
+	}
+
+	// Other navigators than firefox, manual search bar
+	else {
+		let search_input = document.getElementById('search-input');
+		window.addEventListener("keydown",function (e) {
+			if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) { 
+				e.preventDefault();
+				search_input.focus();
+			}
+		})
+		search_input.addEventListener("input", (event) => {
+			changeImageColorBasedOnSearch(event.target.value.toLowerCase());
+		});
+	}
 
 	// Allow copy-pasting image from clipboard
 	document.onpaste = (evt) => {

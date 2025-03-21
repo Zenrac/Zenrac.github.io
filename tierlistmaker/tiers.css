@@ -175,6 +175,15 @@ img.draggable.dragged, .button:active {
 	display: none;
 }
 
+#search-input {
+	display: block;
+	background: transparent;
+	border: 0px;
+	color: #ddd;
+	width: 200px;
+	margin-bottom: 10px;
+}
+
 .bottom-container > div {
 	margin: 0;
 }
