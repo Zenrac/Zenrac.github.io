@@ -142,6 +142,8 @@ function hard_reset_list() {
 
 // Places back all the tierlist content into the untiered pool.
 function soft_reset_list(resetRows = false) {
+	let search_input = document.getElementById('search-input');
+	search_input.value = "";
 	tierlist_div.querySelectorAll('.row').forEach(reset_row);
 	if (resetRows) {
 		tierlist_div.innerHTML = '';
