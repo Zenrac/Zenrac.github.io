@@ -40,6 +40,14 @@ let untiered_images;
 let tierlist_div;
 let dragged_image;
 
+function detectAnimeSeason(img) {
+	return Object.entries(window.animeSeasons )
+	  .filter(([season, items]) => 
+		items.some(item => item.img && item.img.includes(img))
+	  )
+	  .map(([season]) => season);
+}
+
 function importTierlist(file) {
 	let reader = new FileReader();
 	reader.addEventListener('load', (load_evt) => {
@@ -50,6 +58,9 @@ function importTierlist(file) {
 			return;
 		}
 		hard_reset_list();
+		var detected = detectAnimeSeason(parsed.rows[0].imgs[0])[0];
+		var dropdown = document.getElementById("dropdown");
+		dropdown.value = detected;
 		load_tierlist(parsed);
 	});
 	reader.readAsText(file);
