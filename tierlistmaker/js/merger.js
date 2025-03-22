@@ -53,15 +53,12 @@ function calculateAverageRankings(allData, files) {
         });
     });
 
-    var i = 0;
     for (const [imgId, info] of Object.entries(globalRank)) {
-        i++;
         const totalPosition = info.positions.reduce((sum, pos) => sum + pos, 0);
         const averagePosition = totalPosition / info.positions.length;
         globalImageList.push({
             imgId,
             averagePosition,
-            newposition: i,
             positions: info.positions,
             files: info.files
         });
@@ -140,22 +137,21 @@ function exportResults(redirect = false) {
         imgs: []
     }));
 
-    globalImageList.forEach(result => {
-        let assigned = false;
-        const imgId = result.imgId;
-        const avgRank = result.newposition;
+    globalImageList.sort((a, b) => a.averagePosition - b.averagePosition);
 
-        // Determine the rank based on the average position
-        if (avgRank <= 5) {
-            resultJson.rows[0].imgs.push(imgId);  // Rank S
-        } else if (avgRank <= 15) {
-            resultJson.rows[1].imgs.push(imgId);  // Rank A
-        } else if (avgRank <= 30) {
-            resultJson.rows[2].imgs.push(imgId);  // Rank B
-        } else if (avgRank <= 50) {
-            resultJson.rows[3].imgs.push(imgId);  // Rank C
+    globalImageList.forEach((result, index) => {
+        const imgId = result.imgId;
+    
+        if (index < 10) {
+            resultJson.rows[0].imgs.push(imgId); 
+        } else if (index < 20) {
+            resultJson.rows[1].imgs.push(imgId);
+        } else if (index < 30) {
+            resultJson.rows[2].imgs.push(imgId);
+        } else if (index < 40) {
+            resultJson.rows[3].imgs.push(imgId);
         } else {
-            resultJson.rows[4].imgs.push(imgId);  // Rank D
+            resultJson.rows[4].imgs.push(imgId);
         }
     });
 

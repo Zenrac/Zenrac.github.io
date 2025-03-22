@@ -31,19 +31,9 @@ window.animeSeasons['Winter 2025'] = [
     "url": "https://myanimelist.net/anime/58572/Shangri-La_Frontier__Kusoge_Hunter_Kamige_ni_Idoman_to_su_2nd_Season"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1299/144738.jpg",
-    "title": "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka V: Houjou no Megami-hen",
-    "url": "https://myanimelist.net/anime/57066/Dungeon_ni_Deai_wo_Motomeru_no_wa_Machigatteiru_Darou_ka_V__Houjou_no_Megami-hen"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1553/145597.jpg",
     "title": "Arifureta Shokugyou de Sekai Saikyou Season 3",
     "url": "https://myanimelist.net/anime/52995/Arifureta_Shokugyou_de_Sekai_Saikyou_Season_3"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1749/145922.jpg",
-    "title": "Chi. Chikyuu no Undou ni Tsuite",
-    "url": "https://myanimelist.net/anime/52215/Chi_Chikyuu_no_Undou_ni_Tsuite"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1093/145470.jpg",
@@ -69,11 +59,6 @@ window.animeSeasons['Winter 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1904/144608.jpg",
     "title": "Guild no Uketsukejou desu ga, Zangyou wa Iya nanode Boss wo Solo Toubatsu Shiyou to Omoimasu",
     "url": "https://myanimelist.net/anime/55997/Guild_no_Uketsukejou_desu_ga_Zangyou_wa_Iya_nanode_Boss_wo_Solo_Toubatsu_Shiyou_to_Omoimasu"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1660/143460.jpg",
-    "title": "Kimi to Boku no Saigo no Senjou, Aruiwa Sekai ga Hajimaru Seisen Season II",
-    "url": "https://myanimelist.net/anime/49981/Kimi_to_Boku_no_Saigo_no_Senjou_Aruiwa_Sekai_ga_Hajimaru_Seisen_Season_II"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1382/144602.jpg",
@@ -274,11 +259,6 @@ window.animeSeasons['Winter 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1221/146649.jpg",
     "title": "Babanbabanban Vampire",
     "url": "https://myanimelist.net/anime/58265/Babanbabanban_Vampire"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1214/142185.jpg",
-    "title": "Haigakura",
-    "url": "https://myanimelist.net/anime/56420/Haigakura"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1406/146839.jpg",
