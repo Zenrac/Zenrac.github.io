@@ -24,8 +24,8 @@ function processFiles() {
                     calculateAverageRankings(allData, uploadedFiles); // Pass the uploaded files
                 }
             } catch (e) {
-                console.log(e);
                 alert('Error parsing file: ' + file.name);
+                throw e;
             }
         };
         reader.readAsText(file);
@@ -142,7 +142,6 @@ function exportResults(redirect = false) {
 
     globalImageList.forEach(result => {
         let assigned = false;
-        console.log(result);
         const imgId = result.imgId;
         const avgRank = result.newposition;
 
@@ -172,7 +171,7 @@ function exportResults(redirect = false) {
     if (redirect) {
         const jsonData = JSON.stringify(resultJson);
         localStorage.setItem("mergedData", jsonData);
-        // window.location.href = "index.html?merged=true";
+        window.location.href = "index.html?merged=true";
     } else {
         // Convert the JSON object to a Blob for download
         const blob = new Blob([JSON.stringify(resultJson, null, 2)], { type: 'application/json' });
@@ -194,6 +193,8 @@ function resetTable() {
     // Clear table body and header
     tableBody.innerHTML = '';
     tableHeader.querySelector('tr').innerHTML = '<th>Rank</th><th>Image ID</th><th>Average Rank</th>';
+    toggleExportButton();
+    toggleTierlistButton();
 }
 
 // Function to toggle the export button based on the table content

@@ -256,6 +256,13 @@ window.addEventListener('load', () => {
 		}
 	});
 
+	document.addEventListener('keydown', function(event) {
+		if (event.shiftKey && event.key === 'M') {
+			event.preventDefault();
+			window.location.href = "./merger.html";
+		}
+	});
+
 	/*
 	// Allow to search image with CTRL + F (Firefox only)
 	if (navigator.userAgent.indexOf("Firefox") > 0) {
@@ -350,7 +357,7 @@ window.addEventListener('load', () => {
     const merged = urlParams.get('merged');
 
 	if (merged === 'true') {
-		var mergedData = localStorage.getItem('mergedData');
+		var mergedData = loadFromLocalStorage('mergedData');
 		if (mergedData) {
 			load_tierlist(mergedData)
 		}
@@ -501,7 +508,6 @@ function save_tierlist_json() {
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype"); 
 	var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
-	console.log(animes)
     var json = JSON.stringify(animes);
 	var blob = new Blob([json], { type: "application/json" });
     var a = document.createElement("a");
