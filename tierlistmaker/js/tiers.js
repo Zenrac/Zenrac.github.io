@@ -57,10 +57,6 @@ function importTierlist(file) {
 			alert("Failed to parse data");
 			return;
 		}
-		hard_reset_list();
-		var detected = detectAnimeSeason(parsed.rows[0].imgs[0])[0];
-		var dropdown = document.getElementById("dropdown");
-		dropdown.value = detected;
 		load_tierlist(parsed);
 	});
 	reader.readAsText(file);
@@ -606,6 +602,11 @@ function convert_tierlist_from_json(json) {
 
 function load_tierlist(serialized_tierlist) {
 	hard_reset_list()
+	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
+	if (detected) {
+		var dropdown = document.getElementById("dropdown");
+		dropdown.value = detected;
+	}
 	document.querySelector('.title-label').innerText = serialized_tierlist.title;
 	for (let idx in serialized_tierlist.rows) {
 		let ser_row = serialized_tierlist.rows[idx];
