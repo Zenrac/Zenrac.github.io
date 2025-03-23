@@ -197,6 +197,15 @@ img.draggable.dragged, .button:active {
 	margin-bottom: 10px;
 }
 
+.header label {
+	padding: 10px;
+}
+
+.header label:empty {
+	min-width: 50px;
+	min-height: 50px;
+}
+
 .button.export {
     position: relative;
     display: flex;

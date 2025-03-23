@@ -246,11 +246,6 @@ window.animeSeasons['Winter 2025'] = [
     "url": "https://myanimelist.net/anime/58739/Momentary_Lily"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1306/145571.jpg",
-    "title": "Touhai: Ura Rate Mahjong Touhairoku",
-    "url": "https://myanimelist.net/anime/57796/Touhai__Ura_Rate_Mahjong_Touhairoku"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1909/146787.jpg",
     "title": "Sorairo Utility (TV)",
     "url": "https://myanimelist.net/anime/58066/Sorairo_Utility_TV"
