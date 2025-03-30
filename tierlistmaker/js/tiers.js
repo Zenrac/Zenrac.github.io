@@ -488,9 +488,7 @@ function create_img_with_src(src, title = "", url = "") {
 	container.classList.add('image-container');
 	container.appendChild(img);
 	container.appendChild(titleSpan);
-
-	let selection = window.getSelection().toString().toLowerCase();
-
+	
 	let item = document.createElement('span');
 	item.classList.add('item');
 	item.appendChild(container);

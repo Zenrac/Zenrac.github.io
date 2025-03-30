@@ -9,6 +9,7 @@
     </style>
 </head>
 <body>
+    <iframe id="indexFrame" src="index.html" style="display:none;"></iframe>
     <link rel='stylesheet' href='css/merger.css'/>
     <h1>Super Tierlist Merger</h1>
     <p>Upload multiple JSON files containing tierlist rankings, and we'll calculate the average placements.</p>
@@ -17,18 +18,20 @@
     <button id="exportBtn" disabled onclick="exportResults()">Export Results</button>
     <button id="tierlistBtn" disabled onclick="exportResults(true)">See tierlist</button>
 
-    <h2>Results</h2>
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Image</th>
-                <th>Average Placement</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    <div id="results">
+        <h2 id="resultsTitle">Results</h2>
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Image</th>
+                    <th>Average Placement</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     <script src="js/merger.js"></script>  <!-- Link to the external JS file -->
 
