@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.66
+// @version      1.67
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -40,12 +40,15 @@
     const NO_RESULT_IMAGE = "https://i.imgur.com/Fg9J6uA.png";
     const ZENRAC_AVATAR = "https://i.imgur.com/7UWLr6t.png";
     const MAV_ICON = "https://i.imgur.com/xSHwElF.png";
-    const FRA_ICON  = "https://i.imgur.com/f9PElxF.png";
-    const VOA_ICON  = "https://i.imgur.com/xqi8s1S.png";
+    const FRA_ICON = "https://i.imgur.com/f9PElxF.png";
+    const VOA_ICON = "https://i.imgur.com/xqi8s1S.png";
     const MAL_ICON = "https://i.imgur.com/S9KpzW5.png";
     const NO_RESULT_PLAYER = `<div style="display:flex;justify-content: center;height: 500px;"><img src="${NO_RESULT_IMAGE}"/></div>`;
 
     const urlParams = new URLSearchParams(window.location.search);
+
+    const NYAA_URL = "https://nyaa.si/?q=";
+    const EP_10_EXCLUSIONS = Array.from({ length: 19 }, (_, i) => `-${10 + i + 1}`).join(" ");
 
     /**
     * Allows to wait for an element to exist
@@ -68,6 +71,34 @@
                 subtree: true
             });
         });
+    }
+
+    function buildSearchUrlNyaa(title, ep, season, newEp, iframe = false) {
+        const parts = [];
+
+        if (ep) {
+            parts.push(ep);
+            if (season) parts.push(`S${season}E${ep}`);
+        }
+
+        if (newEp && ep !== newEp) {
+            parts.push(newEp);
+            if (season) parts.push(`S${season}E${newEp}`);
+        }
+
+        const episodePart = parts.length ? `(${parts.join("|")})` : "";
+
+        let base = `${NYAA_URL}${title} ${episodePart} ${GM_config.get('customnyaasearch')}`.trim();
+
+        if (ep === "10" || newEp === "10") {
+            base += " " + EP_10_EXCLUSIONS;
+        }
+
+        if (iframe) {
+            base += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`
+        }
+
+        return base;
     }
 
     function getMostCompatibleMagnet() {
@@ -323,12 +354,12 @@
             "magnetpriority" : {
                 "label" : "Filtre de mots séparés par une virgule, dans l'odre de priorité, pour le magnet/telechargement",
                 "type" : "text",
-                "default" : "Tsundere-Raws,Erai-Raws"
+                "default" : "Tsundere-Raws,vostfr,Erai-Raws,multi"
             },
             "magnetprioritymaxage" : {
                 "label" : "Age maximum (en jours) des résultats pour la prise en compte du filtre pour le magnet/telechargement",
                 "type" : "text",
-                "default" : "30"
+                "default" : "100"
             }
         },
         `
@@ -397,9 +428,13 @@
     * Creates an url friendly title for nyaa search
     */
         function createNyaaUrlFromTitle(titleText) {
+            console.log(titleText)
             let title = titleText.replace(',', ' ').replace('.', ' ').replace('  ', ' ').split(':')[0].split('-')[0].trim()
             let firstBiggerWord = titleText.replace(',', ' ').replace('.', ' ').replace(title, '').replace(':', '').replace('-', '').trim().split(' ')[0]
             if (firstBiggerWord != "" && firstBiggerWord.includes(title)) {
+                console.log("REPLACING");
+                console.log(title)
+                console.log(firstBiggerWord)
                 title = firstBiggerWord
             }
             return encodeURIComponent(title)
@@ -822,15 +857,15 @@
                     if (ep) {
                         let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        clickableNyaa.href = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = buildSearchUrlNyaa(title, epStr, saisonStr);
                     }
                     else if (oav) {
                         let epStr = parseInt(oav[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                        clickableNyaa.href = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = buildSearchUrlNyaa(title, epStr, saisonStr);
                     }
                     else {
-                        clickableNyaa.href = "https://nyaa.si/?q=" + title + " " + GM_config.get('customnyaasearch');
+                        clickableNyaa.href = buildSearchUrlNyaa(title, null, null, null);
                     }
                     clickableNyaa.target = "_blank"
                     let elNyaa = document.createElement("img");
@@ -850,9 +885,7 @@
                                     let newEpStr = newEp.toString().padStart(2, '0');
                                     let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                                     let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
-                                    if (epStr != newEpStr) {
-                                        clickableNyaa.href = "https://nyaa.si/?q=" + title + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                    }
+                                    clickableNyaa.href = buildSearchUrlNyaa(title, epStr, saisonStr, newEpStr);
                                 }
 
                                 window.open(clickableNyaa.href, '_blank');
@@ -881,15 +914,9 @@
                                             var newEp = calculateEpisodeNumberFromActived(actived, true);
                                             let newEpStr = newEp.toString().padStart(2, '0');
                                             let epStr = parseInt(ep[1]).toString().padStart(2, '0');
-                                            if (epStr != newEpStr) {
-                                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${newEpStr}|S${saisonStr}E${newEpStr}|${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                            }
-                                            else {
-                                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                            }
-                                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
+                                            urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, newEpStr, true);
                                         } else {
-                                            urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                            urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, true);
                                         }
                                         let frameMagnet = document.createElement("iframe");
                                         frameMagnet.src = urlNyaa;
@@ -904,21 +931,17 @@
                                     return;
                                 }
                                 else {
-                                    urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                    if (epBeforeStr != epStr) {
-                                        urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
-                                    }
+                                   urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, epBeforeStr, true);
                                 }
                             }
                             else if (oav) {
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                 let epStr = oav.toString().padStart(2, '0');
-                                urlNyaa = "https://nyaa.si/?q=" + title + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                                urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, newEpStr, true);
                             }
                             else {
-                                urlNyaa = "https://nyaa.si/?q=" + title + " " + GM_config.get('customnyaasearch');
+                                urlNyaa = clickableNyaa.href = buildSearchUrlNyaa(title, null, null, null, true);
                             }
-                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
                             let frameMagnet = document.createElement("iframe");
                             frameMagnet.src = urlNyaa;
                             frameMagnet.classList.add("nyaaMagnet");
@@ -1143,18 +1166,15 @@
                         let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                         let epStr = newEpElement.toString().padStart(2, '0');
-                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                        if (epBeforeStr != epStr) {
-                            clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
-                        }
+                        clickableNyaa.href = buildSearchUrlNyaa(originalTitle, epStr, saisonStr, epBeforeStr);
                     } else if (oav) {
                         let epBeforeStr = parseInt(oav[1]).toString().padStart(2, '0');
                         let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                         let epStr = newEpElement.toString().padStart(2, '0');
-                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
+                        clickableNyaa.href = buildSearchUrlNyaa(originalTitle, epStr, saisonStr);
                     }
                     else {
-                        clickableNyaa.href = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
+                        clickableNyaa.href = buildSearchUrlNyaa(originalTitle, null, null, null);
                     }
                     clickableNyaa.target = "_blank"
                     let elNyaa = document.createElement("img");
@@ -1174,23 +1194,16 @@
                                 let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                 let epStr = newEpElement.toString().padStart(2, '0');
-                                urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                if (epBeforeStr != epStr) {
-                                    urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
-                                }
+                                urlNyaa = buildSearchUrlNyaa(originalTitle, epStr, saisonStr, epBeforeStr, true);
                             } else if (oav) {
                                 let epBeforeStr = parseInt(oav[1]).toString().padStart(2, '0');
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                 let epStr = newEpElement.toString().padStart(2, '0');
-                                urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}) ${GM_config.get('customnyaasearch')}`;
-                                if (epBeforeStr != epStr) {
-                                    urlNyaa = "https://nyaa.si/?q=" + originalTitle + ` (${epStr}|S${saisonStr}E${epStr}|${epBeforeStr}|S${saisonStr}E${epBeforeStr}) ${GM_config.get('customnyaasearch')}`;
-                                }
+                                urlNyaa = buildSearchUrlNyaa(originalTitle, epStr, saisonStr, epBeforeStr, true);
                             }
                             else {
-                                urlNyaa = "https://nyaa.si/?q=" + originalTitle + " " + GM_config.get('customnyaasearch');
+                                urlNyaa = buildSearchUrlNyaa(originalTitle, null, null, null, true);
                             }
-                            urlNyaa += `&adk=true&nyaashortcut=${GM_config.get('nyaashortcut')}&magnetpriority=${GM_config.get('magnetpriority')}&magnetprioritymaxage=${GM_config.get('magnetprioritymaxage')}`;
                             let frameMagnet = document.createElement("iframe");
                             frameMagnet.src = urlNyaa;
                             frameMagnet.classList.add("nyaaMagnet");
