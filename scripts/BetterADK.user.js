@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.67
+// @version      1.68
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -428,16 +428,12 @@
     * Creates an url friendly title for nyaa search
     */
         function createNyaaUrlFromTitle(titleText) {
-            console.log(titleText)
-            let title = titleText.replace(',', ' ').replace('.', ' ').replace('  ', ' ').split(':')[0].split('-')[0].trim()
+            let title = titleText.replace(',', ' ').replace('.', ' ').replace('!', ' ').replace('?', ' ').replace('  ', ' ').split(':')[0].split('-')[0].trim()
             let firstBiggerWord = titleText.replace(',', ' ').replace('.', ' ').replace(title, '').replace(':', '').replace('-', '').trim().split(' ')[0]
-            if (firstBiggerWord != "" && firstBiggerWord.includes(title)) {
-                console.log("REPLACING");
-                console.log(title)
-                console.log(firstBiggerWord)
+            if ((firstBiggerWord != "" && firstBiggerWord.includes(title)) || title.length < 3) {
                 title = firstBiggerWord
             }
-            return encodeURIComponent(title)
+            return encodeURIComponent(title.replace(/[^a-zA-Z\s]/g, ' '));
         }
 
 
