@@ -16,7 +16,7 @@ window.animeSeasons['Summer 2024'] = [
     "url": "https://myanimelist.net/anime/52635/Kami_no_Tou__Ouji_no_Kikan"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1084/144617.webp",
+    "img": "https://cdn.myanimelist.net/images/anime/1094/143324.jpg",
     "title": "Shikanoko Nokonoko Koshitantan",
     "url": "https://myanimelist.net/anime/58426/Shikanoko_Nokonoko_Koshitantan"
   },
