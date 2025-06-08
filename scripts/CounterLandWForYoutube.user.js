@@ -115,8 +115,8 @@
     const textEl = el.querySelector('#message');
     if (!textEl) return;
     const text = textEl.textContent.toLowerCase();
-    const wMatches = text.match(/\bw+\b/g) || [];
-    const lMatches = text.match(/\bl+\b/g) || [];
+    const wMatches = text.match(/(?:^|\s)[wW](?=\s|$)/g) || [];
+    const lMatches = text.match(/(?:^|\s)[lL](?=\s|$)/g) || [];
     wCount += wMatches.length;
     lCount += lMatches.length;
     counterDisplay.textContent = `W: ${wCount} | L: ${lCount}`;
