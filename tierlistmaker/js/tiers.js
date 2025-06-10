@@ -474,7 +474,7 @@ function create_img_with_src(src, title = "", url = "") {
 			if (event.altKey && title) {
 				var dropdownType = document.getElementById("dropdowntype");
 				let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
-				let youtubeUrl = "https://www.youtube.com/results?search_query=" + title + " " + tierListType;
+				let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
 				window.open(youtubeUrl, "_blank");
 			}
 		});
