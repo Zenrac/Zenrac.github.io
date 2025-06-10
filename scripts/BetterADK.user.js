@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.68
+// @version      1.69
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -48,7 +48,7 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     const NYAA_URL = "https://nyaa.si/?q=";
-    const EP_10_EXCLUSIONS = Array.from({ length: 19 }, (_, i) => `-${10 + i + 1}`).join(" ");
+    const EP_10_EXCLUSIONS = Array.from({ length: 15 }, (_, i) => `-${10 + i + 1}`).join(" ");
 
     /**
     * Allows to wait for an element to exist
