@@ -47,7 +47,6 @@ body {
 }
 
 #dropdowntype {
-	margin-top: 5px;
     width: 103px;
     height: 25px;
     font-size: 15px;
@@ -180,6 +179,7 @@ img.draggable.dragged, .button:active {
 	flex: 1;
 	padding: 0px 5px;
 	align-self: center;
+	gap: 10px 0;
 }
 
 .bottom-container input {
@@ -193,8 +193,7 @@ img.draggable.dragged, .button:active {
 	background: transparent;
 	border: 0px;
 	color: #ddd;
-	width: 200px;
-	margin-bottom: 10px;
+	width: 202px;
 }
 
 .header label {
@@ -386,3 +385,88 @@ img.draggable.dragged, .button:active {
 	  animation: octocat-wave 560ms ease-in-out
 	}
   }
+
+#toggle-shortcuts {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  z-index: 1001;
+  border: none;
+}
+
+#shortcuts-box {
+  max-width: 680px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 17px;
+  color: #f5f5f5;
+  border-color: black;
+  padding: 1rem;
+  border-radius: 12px;
+  display: none;
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 12px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  margin-bottom: 0.6rem;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.keys kbd.kbc-button {
+  min-width: 50px;
+  display: inline-block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;;
+}
+
+.keys {
+  flex-shrink: 0;
+  width: 240px;
+}
+
+.desc {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.shortcut-section-title {
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 0 0 0.6rem;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+}
+
+.shortcuts-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-weight: bold;;
+  font-size: 20px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.shortcuts-close:hover {
+  color: #fff;
+}

@@ -466,16 +466,20 @@ function create_img_with_src(src, title = "", url = "") {
 	});
 	if (url.trim() != "") {
 		img.addEventListener("click", function(event) {
-			// Check if the CTRL key is pressed
-			if (event.ctrlKey || event.metaKey) {
-				// Open the link in a new tab/window
-				window.open(url, "_blank");
-			}
 			if (event.altKey && title) {
 				var dropdownType = document.getElementById("dropdowntype");
 				let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
-				let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
-				window.open(youtubeUrl, "_blank");
+				if (event.ctrlKey || event.metaKey) {
+					let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
+					window.open(animeUrl, "_blank");
+				} else {
+					let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
+					window.open(youtubeUrl, "_blank");
+				}
+			}
+			else if (event.ctrlKey || event.metaKey) {
+				// Open the link in a new tab/window
+				window.open(url, "_blank");
 			}
 		});
 	}	
@@ -907,6 +911,30 @@ function bind_trash_events() {
 			}
 			refreshTierListStyle();
 		}
+	});
+	const toggleButton = document.getElementById("toggle-shortcuts");
+	const shortcutsBox = document.getElementById("shortcuts-box");
+	let isVisible = false;
+
+	toggleButton.addEventListener("click", (e) => {
+	e.stopPropagation();
+	isVisible = !isVisible;
+	shortcutsBox.style.display = isVisible ? "block" : "none";
+	});
+
+	document.addEventListener("click", (e) => {
+	const clickedOutside = !shortcutsBox.contains(e.target) && !toggleButton.contains(e.target);
+	if (isVisible && clickedOutside) {
+		shortcutsBox.style.display = "none";
+		isVisible = false;
+	}
+	});
+
+	const closeButton = document.getElementById("shortcuts-close");
+
+	closeButton.addEventListener("click", () => {
+	shortcutsBox.style.display = "none";
+	isVisible = false;
 	});
 	trash.addEventListener('dragleave', (evt) => {
 		evt.preventDefault();
