@@ -6,7 +6,7 @@ var seasonType = {
 	"Anime" : 0,
 };
 
-const seasons = ['winter', 'spring', 'summer', 'fall'];
+const seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
 
 const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)$/i, '');
 
@@ -39,6 +39,17 @@ let headers_orig_min_width;
 let untiered_images;
 let tierlist_div;
 let dragged_image;
+
+const years = Object.keys(window.animeSeasons).map(key => {
+  const parts = key.split(' ');
+  return parseInt(parts[1], 10);
+}).filter(year => !isNaN(year));
+
+const minYear = Math.min(...years);
+const maxYear = Math.max(...years);
+
+const minDate = new Date(minYear, 0, 1);
+const maxDate = new Date(maxYear, 11, 31); 
 
 function detectAnimeSeason(img) {
 	return Object.entries(window.animeSeasons )
@@ -424,6 +435,7 @@ function initialize_dropdown_type() {
 function initialize_dropdown_tierlists() {
 	var dropdownType = document.getElementById("dropdowntype");
 	var dropdown = document.getElementById("dropdown");
+	var dropdownPicker = document.getElementById("seasonPicker");
 
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
@@ -436,8 +448,15 @@ function initialize_dropdown_tierlists() {
 	}
 
 	dropdown.addEventListener("change", function() {
+		dropdownPicker.value = dropdown.value;
 		soft_reset_list();
 		load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+	});
+
+	dropdownPicker.addEventListener("change", function() {
+		dropdown.value = dropdownPicker.value;
+		dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+
 	});
 }
 
@@ -962,3 +981,117 @@ function bind_trash_events() {
 		}
 	});
 }
+
+
+const picker = new AirDatepicker('#seasonPicker', {
+	view: 'months',
+	minView: 'months',
+	dateFormat(date) {
+	const seasonIndex = Math.floor(date.getMonth() / 3);
+	return seasons[seasonIndex] + ' ' + date.getFullYear();
+	},
+	minDate,
+  	maxDate,
+	onShow() {
+	setTimeout(updateSeasons, 10);
+	},
+	onHide() {
+	setTimeout(restorePreviousValue, 10);
+	},
+	onChangeView() {
+	setTimeout(updateSeasons, 10);
+	}
+});
+
+const input = document.getElementById('seasonPicker');
+let previousValue = input.value;
+
+function restorePreviousValue() {
+	if (input.value === "Selecting...") {
+	input.value = previousValue;
+	}
+}
+
+function updateSeasons() {
+    const datepickerVisible = document.querySelector('.air-datepicker--content') !== null;
+    if (datepickerVisible) {
+        if (input.value !== "Selecting...") {
+            previousValue = input.value;
+        }
+        input.value = "Selecting...";
+    } 
+
+    const content = picker.$datepicker.querySelector('.air-datepicker--content');
+    if (!content) return;
+
+    const existing = picker.$datepicker.querySelector('.custom-season-container');
+    if (existing) existing.remove();
+
+    const navTitle = picker.$datepicker.querySelector('.air-datepicker-nav--title');
+    if (!navTitle) return;
+    const displayedYear = parseInt(navTitle.textContent.trim(), 10);
+    if (isNaN(displayedYear)) return;
+
+    const container = document.createElement('div');
+    container.className = 'custom-season-container';
+
+    // Corrected: Use Object.keys since animeSeasons is an object
+    const seasonsAvailableInYear = new Set();
+    const yearStr = displayedYear.toString();
+
+    Object.keys(window.animeSeasons).forEach(seasonYearStr => {
+        const [seasonName, year] = seasonYearStr.split(' ');
+        if (year === yearStr) {
+            seasonsAvailableInYear.add(seasonName);
+        }
+    });
+
+    const yearAvailable = seasonsAvailableInYear.size > 0;
+
+    seasons.forEach((season, i) => {
+        const div = document.createElement('div');
+        div.className = 'custom-season-cell ' + season.toLowerCase();
+        div.textContent = season;
+
+        if (!yearAvailable || !seasonsAvailableInYear.has(season)) {
+            div.classList.add('disabled');
+            div.style.pointerEvents = 'none';
+            div.style.opacity = '0.5';
+        } else {
+            div.addEventListener('click', () => {
+                picker.selectDate(new Date(displayedYear, i * 3, 1));
+                picker.$el.value = season + ' ' + displayedYear;
+                picker.hide();
+            });
+        }
+
+        if (picker.date && picker.date.length) {
+            const selectedYear = picker.date[0].getFullYear();
+            const selectedSeason = Math.floor(picker.date[0].getMonth() / 3);
+            if (selectedYear === displayedYear && selectedSeason === i) {
+                div.classList.add('selected');
+            }
+        }
+
+        container.appendChild(div);
+    });
+
+    var yearElement = picker.$datepicker.querySelector('.air-datepicker-nav--title.-disabled-');
+    if (!yearElement) {
+        content.appendChild(container);
+    }
+}
+
+function attachNavListeners() {
+	const prev = picker.$datepicker.querySelector('.air-datepicker-nav--action[data-action="prev"]');
+	const next = picker.$datepicker.querySelector('.air-datepicker-nav--action[data-action="next"]');
+	if (prev) prev.onclick = () => setTimeout(() => { updateSeasons(); attachNavListeners(); }, 10);
+	if (next) next.onclick = () => setTimeout(() => { updateSeasons(); attachNavListeners(); }, 10);
+}
+
+picker.$el.addEventListener('click', () => {
+	setTimeout(() => {
+	updateSeasons();
+	attachNavListeners();
+	}, 10);
+});

@@ -21,6 +21,9 @@
     <!-- Keyboard CSS -->
     <link rel="stylesheet" href="https://unpkg.com/keyboard-css@1.2.4/dist/css/main.min.css" /> 
 
+    <!-- Air Datepicker -->
+    <link href="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.css" rel="stylesheet" />
+
     <!-- Github ribbon -->
     <a style="z-index: 1;" href="https://github.com/Zenrac/Zenrac.github.io" class="github-corner" aria-label="View source on GitHub">
         <svg width="80" height="80" viewBox="0 0 250 250" style="z-index: 5; fill:rgba(0, 0, 0, 0.05); color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
@@ -49,7 +52,12 @@
     <!-- Custom styles -->
     <link rel='stylesheet' href='css/tiers.css'/>
 
+    <!-- Html2Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+    <!-- Air Datepicker -->
+    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.js"></script>
+
     <script src='animes/spring2025.js'></script>
     <script src='animes/winter2025.js'></script>
     <script src='animes/fall2024.js'></script>
@@ -150,7 +158,11 @@
                     </div>
                 </div>
 
-                <select id="dropdown">
+                <div class="input-wrapper">
+                    <input type="text" id="seasonPicker" readonly placeholder="Select season" style="width: 180px; padding: 8px; font-size: 16px; display: block;">
+                    <span class="arrow">▼</span>
+                </div>
+                <select id="dropdown" style="display: none;">
                 </select>
                 <select id="dropdowntype">
                 </select>
