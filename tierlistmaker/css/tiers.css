@@ -706,3 +706,8 @@ line-height: 1;
   font-style: italic;
   text-align: center;
 }
+
+#seasonPicker::placeholder {
+  color: #000;
+  opacity: 1;
+}
