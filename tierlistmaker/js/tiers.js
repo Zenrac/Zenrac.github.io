@@ -375,6 +375,7 @@ window.addEventListener('load', () => {
 
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
+	picker.selectDate(new Date());
 
 	const urlParams = new URLSearchParams(window.location.search);
     const merged = urlParams.get('merged');
@@ -418,6 +419,7 @@ function initialize_dropdown_type() {
 
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
+	picker.selectDate(new Date());
 
 	for (var season in seasonType) {
 		var option = document.createElement("option");
@@ -439,6 +441,7 @@ function initialize_dropdown_tierlists() {
 
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
+	picker.selectDate(new Date());
 
 	for (var season in window.animeSeasons) {
 		var option = document.createElement("option");
