@@ -264,13 +264,18 @@ function openSkinSelector() {
     { value: 'mythic', label: 'Mythic', iconClass: 'fa fa-trophy mythic' },
   ];
 
-  if (getUnlockedAchievements()['bronze']) {
-    skins.push({ value: 'secret', label: 'Secret', iconClass: 'fa fa-trophy secret' });
-  }
+  const unlockedAchievements = getUnlockedAchievements();
+
+  const hasSecretAchievement = Object.entries(unlockedAchievements).some(([id, unlocked]) =>
+    unlocked && (achievementData[id]?.rarity === 'SecretAchievement' || achievementData[id]?.rarity === 'PrestigeAchievement')
+  );
+
+  if (hasSecretAchievement) skins.push({ value: 'secret', label: 'Secret', iconClass: 'fa fa-trophy secret' });
 
   if (getUnlockedAchievements()['prestigious']) {
     skins.push({ value: 'prestige', label: 'Prestige', iconClass: 'fa fa-trophy prestige' });
   }
+
   const savedSkin = localStorage.getItem('achievementTrackerSkin') || 'bronze';
   let prestigeSettings = { animation: 'bronzeGlow', color: '#ff0077' };
   try {
@@ -1173,7 +1178,7 @@ jQuery(document).ready(function($) {
         title: isZoomed ? "Congratulation Detective! You're on the right way!" : "Congratulations! You unlocked all achievements!",
         text: isZoomed ? "Thanks to your detective skills you understand that you may need to celebrate..." : "I mean all of them without talking about the secret ones, right?",
         width: 500,
-        confirmButtonText: isZoomed ? 'Celebrate!' : 'If only I had my manifying glass...',
+        confirmButtonText: isZoomed ? 'Celebrate!' : 'If only I had my magnifying glass...',
         confirmButtonColor: isZoomed ? '#B28E00' : ''
       }).then((result) => { 
         if (isZoomed && result.value) {
