@@ -890,3 +890,17 @@ a {
 .skin-option:hover {
   transform: scale(1.15);
 }
+
+.newly-viewed-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  box-shadow: 0 0 6px red;
+  pointer-events: none;
+  z-index: 10;
+}

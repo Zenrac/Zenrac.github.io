@@ -112,7 +112,7 @@ let lastMousePos = { x: 0, y: 0 };
 
 let celebrationCount = 0;
 
-function renderAchievementIcon(id, unlocked) {
+function renderAchievementIcon(id, unlocked, isNew = false) {
   const data = achievementData[id] || {
     icon: "fa fa-trophy",
     text: "Achievement unlocked!",
@@ -123,15 +123,18 @@ function renderAchievementIcon(id, unlocked) {
   const bgColor = unlocked ? '#14171c' : '#333';
 
   return `
-    <div class="AchievementIconWrapper ${data.rarity}">
-      <div class="AchievementIconGlowContainerRoot">
-        <div class="AchievementIconGlowContainer">
-          <div class="AchievementIconGlow"></div>
+    <div style="position: relative; display: inline-block;">
+      <div class="AchievementIconWrapper ${data.rarity}">
+        <div class="AchievementIconGlowContainerRoot">
+          <div class="AchievementIconGlowContainer">
+            <div class="AchievementIconGlow"></div>
+          </div>
+        </div>
+        <div class="ani_icon" style="background-color: ${bgColor};">
+          <i class="${data.icon} glyphicon-size" style="color: ${iconColor};"></i>
         </div>
       </div>
-      <div class="ani_icon" style="background-color: ${bgColor};">
-        <i class="${data.icon} glyphicon-size" style="color: ${iconColor};"></i>
-      </div>
+      ${isNew ? '<div class="newly-viewed-dot"></div>' : ''}
     </div>
   `;
 }
@@ -244,17 +247,14 @@ function openAchievementList() {
     const data = achievementData[id];
     const isUnlocked = !!unlocked[id];
 
-    const iconHtml = renderAchievementIcon(id, isUnlocked);
+    const iconHtml = renderAchievementIcon(id, isUnlocked, id in newlyViewed);
 
     if (data.secret && !isUnlocked) {
       return '';
     }
-
-    let newlyViewedText = id in newlyViewed ? '<div class="newly-viewed" style="color: red; font-weight: bold;">New!</div>' : '';
-
     return `
       <div class="swal-achievement achievement-${id} ${isUnlocked ? 'unlocked' : 'locked'}" style="display:flex; align-items:center; margin-bottom: 10px;">
-        ${newlyViewedText}${iconHtml}
+        ${iconHtml}
         <div class="achieve-text" style="margin-left: 12px;">
           <div class="achieve-title" style="color: ${isUnlocked ? rarityColors[data.rarity] : '#999'}; font-weight: ${isUnlocked ? '700' : '400'};">
             ${isUnlocked ? data.title : '???'}
@@ -742,7 +742,7 @@ jQuery(document).ready(function($) {
 	  }
   });
 
-  $('.github-corner').one('mouseenter', function () {
+  $('.github-corner').on('mouseenter', function () {
     achievementUnlocked('cat');
   });
 
