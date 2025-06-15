@@ -466,8 +466,8 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
-  width: 80px;
+  height: 100%;
+  width: 100%;
   padding: 15px;
   position: relative;
 }
@@ -481,7 +481,7 @@ a {
 }
 
 .glyphicon-size {
-  font-size: 55px;
+  font-size: 45px;
 }
 
 .ani_div {
@@ -493,7 +493,7 @@ a {
 
 .ani_div span {
 	color: white;
-	font-size: 12px;
+	font-size: 14px;
 	font-family: helvetica;
 	vertical-align: middle;
 }
@@ -516,9 +516,9 @@ a {
 
 .AchievementIconWrapper {
 	display: inline-block;
-	height: 80px;
+	height: 70px;
 	position: relative;
-	width: 80px;
+	width: 70px;
 }
 
 .AchievementIconGlowContainerRoot,
@@ -625,6 +625,38 @@ a {
   text-shadow:
     0 0 5px #111,
     0 0 10px #111;
+}
+
+.AchievementIconWrapper.PrestigeAchievement .ani_icon {
+  animation: prestigeMultiFlash 2s infinite;
+}
+
+@keyframes prestigeMultiFlash {
+  0% {
+    box-shadow:
+      0 0 8px red,
+      0 0 16px orange;
+  }
+  25% {
+    box-shadow:
+      0 0 8px orange,
+      0 0 16px yellow;
+  }
+  50% {
+    box-shadow:
+      0 0 8px yellow,
+      0 0 16px lime;
+  }
+  75% {
+    box-shadow:
+      0 0 8px lime,
+      0 0 16px cyan;
+  }
+  100% {
+    box-shadow:
+      0 0 8px cyan,
+      0 0 16px red;
+  }
 }
 
 @keyframes glitchShift {
@@ -820,14 +852,34 @@ a {
   }
 }
 
-@keyframes smokeDrift {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.5;
+@keyframes prestigeGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px #ff0077,
+      0 0 12px #00f7ff,
+      0 0 18px #ffe600,
+      0 0 25px #ff00f2;
   }
-  100% {
-    transform: translate(-55%, -55%) scale(1.1);
-    opacity: 0.3;
+  25% {
+    text-shadow:
+      0 0 10px #00f7ff,
+      0 0 18px #ffe600,
+      0 0 28px #ff00f2,
+      0 0 36px #ff0077;
+  }
+  50% {
+    text-shadow:
+      0 0 12px #ffe600,
+      0 0 22px #ff00f2,
+      0 0 32px #ff0077,
+      0 0 42px #00f7ff;
+  }
+  75% {
+    text-shadow:
+      0 0 10px #ff00f2,
+      0 0 20px #ff0077,
+      0 0 30px #00f7ff,
+      0 0 40px #ffe600;
   }
 }
 

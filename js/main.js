@@ -8,7 +8,7 @@ const achievementData = {
   "blind": {
     icon: "fa fa-glasses",
     title: "Colorblind",
-    text: "You may need to wear sunglasses after this one!",
+    text: "You might need sunglasses after this one!",
     rarity: "CommonAchievement",
   },
   "grave_digger": {
@@ -32,7 +32,7 @@ const achievementData = {
   "completed": {
     icon: "fa fa-trophy",
     title: "Master of the Pointless",
-    text: "You got 'em all! Or maybe...",
+    text: "You got 'em all! Or did you...?",
     rarity: "LegendaryAchievement",
   },
   "konami": {
@@ -45,22 +45,29 @@ const achievementData = {
     secret: true,
     icon: "fa-solid fa-meteor",
     title: "Celebration Time",
-    text: "Your powers are now unmatched! Press C to celebrate anywhere.",
+    text: "Your powers are now unmatched! Press C to celebrate.",
     rarity: "MythicAchievement",
   },
   "skin": {
     secret: true,
     icon: "fa-solid fa-shirt",
     title: "Metamorphosis",
-    text: "You've reached maximum potential! Press S to change your skin anytime.",
+    text: "You've reached maximum potential! Press S to change your skin.",
     rarity: "MythicAchievement",
   },
   "bronze": {
     secret: true,
     icon: "fa-solid fa-medal",
     title: "Prestige",
-    text: "After a long journey, you came back to where it all started. Congratulations, I have nothing more to offer.",
+    text: "After a long journey, you came back to where it all started. Congratulations!",
     rarity: "SecretAchievement",
+  },
+  "prestigious": {
+    secret: true,
+    icon: "fa-solid fa-repeat",
+    title: "Master of the Loop",
+    text: "You mastered the art of looping back to the beginning. Truly prestigious!",
+    rarity: "PrestigeAchievement",
   },
 };
 
@@ -72,6 +79,7 @@ const rarityOrder = {
   'LegendaryAchievement': 5,
   'MythicAchievement': 6,
   'SecretAchievement': 7,
+  'PrestigeAchievement': 8
 };
 
 const rarityColors = {
@@ -82,6 +90,7 @@ const rarityColors = {
   LegendaryAchievement: '#ffb84e',
   MythicAchievement: '#ff4500',
   SecretAchievement: '#ff69b4',
+  PrestigeAchievement: 'white'
 };
 
 const rarityToSkin = {
@@ -92,6 +101,7 @@ const rarityToSkin = {
   'LegendaryAchievement': 'gold',
   'MythicAchievement': 'mythic',
   'SecretAchievement': 'secret',
+  'PrestigeAchievement': 'prestige'
 };
 
 
@@ -186,12 +196,37 @@ function openSkinSelector() {
     skins.push({ value: 'secret', label: 'Secret', iconClass: 'fa fa-trophy secret' });
   }
 
-  const skinsHTML = skins.map(skin => `
-    <div class="skin-option" data-skin="${skin.value}" title="${skin.label}">
-      <i class="${skin.iconClass}" style="font-size: 48px;"></i>
-      <div style="text-align:center; margin-top:4px;">${skin.label}</div>
-    </div>
-  `).join('');
+  if (getUnlockedAchievements()['prestigious']) {
+    skins.push({ value: 'prestige', label: 'Prestige', iconClass: 'fa fa-trophy prestige' });
+  }
+  const savedSkin = localStorage.getItem('achievementTrackerSkin') || 'bronze';
+  let prestigeSettings = { animation: 'bronzeGlow', color: '#ff0077' };
+  try {
+    const savedPrestige = JSON.parse(localStorage.getItem('customPrestige'));
+    if (savedPrestige && savedPrestige.animation && savedPrestige.color) {
+      prestigeSettings = savedPrestige;
+    }
+  } catch {}
+
+  const skinsHTML = skins.map(skin => {
+    let style = '';
+    if (skin.value === 'prestige') {
+      style = `color: ${prestigeSettings.color}; animation: ${prestigeSettings.animation} 2s infinite; font-size:48px;`;
+    } else {
+      style = 'font-size: 48px;';
+    }
+    const selectedClass = skin.value === savedSkin ? 'selected' : '';
+
+    return `
+      <div class="skin-option ${selectedClass}" data-skin="${skin.value}" title="${skin.label}" style="cursor:pointer;">
+        <i class="${skin.iconClass}" style="${style}"></i>
+        <div style="text-align:center; margin-top:4px;">
+          ${skin.label}
+          ${savedSkin === skin.value ? '<div style="font-size:12px; color:#888;">Current</div>' : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
 
   Swal.fire({
     title: 'Choose your Skin',
@@ -205,24 +240,175 @@ function openSkinSelector() {
         el.style.cursor = 'pointer';
         el.addEventListener('click', () => {
           const selectedSkin = el.getAttribute('data-skin');
-          applyTrackerSkin(selectedSkin);
-          if (selectedSkin === 'bronze') {
-            achievementUnlocked('bronze');
+          if (selectedSkin === 'prestige') {
+            openPrestigeCustomizationPopup();
+          } else {
+            applyTrackerSkin(selectedSkin);
+            if (selectedSkin === 'bronze') {
+              achievementUnlocked('bronze');
+            }
+            Swal.close();
           }
-          Swal.close();
         });
       });
     }
   });
 }
 
+function openPrestigeCustomizationPopup() {
+  const availableAnimations = [
+    'bronzeGlow', 'silverGlow', 'goldGlow',
+    'mythicGlow', 'secretGlow', 'secretGlitchShift', 'prestigeGlow'
+  ];
+
+  const animationLabels = {
+    bronzeGlow: 'Bronze',
+    silverGlow: 'Silver',
+    goldGlow: 'Gold',
+    mythicGlow: 'Mythic',
+    secretGlow: 'Secret',
+    secretGlitchShift: 'Secret Glitch',
+    prestigeGlow: 'Prestige'
+  };
+
+  let savedSettings = localStorage.getItem('customPrestige');
+
+  let defaultColor = '#ff0077';
+  let defaultAnimation = 'bronzeGlow';
+
+  if (savedSettings) {
+    try {
+      const parsed = JSON.parse(savedSettings);
+      if (parsed.color) defaultColor = parsed.color;
+      if (parsed.animation && availableAnimations.includes(parsed.animation)) {
+        defaultAnimation = parsed.animation;
+      }
+    } catch {
+    }
+  }
+
+  let chosenColor = defaultColor;
+
+
+  Swal.fire({
+    title: 'Customize Your Prestige Skin',
+    html: `
+      <div style="text-align: center;">
+        <div id="prestige-preview" style="
+          font-size: 48px;
+          margin-bottom: 12px;
+          padding: 16px;
+          border-radius: 12px;
+          display: inline-block;
+          animation: ${defaultAnimation} 2s infinite;
+          color: ${defaultColor};
+        ">
+          <i class="fa fa-trophy"></i>
+        </div>
+
+        <div id="prestige-color-picker" style="margin-bottom: 10px;"></div>
+
+        <label for="prestige-animation">Animation:</label><br>
+        <select id="prestige-animation" style="margin-bottom: 10px; color: black; background-color: white;">
+          ${availableAnimations.map(anim => `<option value="${anim}" ${anim === defaultAnimation ? 'selected' : ''}>${animationLabels[anim] || anim}</option>`).join('')}
+        </select>
+      </div>
+    `,
+    showConfirmButton: true,
+    confirmButtonText: 'Apply',
+    showCloseButton: true,
+    onOpen: () => {
+      const preview = document.getElementById('prestige-preview');
+      const animSelect = document.getElementById('prestige-animation');
+
+      const pickr = Pickr.create({
+        el: '#prestige-color-picker',
+        default: defaultColor,
+        components: {
+          preview: true,
+          opacity: false,
+          hue: true,
+          interaction: {
+            hex: true,
+            input: true,
+            save: true
+          }
+        }
+      });
+
+      pickr.on('change', (color) => {
+        chosenColor = color.toHEXA().toString();
+        preview.style.color = chosenColor;
+      });
+
+      animSelect.addEventListener('change', () => {
+        const animation = animSelect.value;
+        preview.style.animation = `${animation} 2s infinite`;
+      });
+
+      pickr.on('save', () => {
+        pickr.hide();
+      });
+    },
+    preConfirm: () => {
+      return {
+        color: chosenColor,
+        animation: document.getElementById('prestige-animation').value
+      };
+    }
+  }).then(result => {
+    if (result && result.value) {
+      const { animation, color } = result.value;
+      applyPrestigeSkin(animation, color);
+    }
+  });
+}
+
+function loadCustomPrestigeSkin() {
+  const tracker = document.getElementById('achievement-tracker');
+  if (!tracker) return;
+
+  const saved = localStorage.getItem('customPrestige');
+  if (!saved) return;
+
+  try {
+    const { animation, color } = JSON.parse(saved);
+
+    const icon = tracker.querySelector('i');
+
+    if (!icon) return;
+
+    icon.style.animation = `${animation} 2s infinite`;
+    icon.style.color = color;
+
+    tracker.classList.add('prestige');
+  } catch  {
+  }
+}
+
+function applyPrestigeSkin(animation, color) {
+  localStorage.setItem('customPrestige', JSON.stringify({ animation, color }));
+  applyTrackerSkin('prestige');
+}
+
 function applyTrackerSkin(skin) {
   const tracker = document.getElementById('achievement-tracker');
   if (!tracker) return;
 
-  tracker.classList.remove('bronze', 'silver', 'gold', 'mythic', 'secret');
+  const icon = tracker.querySelector('i');
+
+  tracker.classList.remove('bronze', 'silver', 'gold', 'mythic', 'secret', 'prestige');
+  if (icon) icon.style.animation = '';
+  if (icon) icon.style.color = '';
 
   tracker.classList.add(skin);
+
+  if (skin === 'prestige') {
+    loadCustomPrestigeSkin();
+  } else {
+    tracker.classList.remove('prestige');
+    tracker.style.removeProperty('--prestige-color');
+  }
 
   localStorage.setItem('achievementTrackerSkin', skin);
 }
@@ -367,11 +553,12 @@ function setPrestigeCount(count) {
 }
 
 function prestige() {
-  unlockedAchievements = {};
+  unlockedAchievements = getUnlockedAchievements();
+  unlockedAchievements = unlockedAchievements['prestigious'] ? { prestigious: unlockedAchievements['prestigious'] } : {};
   currentSkin = 'bronze';
+  celebrationCount = 0;
   applyTrackerSkin(currentSkin);
   setUnlockedAchievements(unlockedAchievements);
-  updateAchievementCount();
   let count = getPrestigeCount();
   count++;
   setPrestigeCount(count);
@@ -381,6 +568,15 @@ function prestige() {
     icon: 'success',
     confirmButtonText: 'Great!'
   });
+  checkPrestigeCount();
+  updateAchievementCount();
+}
+
+function checkPrestigeCount() {
+  const count = getPrestigeCount();
+  if (count >= 7) {
+    achievementUnlocked('prestigious');
+  }
 }
 
 function formatDuration(ms) {
@@ -505,6 +701,8 @@ jQuery(document).ready(function($) {
     applyTrackerSkin(defaultSkin);
   }
 
+  checkPrestigeCount();
+
   footerAlwayInBottom($("#footer"));
 
   document.addEventListener('keydown', (e) => {
@@ -525,8 +723,13 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('#achievement-tracker').on('click', () => {
-    openAchievementList();
+  $('#achievement-tracker').on('click', (event) => {
+    const unlocked = getUnlockedAchievements();
+    if (event.ctrlKey && unlocked["completed"]) {
+      createConfetti();
+    } else {
+      openAchievementList();
+    }
   });
 
   $('body').on('click', '.ani_div', () => {
@@ -566,6 +769,13 @@ jQuery(document).ready(function($) {
         html:
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/pM7KJxz5i00?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
+    }
+  });
+
+  $(document).on('click', '.achievement-prestigious', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['prestigious']) {
+      openPrestigeCustomizationPopup();
     }
   });
 
@@ -743,7 +953,6 @@ jQuery(document).ready(function($) {
         $('.mainblock').show();
       }
       achievementUnlocked('blind');
-
 	  }
   });
 
