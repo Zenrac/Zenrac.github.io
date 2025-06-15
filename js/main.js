@@ -661,7 +661,7 @@ function getHighestUnlockedSkin() {
 
   let rarityOrderHere = Object.fromEntries(
     Object.entries(rarityOrder).filter(([key]) =>
-      key !== 'PrestigeAchievement' && key !== 'SecretAchievement'
+      key !== 'PrestigeAchievement'
     )
   );
 
