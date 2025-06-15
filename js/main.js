@@ -5,9 +5,9 @@ const achievementData = {
     text: "Clicked so many things, you're basically a detective now.",
     rarity: "EpicAchievement",
   },
-  "epilespy": {
+  "blind": {
     icon: "fa fa-glasses",
-    title: "Colorblind Panda Eyes",
+    title: "Colorblind",
     text: "You may need to wear sunglasses after this one!",
     rarity: "CommonAchievement",
   },
@@ -20,7 +20,7 @@ const achievementData = {
   "friendship": {
     icon: "fa fa-door-open",
     title: "An Open Door",
-    text: "You’re here. But are you welcome?",
+    text: "You're here. But are you welcome?",
     rarity: "UncommonAchievement",
   },
   "cat": {
@@ -32,13 +32,13 @@ const achievementData = {
   "completed": {
     icon: "fa fa-trophy",
     title: "Master of the Pointless",
-    text: "You got em all! You can leave! Or maybe...",
+    text: "You got 'em all! Or maybe...",
     rarity: "LegendaryAchievement",
   },
   "konami": {
     icon: "fa fa-gamepad",
     title: "Konami Fanboy",
-    text: "You cracked the not so secret Konami code!",
+    text: "You cracked the not-so-secret Konami code!",
     rarity: "EpicAchievement",
   },
   "celebrate": {
@@ -52,14 +52,14 @@ const achievementData = {
     secret: true,
     icon: "fa-solid fa-shirt",
     title: "Metamorphosis",
-    text: "Reaching the maximum potential! Press S to change your skin anytime.",
+    text: "You've reached maximum potential! Press S to change your skin anytime.",
     rarity: "MythicAchievement",
   },
   "bronze": {
     secret: true,
     icon: "fa-solid fa-medal",
     title: "Prestige",
-    text: "After a long journey you came back to where it all started. Congratulations I have nothing more to offer.",
+    text: "After a long journey, you came back to where it all started. Congratulations, I have nothing more to offer.",
     rarity: "SecretAchievement",
   },
 };
@@ -560,9 +560,9 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $(document).on('click', '.achievement-epilespy', () => {
+  $(document).on('click', '.achievement-blind', () => {
     const unlocked = getUnlockedAchievements();
-    if (unlocked['epilespy']) {
+    if (unlocked['blind']) {
       Swal.fire({
         title: isZoomed ? "Nothing to see here Detective" : "An easter egg into an easter egg? Really?",
         width: 500,
@@ -737,7 +737,7 @@ jQuery(document).ready(function($) {
       if (!$('.mainblock').is(":visible")) {
         $('.mainblock').show();
       }
-      achievementUnlocked('epilespy');
+      achievementUnlocked('blind');
 
 	  }
   });
