@@ -5,6 +5,14 @@
 	text-decoration: none;
 }
 
+:root {
+  /* Animation settings */
+  --anim-glitch-dur: 0.35s;
+  --anim-shift-dur: 0.8s;
+  --easing-glitch: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --easing-shift: ease-in-out;
+}
+
 @font-face {
 	font-family: "Lato-Regular";
 	src: url('polices/Lato-Regular.ttf');
@@ -62,6 +70,7 @@ a:hover, a:focus {
 .fullscreen {
 	height: 100%;
 	width: 100%;
+  position: absolute;
 	border: 0;
 }
 
@@ -955,4 +964,71 @@ a {
   box-shadow: 0 0 6px red;
   pointer-events: none;
   z-index: 10;
+}
+
+.zoomed {
+  transform-origin: top left;
+  transition: transform 0.3s ease;
+}
+
+body {
+  transition: transform 0.3s ease;
+}
+
+body.swal2-height-auto {
+  height: 100% !important;
+}
+
+.glitch-text {
+  position: relative;
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+  line-height: 1.2;
+  color: var(--color-main);
+  letter-spacing: var(--letter-spacing);
+  z-index: 1;
+  animation: shift var(--anim-shift-dur) var(--easing-shift) infinite alternate;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0.8;
+  animation: glitch var(--anim-glitch-dur) var(--easing-glitch) both infinite;
+}
+
+.glitch-text::before {
+  color: var(--color-accent1);
+  z-index: -1;
+}
+
+.glitch-text::after {
+  color: var(--color-accent2);
+  z-index: -2;
+  animation-direction: reverse;
+}
+
+/* Horizontal jitter animation */
+@keyframes glitch {
+  20%  { transform: translate(-3px, 3px); }
+  40%  { transform: translate(-3px, -3px); }
+  60%  { transform: translate(3px, 3px); }
+  80%  { transform: translate(3px, -3px); }
+  to   { transform: translate(0); }
+}
+
+/* Skew-based distortion effect */
+@keyframes shift {
+  0%, 40%, 44%, 58%, 61%, 65%, 69%, 73%, 100% { transform: skewX(0deg); }
+  41%  { transform: skewX(7deg); }
+  42%  { transform: skewX(-7deg); }
+  59%  { transform: skewX(28deg) skewY(7deg); }
+  60%  { transform: skewX(-28deg) skewY(-7deg); }
+  63%  { transform: skewX(7deg) skewY(-3.5deg); }
+  70%  { transform: skewX(-35deg) skewY(-14deg); }
+  71%  { transform: skewX(7deg) skewY(-7deg); }
 }

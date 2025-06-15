@@ -59,7 +59,7 @@ const achievementData = {
     secret: true,
     icon: "fa-solid fa-medal",
     title: "Prestige",
-    text: "After a long journey, you came back to where it all started. Congratulations!",
+    text: "After a long journey, you came back to where it all started. Cycle is completed.",
     rarity: "SecretAchievement",
   },
   "prestigious": {
@@ -69,6 +69,27 @@ const achievementData = {
     text: "You mastered the art of looping back to the beginning. Truly prestigious!",
     rarity: "PrestigeAchievement",
   },
+  'L': {
+    secret: true,
+    icon: "fa-solid fa-user-secret",
+    title: "Lawliet",
+    text: "You found the hardest achievement, you can be proud of yourself.",
+    rarity: "PrestigeAchievement",
+  },
+  'edgy': {
+    secret: true,
+    icon: "fa-solid fa-crow",
+    title: "???",
+    text: "<div class='glitch-text'>Only those who abandon all reason may glimpse the void behind the veil.</div>",
+    rarity: "PrestigeAchievement",
+  },
+  'berserk': {
+    secret: true,
+    icon: "fa-solid fa-smile",
+    title: "They are looking",
+    text: "Who are they? Why are they smiling? What's so funny?!",
+    rarity: "PrestigeAchievement",
+  }
 };
 
 const rarityOrder = {
@@ -77,9 +98,7 @@ const rarityOrder = {
   'RareAchievement': 3,
   'EpicAchievement': 4,
   'LegendaryAchievement': 5,
-  'MythicAchievement': 6,
-  'SecretAchievement': 7,
-  'PrestigeAchievement': 8
+  'MythicAchievement': 6
 };
 
 const rarityColors = {
@@ -100,8 +119,7 @@ const rarityToSkin = {
   'EpicAchievement': 'silver',
   'LegendaryAchievement': 'gold',
   'MythicAchievement': 'mythic',
-  'SecretAchievement': 'secret',
-  'PrestigeAchievement': 'prestige'
+  'SecretAchievement': 'secret'
 };
 
 
@@ -123,6 +141,8 @@ let lastMousePos = { x: 0, y: 0 };
 let celebrationCount = 0;
 
 let isZoomed = false;
+
+let currentZoom = 1;
 
 let inputBuffer = [];
 
@@ -182,6 +202,27 @@ function updateAchievementCount() {
   } else {
     badge.style.display = "none";
   }
+}
+
+function changeZoom(value) {
+  currentZoom = value;
+
+  if (value === 1) {
+    document.body.classList.remove('zoomed');
+    document.body.style.transform = "";
+  } else {
+    document.body.classList.add('zoomed');
+    document.body.style.transform = `scale(${value})`;
+  }
+}
+
+function toggleZoom() {
+    if (isZoomed) {
+      changeZoom(1);
+    } else {
+      changeZoom(1.5);
+    }
+    isZoomed = !isZoomed;
 }
 
 function openSkinSelector() {
@@ -393,6 +434,7 @@ function applyPrestigeSkin(animation, color) {
 
 function applyTrackerSkin(skin) {
   const tracker = document.getElementById('achievement-tracker');
+  const unlocked = getUnlockedAchievements();
   if (!tracker) return;
 
   const icon = tracker.querySelector('i');
@@ -403,7 +445,7 @@ function applyTrackerSkin(skin) {
 
   tracker.classList.add(skin);
 
-  if (skin === 'prestige') {
+  if (skin === 'prestige' && unlocked['prestigious']) {
     loadCustomPrestigeSkin();
   } else {
     tracker.classList.remove('prestige');
@@ -442,6 +484,9 @@ function openAchievementList() {
     if (data.secret && !isUnlocked) {
       return '';
     }
+    if (id == 'edgy' && unlocked['berserk']) {
+      return '';
+    }
     return `
       <div class="swal-achievement achievement-${id} ${isUnlocked ? 'unlocked' : 'locked'}" style="display:flex; align-items:center; margin-bottom: 10px;">
         ${iconHtml}
@@ -476,9 +521,7 @@ function openAchievementList() {
     buttonsStyling: true,
   }).then((result) => {
     if (isZoomed) {
-      document.body.style.transform = "scale(1)";
-      document.body.style.transformOrigin = "";
-      isZoomed = false;
+      toggleZoom();
     }
     let unlocked = getUnlockedAchievements();
     if (result.dismiss == "cancel") {
@@ -554,7 +597,15 @@ function setPrestigeCount(count) {
 
 function prestige() {
   unlockedAchievements = getUnlockedAchievements();
-  unlockedAchievements = unlockedAchievements['prestigious'] ? { prestigious: unlockedAchievements['prestigious'] } : {};
+  const filteredAchievements = {};
+  for (const key in unlockedAchievements) {
+    if (achievementData[key]) {
+      if (achievementData[key]?.rarity == 'PrestigeAchievement') {
+        filteredAchievements[key] = unlockedAchievements[key];
+      }
+    }
+  }
+  unlockedAchievements = filteredAchievements;
   currentSkin = 'bronze';
   celebrationCount = 0;
   applyTrackerSkin(currentSkin);
@@ -694,7 +745,9 @@ jQuery(document).ready(function($) {
 
   const savedSkin = localStorage.getItem('achievementTrackerSkin');
 
-  if (savedSkin) {
+  const unlockedAch = getUnlockedAchievements();
+
+  if (savedSkin && (savedSkin != 'prestige' || unlockedAch['prestigious'])) {
     applyTrackerSkin(savedSkin);
   } else {
     const defaultSkin = getHighestUnlockedSkin();
@@ -764,11 +817,31 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['cat']) {
       Swal.fire({
-        title: isZoomed ? "Nothing to see here Detective" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? "A funfact about cats" : "An easter egg into an easter egg? Really?",
         width: 500,
         html:
+        isZoomed ? "Did you know that according to different cultures cats have 9 or 7 lives..? And by the way, you should try to reach for 7 on some things here..." :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/pM7KJxz5i00?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
+    }
+  });
+
+  $(document).on('click', '.achievement-L', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['L']) {
+      Swal.close();
+
+      const playButton = document.querySelector('.play');
+      if (playButton) {
+        const ctrlClickEvent = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+          altKey: true,
+          ctrlKey: isZoomed
+        });
+        playButton.dispatchEvent(ctrlClickEvent);
+      }
     }
   });
 
@@ -779,13 +852,67 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $(document).on('click', '.achievement-edgy', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['edgy']) {
+      if (!isZoomed) {
+        $('body').empty();
+        document.body.background = "https://i.imgur.com/ZngZTjQ.png";
+        setTimeout(() => {
+        alert('Do not click this ever again. And never look at it too closely.')
+        }, 1000);
+        setTimeout(() => {
+          location.reload();
+        }, 3000);
+      } else {
+        document.querySelectorAll('*').forEach(el => {
+          el.classList.add('glitch-text');
+        });
+      }
+    }
+  });
+
+  $(document).on('click', '.achievement-berserk', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['berserk']) {
+      if (!isZoomed) {
+        $('body').empty();
+        document.body.background = "https://i.imgur.com/ZngZTjQ.png";
+        setTimeout(() => {
+        alert('You never learn right?')
+        }, 1000);
+        setTimeout(() => {
+          location.reload();
+        }, 3000);
+      } else {
+        document.querySelectorAll('*').forEach(el => {
+          el.classList.add('glitch-text');
+        });
+
+        setTimeout(() => {
+          const playButton = document.querySelector('.play');
+          if (playButton) {
+            const ctrlClickEvent = new MouseEvent('click', {
+              bubbles: true,
+              cancelable: true,
+              view: window,
+              altKey: true
+            });
+            playButton.dispatchEvent(ctrlClickEvent);
+          }
+        }, 3000);
+      }
+    }
+  });
+
   $(document).on('click', '.achievement-blind', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['blind']) {
       Swal.fire({
-        title: isZoomed ? "Nothing to see here Detective" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? "Is this a hint ?" : "An easter egg into an easter egg? Really?",
         width: 500,
         html:
+        isZoomed ? 'Thanks to your detective skills you understand that you may need to repeat what you did but with more "control" or was it the other one..?' :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/-iwYHk_SwNA?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
     }
@@ -815,7 +942,7 @@ jQuery(document).ready(function($) {
       }).then((result) => { 
         if (isZoomed && result.value) {
           createConfetti(); 
-          document.body.style.transform = "scale(1)";
+          document.body.style.transform = "";
           document.body.style.transformOrigin = "";
           isZoomed = false;
         }
@@ -826,14 +953,7 @@ jQuery(document).ready(function($) {
   $(document).on('click', '.achievement-detective', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['detective']) {
-      if (!isZoomed) {
-        document.body.style.transform = "scale(1.5)";
-        document.body.style.transformOrigin = "top left";
-      } else {
-        document.body.style.transform = "scale(1)";
-        document.body.style.transformOrigin = "";
-      }
-      isZoomed = !isZoomed;
+      toggleZoom();
     }
   });
 
@@ -912,9 +1032,27 @@ jQuery(document).ready(function($) {
   }, 25);
 
   $('body').on('click', '.play', function(e) {
-	  if ($('iframe').length < 1) {
-		  var iframe = document.createElement('iframe')
-		  iframe.src = './0x40/?song=WRLD&autoSong=loop&autoSongDelay=3';
+	  if ($('.fullscreen').length < 1) {
+		  var iframe = document.createElement('iframe');
+      var firstSong = 'WRLD';
+      var params = '';
+      if (e.altKey) {
+        firstSong = 'L';
+        achievementUnlocked('L');
+      }
+      const unlocked = getUnlockedAchievements();
+      if (e.ctrlKey && e.altKey && unlocked['L']) {
+        firstSong = 'NOAH';
+        achievementUnlocked('edgy');
+      }
+      if (document.body.classList.contains('glitch-text')) {
+        iframe.classList.add('glitch-text');
+        firstSong = 'Clockmaker';
+        params += '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false';
+        achievementUnlocked('berserk');
+      }
+  
+      iframe.src = `./0x40/?song=${firstSong}&autoSong=loop&autoSongDelay=3${params}`;
 		  iframe.classList.add('fullscreen');
 		  $('body').prepend(iframe)
 		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
@@ -944,7 +1082,7 @@ jQuery(document).ready(function($) {
         }
       }, 100);
 	  } else {
-      $('iframe').remove();
+      $('.fullscreen').remove();
       $('.hideInterface').remove();
       $('.play').html($('.play').html().replace('fa-stop', 'fa-play').replace('Stop', 'Play'))
       $('#footer').removeClass('hidden');
