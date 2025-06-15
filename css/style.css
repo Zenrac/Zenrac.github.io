@@ -969,6 +969,7 @@ a {
 .zoomed {
   transform-origin: top left;
   transition: transform 0.3s ease;
+  transform-origin: center;
 }
 
 body {
@@ -1031,4 +1032,39 @@ body.swal2-height-auto {
   63%  { transform: skewX(7deg) skewY(-3.5deg); }
   70%  { transform: skewX(-35deg) skewY(-14deg); }
   71%  { transform: skewX(7deg) skewY(-7deg); }
+}
+
+#goodBtn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 8px 3px rgba(72, 255, 113, 0.7);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  margin: 10px;
+}
+#goodBtn:hover {
+  box-shadow: 0 0 15px 6px rgba(72, 255, 113, 0.9);
+  transform: scale(1.1) rotate(3deg);
+}
+
+#evilBtn {
+  background-color: #8B0000;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 10px 3px rgba(244, 67, 54, 0.8);
+  text-shadow: 0 0 6px #ff0000;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  margin: 10px;
+}
+#evilBtn:hover {
+  box-shadow: 0 0 20px 8px rgba(255, 0, 0, 1);
+  transform: scale(1.1) rotate(-3deg);
 }

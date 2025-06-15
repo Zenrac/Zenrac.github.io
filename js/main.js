@@ -73,21 +73,47 @@ const achievementData = {
     secret: true,
     icon: "fa-solid fa-user-secret",
     title: "Lawliet",
-    text: "You found the hardest achievement, you can be proud of yourself.",
+    text: "Your mind sees what others miss. Always one step ahead.",
     rarity: "PrestigeAchievement",
   },
   'edgy': {
     secret: true,
     icon: "fa-solid fa-crow",
-    title: "???",
-    text: "<div class='glitch-text'>Only those who abandon all reason may glimpse the void behind the veil.</div>",
-    rarity: "PrestigeAchievement",
+    title: "Edgy Crow",
+    group: 'evilorgood',
+    text: "You ventured into the shadows, and they welcomed you.",
+    rarity: "SecretAchievement",
   },
   'berserk': {
     secret: true,
     icon: "fa-solid fa-smile",
-    title: "They are looking",
+    title: "They are Watching",
+    group: 'evilorgood',
     text: "Who are they? Why are they smiling? What's so funny?!",
+    rarity: "SecretAchievement",
+  },
+  'weakened': {
+    secret: true,
+    icon: "fa-solid fa-heart-crack",
+    title: "Evil Weakened",
+    group: 'evilorgood',
+    text: "You shattered the evil's strength. The end is near.",
+    rarity: "SecretAchievement",
+  },
+  'evil': {
+    secret: true,
+    icon: "fa-solid fa-skull-crossbones",
+    group: 'evilorgood',
+    title: "Berserker Brother",
+    text: "You embraced the rage and became one with madness.",
+    rarity: "PrestigeAchievement",
+  },
+  'good': {
+    secret: true,
+    icon: "fa-solid fa-dove",
+    group: 'evilorgood',
+    title: "Berserker no More",
+    text: "You calmed the chaos and restored the balance.",
     rarity: "PrestigeAchievement",
   }
 };
@@ -98,7 +124,9 @@ const rarityOrder = {
   'RareAchievement': 3,
   'EpicAchievement': 4,
   'LegendaryAchievement': 5,
-  'MythicAchievement': 6
+  'MythicAchievement': 6,
+  'SecretAchievement' : 7,
+  'PrestigeAchievement': 8
 };
 
 const rarityColors = {
@@ -122,6 +150,7 @@ const rarityToSkin = {
   'SecretAchievement': 'secret'
 };
 
+const berserkSrc = 'https://i.imgur.com/ZngZTjQ.png';
 
 const sortedAchievements = Object.entries(achievementData)
   .sort(([, a], [, b]) => rarityOrder[a.rarity] - rarityOrder[b.rarity])
@@ -129,6 +158,8 @@ const sortedAchievements = Object.entries(achievementData)
     obj[key] = val;
     return obj;
   }, {});
+
+console.log(sortedAchievements)
 
 const konamiSequences = [
   ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'],
@@ -427,6 +458,72 @@ function loadCustomPrestigeSkin() {
   }
 }
 
+function choosePath(event) {
+  const unlocked = getUnlockedAchievements();
+  if (!unlocked['berserk'] || unlocked['good'] || unlocked['evil']) return;
+  event.stopImmediatePropagation();
+  event.preventDefault();
+  Swal.fire({
+    title: 'You need to choose your path',
+    showConfirmButton: false,
+    showCancelButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
+    closeButtonHtml: null,
+    html: `
+      <button id="evilBtn">Evil</button>
+      <button id="goodBtn">Good</button>
+    `,
+    onOpen: () => {
+      const popup = Swal.getPopup();
+      const evilBtn = popup.querySelector('#evilBtn');
+      const goodBtn = popup.querySelector('#goodBtn');
+
+      if (evilBtn) {
+        evilBtn.addEventListener('click', () => {
+          Swal.fire({
+            title: 'EMBRACE EVIL?',
+            text: "Do you want to embrace evil? There's no turning back!",
+            confirmButtonColor: '#8B0000',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'BERSERK',
+            cancelButtonText: 'Cancel'
+          }).then(result => {
+            if (result && result.value) {
+              achievementUnlocked('evil');
+            }
+            else {
+              choosePath(event);
+            }
+          });
+        });
+      }
+      if (goodBtn) {
+        goodBtn.addEventListener('click', () => {
+          Swal.fire({
+            title: 'ERASE EVIL?',
+            text: "Do you want to erase evil? There's no turning back!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            confirmButtonText: 'JUSTICE',
+            cancelButtonText: 'Cancel'
+          }).then(result => {
+            if (result && result.value) {
+              achievementUnlocked('good');
+            }
+            else {
+              choosePath();
+            }
+          });
+        });
+      }
+    }
+  });
+}
+
 function applyPrestigeSkin(animation, color) {
   localStorage.setItem('customPrestige', JSON.stringify({ animation, color }));
   applyTrackerSkin('prestige');
@@ -475,6 +572,15 @@ function openAchievementList() {
   const allIds = Object.keys(sortedAchievements);
   const allUnlocked = allIds.filter(id => !achievementData[id].secret).every(id => unlocked[id]);
 
+  const lockedGroups = new Set();
+
+  for (const id in unlocked) {
+    const data = achievementData[id];
+    if (data && data.rarity === 'PrestigeAchievement' && data.group) {
+      lockedGroups.add(data.group);
+    }
+  }
+
   const achievementsHTML = allIds.map(id => {
     const data = achievementData[id];
     const isUnlocked = !!unlocked[id];
@@ -484,9 +590,20 @@ function openAchievementList() {
     if (data.secret && !isUnlocked) {
       return '';
     }
-    if (id == 'edgy' && unlocked['berserk']) {
+
+    if (id == 'edgy' && !unlocked['berserk']) {
+      data.title = '???';
+      data.text = `<div class='glitch-text'>${data.text}</div>`;
+    }
+
+    if (
+      data.group &&
+      lockedGroups.has(data.group) &&
+      (!isUnlocked || data.rarity !== 'PrestigeAchievement')
+    ) {
       return '';
     }
+
     return `
       <div class="swal-achievement achievement-${id} ${isUnlocked ? 'unlocked' : 'locked'}" style="display:flex; align-items:center; margin-bottom: 10px;">
         ${iconHtml}
@@ -506,7 +623,7 @@ function openAchievementList() {
   Swal.fire({
     title: allUnlocked ? `🎉 All Achievements Unlocked!${prestigeHtml}` : `Your Achievements${prestigeHtml}`,
     html: `<div style="text-align:left;">${achievementsHTML}</div>`,
-    width: 480,
+    width: 600,
     customClass: {
       popup: 'achievement-popup',
       title: 'achievement-title',
@@ -542,10 +659,16 @@ function getHighestUnlockedSkin() {
   let highestRarityLevel = 0;
   let highestRarity = 'CommonAchievement';
 
+  let rarityOrderHere = Object.fromEntries(
+    Object.entries(rarityOrder).filter(([key]) =>
+      key !== 'PrestigeAchievement' && key !== 'SecretAchievement'
+    )
+  );
+
   for (const id in unlocked) {
     if (unlocked[id]) {
       const rarity = achievementData[id]?.rarity || 'CommonAchievement';
-      const level = rarityOrder[rarity] || 1;
+      const level = rarityOrderHere[rarity] || 1;
       if (level > highestRarityLevel) {
         highestRarityLevel = level;
         highestRarity = rarity;
@@ -776,6 +899,16 @@ jQuery(document).ready(function($) {
     }
   });
 
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'o') {
+    if (Swal.isVisible()) {
+      Swal.close();
+    } else {
+      openAchievementList();
+    }
+    }
+  });
+
   $('#achievement-tracker').on('click', (event) => {
     const unlocked = getUnlockedAchievements();
     if (event.ctrlKey && unlocked["completed"]) {
@@ -872,14 +1005,14 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $(document).on('click', '.achievement-berserk', () => {
+  $(document).on('click', '.achievement-weakened', () => {
     const unlocked = getUnlockedAchievements();
-    if (unlocked['berserk']) {
+    if (unlocked['weakened']) {
       if (!isZoomed) {
         $('body').empty();
         document.body.background = "https://i.imgur.com/ZngZTjQ.png";
         setTimeout(() => {
-        alert('You never learn right?')
+        alert('Do not click this ever again. And never look at it too closely.')
         }, 1000);
         setTimeout(() => {
           location.reload();
@@ -888,10 +1021,64 @@ jQuery(document).ready(function($) {
         document.querySelectorAll('*').forEach(el => {
           el.classList.add('glitch-text');
         });
+      }
+    }
+  });
 
-        setTimeout(() => {
-          const playButton = document.querySelector('.play');
-          if (playButton) {
+  $(document).on('click', '.achievement-berserk', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['berserk']) {
+
+
+      if (isZoomed) {
+          toggleZoom();
+          const container = document.querySelector('.achievement-content');
+          container.querySelectorAll('img').forEach(img => {
+            img.src = berserkSrc;
+          });
+          container.querySelectorAll('i').forEach(icon => {
+            if (!icon.classList.contains('fa-play')) {
+              const img = document.createElement('img');
+              img.src = berserkSrc;
+              img.style.width = icon.style.width;
+              img.style.height = icon.style.height;
+              img.classList = icon.classList;
+              img.style.minWidth = "60px";
+              icon.replaceWith(img);
+            }
+
+            container.querySelectorAll(`img[src="${berserkSrc}"]`).forEach(img => {
+              const parent = img.closest('.swal-achievement');
+              if (parent) {
+                  parent.addEventListener('click', event => {
+                    event.stopImmediatePropagation();
+                    event.preventDefault();  
+                    img.remove();
+
+                  const remaining = container.querySelectorAll(`img[src="${berserkSrc}"]`).length;
+                  if (remaining === 0) {
+                    Swal.update({
+                      html: '<div class="glitch-text">Good job! The source of evil is now weakened!</div>',
+                      confirmButtonText: "Time to end this!",
+                      confirmButtonColor: 'red'
+                    });
+                    achievementUnlocked('weakened');
+                  }
+                });
+              }
+            });
+          });
+      } else {
+        document.querySelectorAll('*').forEach(el => {
+          el.classList.add('glitch-text');
+        });
+
+        const playButton = document.querySelector('.play')
+        if (playButton) {
+          playButton.disabled = true;
+
+          setTimeout(() => {
+            playButton.disabled = false;
             const ctrlClickEvent = new MouseEvent('click', {
               bubbles: true,
               cancelable: true,
@@ -899,8 +1086,33 @@ jQuery(document).ready(function($) {
               altKey: true
             });
             playButton.dispatchEvent(ctrlClickEvent);
-          }
-        }, 3000);
+          }, 3000);
+        }
+      }
+    }
+  });
+
+  $(document).on('click', '#evil', (event) => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['weakened']) {
+      choosePath(event);
+    } else {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      console.log(unlocked)
+      if (!unlocked['edgy']) {
+        Swal.fire({
+          title: "Fight for your life?",
+          showConfirmButton: true,
+          confirmButtonText: 'I have no fear'
+        }).then((result) => { achievementUnlocked('edgy') });
+      } else {
+        Swal.fire({
+          title: "There's no chance",
+          text: "You need to weaken evil before trying to fight it, you currently can't win..",
+          showConfirmButton: true,
+          confirmButtonText: 'Where should I go..'
+        })
       }
     }
   });
@@ -1040,14 +1252,23 @@ jQuery(document).ready(function($) {
         firstSong = 'L';
         achievementUnlocked('L');
       }
-      const unlocked = getUnlockedAchievements();
-      if (e.ctrlKey && e.altKey && unlocked['L']) {
+      if (e.ctrlKey && e.altKey) {
         firstSong = 'NOAH';
-        achievementUnlocked('edgy');
+        params += '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false';
+        Swal.fire({
+          title: 'Is that a boss music?',
+          text: 'This is the song that will play during the boss battle, but where\'s the boss? I already saw this big smile somewhere..',
+          confirmButtonText: 'Umh okay?',
+          icon: 'question',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        });
       }
       if (document.body.classList.contains('glitch-text')) {
         iframe.classList.add('glitch-text');
-        firstSong = 'Clockmaker';
+        firstSong = 'NOAH';
+        if (e.altKey)
+          firstSong = 'Clockmaker'
         params += '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false';
         achievementUnlocked('berserk');
       }
@@ -1157,7 +1378,7 @@ jQuery(document).ready(function($) {
           if (result.dismiss == "cancel") {
             Swal.fire({
               title: "CAN'T YOU ADMIT?",
-              html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img src=https://i.imgur.com/ZngZTjQ.png /></a>",
+              html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img id='evil' src=https://i.imgur.com/ZngZTjQ.png /></a>",
               imageAlt: "BERSERK",
               confirmButtonText:
               '<i class="fa fa-thumbs-up"></i> I am sorry!',
