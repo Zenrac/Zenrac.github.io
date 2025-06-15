@@ -614,42 +614,42 @@ function openAchievementList() {
           ${isUnlocked ? data.text : '<div class="achieve-locked" style="color:#555; font-style: italic; font-size: 12px;">Locked</div>'}
         </div>
       </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
 
-  prestigeCount = getPrestigeCount();
-  prestigeHtml = prestigeCount > 0 ? ' - ' + `<div class="prestige-count" style="color: #ffb84e; margin-left: 5px">Prestige ${prestigeCount}</div>` : ''; 
+    prestigeCount = getPrestigeCount();
+    prestigeHtml = prestigeCount > 0 ? ' - ' + `<div class="prestige-count" style="color: #ffb84e; margin-left: 5px">Prestige ${prestigeCount}</div>` : ''; 
 
-  Swal.fire({
-    title: allUnlocked ? `🎉 All Achievements Unlocked!${prestigeHtml}` : `Your Achievements${prestigeHtml}`,
-    html: `<div style="text-align:left;">${achievementsHTML}</div>`,
-    width: 600,
-    customClass: {
-      popup: 'achievement-popup',
-      title: 'achievement-title',
-      content: 'achievement-content',
-    },
-    showCloseButton: true,
-    focusConfirm: false,
-    confirmButtonText: 'Close',
-    showCancelButton: allUnlocked,
-    cancelButtonText: unlocked['skin'] ? 'Change skin' : 'Celebrate!',
-    cancelButtonColor: '#B28E00',
-    buttonsStyling: true,
-  }).then((result) => {
-    if (isZoomed) {
-      toggleZoom();
-    }
-    let unlocked = getUnlockedAchievements();
-    if (result.dismiss == "cancel") {
-      if (unlocked['skin']) {
-        openSkinSelector();
+    Swal.fire({
+      title: allUnlocked ? `🎉 All Achievements Unlocked!${prestigeHtml}` : `Your Achievements${prestigeHtml}`,
+      html: `<div style="text-align:left;">${achievementsHTML}</div>`,
+      width: 600,
+      customClass: {
+        popup: 'achievement-popup',
+        title: 'achievement-title',
+        content: 'achievement-content',
+      },
+      showCloseButton: true,
+      focusConfirm: false,
+      confirmButtonText: 'Close',
+      showCancelButton: allUnlocked,
+      cancelButtonText: unlocked['skin'] ? 'Change skin' : 'Celebrate!',
+      cancelButtonColor: '#B28E00',
+      buttonsStyling: true,
+    }).then((result) => {
+      if (isZoomed) {
+        toggleZoom();
       }
-      else {
-          createConfetti();
+      let unlocked = getUnlockedAchievements();
+      if (result.dismiss == "cancel") {
+        if (unlocked['skin']) {
+          openSkinSelector();
         }
-    }
-  });
+        else {
+            createConfetti();
+          }
+      }
+    });
 }
 
 function getHighestUnlockedSkin() {
@@ -938,9 +938,10 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['friendship']) {
       Swal.fire({
-        title: isZoomed ? "Nothing to see here Detective" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? "What do you think of Nova on BDO?" : "An easter egg into an easter egg? Really?",
         width: 500,
         html:
+        isZoomed ? "Nova released as a heavy tank class with a giant door shield. But did you know that Nova awakening was so broken that everyone though they were using 'cheat codes'..? Funny isnt it?" :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/J7BiQPD6qUg?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
     }
@@ -1103,9 +1104,32 @@ jQuery(document).ready(function($) {
       if (!unlocked['edgy']) {
         Swal.fire({
           title: "Fight for your life?",
+          text: 'This a very strong opponent. You may need to come equiped.',
           showConfirmButton: true,
           confirmButtonText: 'I have no fear'
-        }).then((result) => { achievementUnlocked('edgy') });
+        }).then((result) => 
+          { 
+            prestigeCount = getPrestigeCount();
+            if (unlocked['skin'] || prestigeCount > 0) {
+              achievementUnlocked('edgy') 
+              Swal.fire({
+                title: 'Defeat?',
+                text: 'You have not defeated the evil but you may have found a way to weaken it.',
+                icon: 'success',
+                confirmButtonText: 'Awesome!'
+              });
+            }
+            else {
+              Swal.fire({
+                title: 'Defeat!',
+                text: "You are getting absolutely blasted, you don't stand a chance...",
+                icon: 'error',
+                confirmButtonText: 'I will come back later'
+              }).then(() => {
+                restartGame();
+              });
+            }
+          });
       } else {
         Swal.fire({
           title: "There's no chance",
