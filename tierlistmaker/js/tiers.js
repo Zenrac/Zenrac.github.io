@@ -1098,3 +1098,4 @@ picker.$el.addEventListener('click', () => {
 	attachNavListeners();
 	}, 10);
 });
+

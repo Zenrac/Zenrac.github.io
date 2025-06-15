@@ -1,9 +1,25 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+  <!-- Page info -->
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Zenrac</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Zenrac's official website.">
+  <meta name="keywords" content="Zenrac website betteradk discord">
+
+  <link rel="shortcut icon" type="image/x-icon" href="https://zenrac.github.io/images/favicon.ico" />
+  <meta property="og:title" content="Home">
+  <meta property="og:description" content="Zenrac's official website.">
+  <meta property="og:image" content="https://i.imgur.com/BEeTwQb.gif">
+  <meta property="og:type" content="article">
 
   <!-- JQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <!-- Latest compiled and minified bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -12,10 +28,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
-
-  <!-- Fork Awesome -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.1.7/css/fork-awesome.min.css" integrity="sha256-gsmEoJAws/Kd3CjuOQzLie5Q3yshhvmo7YNtBG7aaEY=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
   <!-- Latest compiled and minified bootstrap -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -45,19 +58,6 @@
     </svg>
   </a>
 
-  <!-- Page info -->
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Zenrac</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Zenrac's official website.">
-  <meta name="keywords" content="Zenrac website betteradk discord">
-
-  <link rel="shortcut icon" type="image/x-icon" href="https://zenrac.github.io/images/favicon.ico" />
-  <meta property="og:title" content="Home">
-  <meta property="og:description" content="Zenrac's official website.">
-  <meta property="og:image" content="https://i.imgur.com/BEeTwQb.gif">
-  <meta property="og:type" content="article">
-
 </head>
 
 <body>
@@ -67,7 +67,7 @@
     backgroundEffect('canvas');
   </script>
   <div class="mainblock">
-    <div style="right: 0; top: -45;" class="center-object nopointers">
+    <div style="right: 0; top: -45px;" class="center-object nopointers">
       <section class="initialpointers me unset">
         <div class="avatar-container">
           <a href="#" class="docs" target="_blank">
@@ -86,9 +86,9 @@
     <div class="buttons initialpointers">
       <a href="#" class="btn docsbots discord-dropshadow animation hover">Bots</a>
       <a href="scripts" class="btn android-dropshadow animation hover">Scripts</a>
-      <a href="https://steamcommunity.com/id/Zenrac_/" class="btn green-sea-dropshadow animation hover">Steam</a>
+      <a href="https://anilist.co/user/Zenrac/" class="btn green-sea-dropshadow animation hover">Anilist</a>
       <a style="background-color: #195FF5;" href="https://myanimelist.net/animelist/Zenrac" class="btn twitter-dropshadow animation hover">MyAnimeList</a>
-      <a style="background-color: #7222c9;" href="tierlistmaker/index.html" class="btn raw-purple-dropshadow animation hover">TierMaker</a>
+      <a style="background-color: #7222c9;" href="tierlistmaker/index.html" class="btn raw-purple-dropshadow animation hover">Anime TierMaker</a>
       <a href="#" class="btn play rasberry-dropshadow animation hover"><i class="fa-solid fa-play"></i> Play</a>
     </div>
   </div>
@@ -99,28 +99,28 @@
 
   <footer id="footer">
     <div class="links">
-      <div class="icon paypal">
-        <a href="https://www.paypal.com/paypalme/ZenracZenrac">
-          <i class="fa fa-paypal"></i>
-        </a>
-      </div>
-      <div class="icon patreon">
-        <a href="https://www.patreon.com/bePatron?u=7139372">
-          <i class="fa fa-patreon"></i>
+      <div class="icon steam">
+        <a href="https://steamcommunity.com/id/Zenrac_/">
+          <i class="fab fa-steam"></i>
         </a>
       </div>
       <div class="icon github">
         <a href="https://github.com/Zenrac">
-          <i class="fa fa-github"></i>
+          <i class="fab fa-github"></i>
         </a>
       </div>
       <div class="icon docs">
         <a href="#">
-          <i class="fa fa-discord"></i>
+          <i class="fab fa-discord"></i>
         </a>
       </div>
     </div>
   </footer>
+
+  <div id="achievement-tracker" style="position: fixed; bottom: 20px; right: 20px; cursor: pointer;">
+  <i class="fa fa-trophy fa-2x"></i>
+  <span id="achievement-count" style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -10px; right: -10px;">0</span>
+</div>
 
   <!-- main JS -->
   <script src="js/main.js"></script>
