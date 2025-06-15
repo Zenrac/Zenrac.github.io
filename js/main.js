@@ -112,6 +112,10 @@ let lastMousePos = { x: 0, y: 0 };
 
 let celebrationCount = 0;
 
+let isZoomed = false;
+
+let inputBuffer = [];
+
 function renderAchievementIcon(id, unlocked, isNew = false) {
   const data = achievementData[id] || {
     icon: "fa fa-trophy",
@@ -285,6 +289,11 @@ function openAchievementList() {
     cancelButtonColor: '#B28E00',
     buttonsStyling: true,
   }).then((result) => {
+    if (isZoomed) {
+      document.body.style.transform = "scale(1)";
+      document.body.style.transformOrigin = "";
+      isZoomed = false;
+    }
     let unlocked = getUnlockedAchievements();
     if (result.dismiss == "cancel") {
       if (unlocked['skin']) {
@@ -604,8 +613,6 @@ jQuery(document).ready(function($) {
     }
   });
 
-  let isZoomed = false;
-
   $(document).on('click', '.achievement-detective', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['detective']) {
@@ -654,8 +661,6 @@ jQuery(document).ready(function($) {
       });
     }
   });
-
-  let inputBuffer = [];
 
   document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
