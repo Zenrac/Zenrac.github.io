@@ -1274,7 +1274,6 @@ jQuery(document).ready(function($) {
       var params = '';
       if (e.altKey) {
         firstSong = 'L';
-        achievementUnlocked('L');
       }
       if (e.ctrlKey && e.altKey) {
         firstSong = 'NOAH';
@@ -1297,6 +1296,9 @@ jQuery(document).ready(function($) {
         achievementUnlocked('berserk');
       }
   
+      if (firstSong == 'L')
+        achievementUnlocked('L');
+      
       iframe.src = `./0x40/?song=${firstSong}&autoSong=loop&autoSongDelay=3${params}`;
 		  iframe.classList.add('fullscreen');
 		  $('body').prepend(iframe)
