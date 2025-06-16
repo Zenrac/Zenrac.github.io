@@ -1165,7 +1165,6 @@ jQuery(document).ready(function($) {
     } else {
       event.stopImmediatePropagation();
       event.preventDefault();
-      console.log(unlocked)
       if (!unlocked['edgy']) {
         Swal.fire({
           title: "Fight for your life?",

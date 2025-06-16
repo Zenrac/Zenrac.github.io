@@ -139,10 +139,8 @@
   const waitForItems = () => {
     const items = document.querySelector('#items');
     if (items) {
-      console.log('✅ #items found, starting observer');
       new MutationObserver(mutationHandler).observe(items, { childList: true, subtree: true });
     } else {
-      console.log('🔁 #items not found, retrying...');
       setTimeout(waitForItems, 500);
     }
   };
