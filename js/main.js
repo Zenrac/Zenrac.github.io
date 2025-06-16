@@ -58,15 +58,15 @@ const achievementData = {
   "bronze": {
     secret: true,
     icon: "fa-solid fa-medal",
-    title: "Prestige",
-    text: "After a long journey, you came back to where it all started. Cycle is completed.",
+    title: "Cycle Completed",
+    text: "After a long journey, you came back to where it all started.",
     rarity: "SecretAchievement",
   },
   "prestigious": {
     secret: true,
     icon: "fa-solid fa-repeat",
     title: "Master of the Loop",
-    text: "You mastered the art of looping back to the beginning. Truly prestigious!",
+    text: "You mastered the art of looping back to the beginning.",
     rarity: "PrestigeAchievement",
   },
   'L': {
@@ -147,8 +147,23 @@ const rarityToSkin = {
   'EpicAchievement': 'silver',
   'LegendaryAchievement': 'gold',
   'MythicAchievement': 'mythic',
-  'SecretAchievement': 'secret'
+  'SecretAchievement': 'secret',
+  'PrestigeAchievement': 'prestige'
 };
+
+const defaultGameData = {
+  viewedAchievements: {},
+  customPrestige: null,
+  achievementTrackerSkin: 'bronze',
+  achievements: {},
+  prestigeCount: 0
+};
+
+const MAGIC_NUMBER = 7;
+const CELEBRATION_MAX = 77;
+const STEAM_POPUP_TIMEOUT = 5950;
+
+const STORAGE_KEY = 'easterEggs';
 
 const berserkSrc = 'https://i.imgur.com/ZngZTjQ.png';
 
@@ -158,8 +173,6 @@ const sortedAchievements = Object.entries(achievementData)
     obj[key] = val;
     return obj;
   }, {});
-
-console.log(sortedAchievements)
 
 const konamiSequences = [
   ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'],
@@ -176,6 +189,138 @@ let isZoomed = false;
 let currentZoom = 1;
 
 let inputBuffer = [];
+
+const GAME_DATA_KEYS = Object.freeze({
+  VIEWED_ACHIEVEMENTS: 'viewedAchievements',
+  CUSTOM_PRESTIGE: 'customPrestige',
+  ACHIEVEMENT_TRACKER_SKIN: 'achievementTrackerSkin',
+  ACHIEVEMENTS: 'achievements',
+  PRESTIGE_COUNT: 'prestigeCount'
+});
+
+Object.values(GAME_DATA_KEYS).forEach(key => {
+  localStorage.removeItem(key);
+});
+
+function getGameData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : { ...defaultGameData };
+}
+
+function setGameData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getPrestigeCount() {
+  return getGameData().prestigeCount || 0;
+}
+
+function setPrestigeCount(count) {
+  const data = getGameData();
+  data.prestigeCount = count;
+  setGameData(data);
+}
+
+function getUnviewedAchievements() {
+  const unlocked = getUnlockedAchievements();
+  const viewed = getGameData().viewedAchievements || {};
+
+  const unviewed = [];
+
+  for (const id in unlocked) {
+    if (!viewed[id]) {
+      unviewed.push(id);
+    }
+  }
+
+  return unviewed;
+}
+
+function getHighestUnlockedSkin() {
+  const unlocked = getUnlockedAchievements();
+  if (!unlocked) return 'bronze';
+
+  let highestRarityLevel = 0;
+  let highestRarity = 'CommonAchievement';
+
+  for (const id in unlocked) {
+    if (unlocked[id]) {
+      const rarity = achievementData[id]?.rarity || 'CommonAchievement';
+      const level = rarityOrder[rarity] || 1;
+      if (level > highestRarityLevel) {
+        highestRarityLevel = level;
+        highestRarity = rarity;
+      }
+    }
+  }
+
+  if (highestRarity == 'PrestigeAchievement')
+    highestRarity = 'SecretAchievement';
+
+  return rarityToSkin[highestRarity] || 'bronze';
+}
+
+function getUnlockedAchievements() {
+  return getGameData().achievements || {};
+}
+
+function setUnlockedAchievements(obj) {
+  const data = getGameData();
+  data.achievements = obj;
+  setGameData(data);
+  updateAchievementCount();
+}
+
+function resetEverything() {
+    setGameData(defaultGameData);
+}
+
+function loadCustomPrestigeSkin() {
+  const tracker = document.getElementById('achievement-tracker');
+  if (!tracker) return;
+
+  const saved = getGameData().customPrestige;
+  if (!saved) return;
+
+  try {
+
+    const icon = tracker.querySelector('i');
+
+    if (!icon) return;
+
+    icon.style.animation = `${saved.animation} 2s infinite`;
+    icon.style.color = saved.color;
+
+    tracker.classList.add('prestige');
+  } catch  {
+  }
+}
+
+function updateAchievementCount() {
+  const unviewed = getUnviewedAchievements();
+  const count = unviewed.length;
+  $('#achievement-count').text(count);
+
+  const badge = document.getElementById("achievement-count");
+  if (!badge) return;
+
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+function getUnlockDuration(unlocked) {
+  const timestamps = Object.values(unlocked);
+  if (timestamps.length === 0) return 0;
+
+  const minTime = Math.min(...timestamps);
+  const maxTime = Math.max(...timestamps);
+
+  return maxTime - minTime;
+}
 
 function renderAchievementIcon(id, unlocked, isNew = false) {
   const data = achievementData[id] || {
@@ -202,37 +347,6 @@ function renderAchievementIcon(id, unlocked, isNew = false) {
       ${isNew ? '<div class="newly-viewed-dot"></div>' : ''}
     </div>
   `;
-}
-
-function getUnviewedAchievements() {
-  const unlocked = getUnlockedAchievements();
-  const viewed = JSON.parse(localStorage.getItem('viewedAchievements')) || {};
-
-  const unviewed = [];
-
-  for (const id in unlocked) {
-    if (!viewed[id]) {
-      unviewed.push(id);
-    }
-  }
-
-  return unviewed;
-}
-
-function updateAchievementCount() {
-  const unviewed = getUnviewedAchievements();
-  const count = unviewed.length;
-  $('#achievement-count').text(count);
-
-  const badge = document.getElementById("achievement-count");
-  if (!badge) return;
-
-  if (count > 0) {
-    badge.textContent = count;
-    badge.style.display = "inline-block";
-  } else {
-    badge.style.display = "none";
-  }
 }
 
 function changeZoom(value) {
@@ -276,10 +390,10 @@ function openSkinSelector() {
     skins.push({ value: 'prestige', label: 'Prestige', iconClass: 'fa fa-trophy prestige' });
   }
 
-  const savedSkin = localStorage.getItem('achievementTrackerSkin') || 'bronze';
+  const savedSkin = getGameData().achievementTrackerSkin || 'bronze';
   let prestigeSettings = { animation: 'bronzeGlow', color: '#ff0077' };
   try {
-    const savedPrestige = JSON.parse(localStorage.getItem('customPrestige'));
+    const savedPrestige = getGameData().customPrestige;
     if (savedPrestige && savedPrestige.animation && savedPrestige.color) {
       prestigeSettings = savedPrestige;
     }
@@ -348,17 +462,15 @@ function openPrestigeCustomizationPopup() {
     prestigeGlow: 'Prestige'
   };
 
-  let savedSettings = localStorage.getItem('customPrestige');
-
+  let savedSettings = getGameData().customPrestige;
   let defaultColor = '#ff0077';
   let defaultAnimation = 'bronzeGlow';
 
   if (savedSettings) {
     try {
-      const parsed = JSON.parse(savedSettings);
-      if (parsed.color) defaultColor = parsed.color;
-      if (parsed.animation && availableAnimations.includes(parsed.animation)) {
-        defaultAnimation = parsed.animation;
+      if (savedSettings.color) defaultColor = savedSettings.color;
+      if (savedSettings.animation && availableAnimations.includes(savedSettings.animation)) {
+        defaultAnimation = savedSettings.animation;
       }
     } catch {
     }
@@ -441,28 +553,6 @@ function openPrestigeCustomizationPopup() {
   });
 }
 
-function loadCustomPrestigeSkin() {
-  const tracker = document.getElementById('achievement-tracker');
-  if (!tracker) return;
-
-  const saved = localStorage.getItem('customPrestige');
-  if (!saved) return;
-
-  try {
-    const { animation, color } = JSON.parse(saved);
-
-    const icon = tracker.querySelector('i');
-
-    if (!icon) return;
-
-    icon.style.animation = `${animation} 2s infinite`;
-    icon.style.color = color;
-
-    tracker.classList.add('prestige');
-  } catch  {
-  }
-}
-
 function choosePath(event) {
   const unlocked = getUnlockedAchievements();
   if (!unlocked['berserk'] || unlocked['good'] || unlocked['evil']) return;
@@ -520,7 +610,7 @@ function choosePath(event) {
               achievementUnlocked('good');
             }
             else {
-              choosePath();
+              choosePath(event);
             }
           });
         });
@@ -530,7 +620,9 @@ function choosePath(event) {
 }
 
 function applyPrestigeSkin(animation, color) {
-  localStorage.setItem('customPrestige', JSON.stringify({ animation, color }));
+  const data = getGameData();
+  data.customPrestige = { animation, color };
+  setGameData(data);
   applyTrackerSkin('prestige');
 }
 
@@ -554,39 +646,13 @@ function applyTrackerSkin(skin) {
     tracker.style.removeProperty('--prestige-color');
   }
 
-  localStorage.setItem('achievementTrackerSkin', skin);
+  const data = getGameData();
+  data.achievementTrackerSkin = skin;
+  setGameData(data);
 }
 
-function openAchievementList() {
-  const unlocked = getUnlockedAchievements();
-
-  const viewed = JSON.parse(localStorage.getItem('viewedAchievements') || '{}');
-
-  const newlyViewed = {};
-
-  for (const id in unlocked) {
-    if (!(id in viewed)) {
-      newlyViewed[id] = unlocked[id];
-    }
-  }
-
-  localStorage.setItem('viewedAchievements', JSON.stringify(unlocked));
-
-  updateAchievementCount();
-
-  const allIds = Object.keys(sortedAchievements);
-  const allUnlocked = allIds.filter(id => !achievementData[id].secret).every(id => unlocked[id]);
-
-  const lockedGroups = new Set();
-
-  for (const id in unlocked) {
-    const data = achievementData[id];
-    if (data && data.rarity === 'PrestigeAchievement' && data.group) {
-      lockedGroups.add(data.group);
-    }
-  }
-
-  const achievementsHTML = allIds.map(id => {
+function generateAchievementHtmlContent(allIds, unlocked, newlyViewed, lockedGroups) {
+  return allIds.map(id => {
     const data = achievementData[id];
     const isUnlocked = !!unlocked[id];
 
@@ -621,9 +687,41 @@ function openAchievementList() {
       </div>
       `;
     }).join('');
+}
 
-    prestigeCount = getPrestigeCount();
-    prestigeHtml = prestigeCount > 0 ? ' - ' + `<div class="prestige-count" style="color: #ffb84e; margin-left: 5px">Prestige ${prestigeCount}</div>` : ''; 
+function openAchievementList() {
+  const unlocked = getUnlockedAchievements();
+  const viewed = getGameData().viewedAchievements || {};
+  const newlyViewed = {};
+
+  for (const id in unlocked) {
+    if (!(id in viewed)) {
+      newlyViewed[id] = unlocked[id];
+    }
+  }
+
+  const data = getGameData();
+  data.viewedAchievements = unlocked;
+  setGameData(data);
+
+  updateAchievementCount();
+
+  const allIds = Object.keys(sortedAchievements);
+  const allUnlocked = allIds.filter(id => !achievementData[id].secret).every(id => unlocked[id]);
+
+  const lockedGroups = new Set();
+
+  for (const id in unlocked) {
+    const data = achievementData[id];
+    if (data && data.rarity === 'PrestigeAchievement' && data.group) {
+      lockedGroups.add(data.group);
+    }
+  }
+
+  const achievementsHTML = generateAchievementHtmlContent(allIds, unlocked, newlyViewed, lockedGroups);
+
+    const prestigeCount = getPrestigeCount();
+    const prestigeHtml = prestigeCount > 0 ? `<div class="prestige-count" style="color: #ffb84e; margin-left: 5px">Prestige ${prestigeCount}</div>` : ''; 
 
     Swal.fire({
       title: allUnlocked ? `🎉 All Achievements Unlocked!${prestigeHtml}` : `Your Achievements${prestigeHtml}`,
@@ -657,43 +755,6 @@ function openAchievementList() {
     });
 }
 
-function getHighestUnlockedSkin() {
-  const unlocked = getUnlockedAchievements();
-  if (!unlocked) return 'bronze';
-
-  let highestRarityLevel = 0;
-  let highestRarity = 'CommonAchievement';
-
-  let rarityOrderHere = Object.fromEntries(
-    Object.entries(rarityOrder).filter(([key]) =>
-      key !== 'PrestigeAchievement'
-    )
-  );
-
-  for (const id in unlocked) {
-    if (unlocked[id]) {
-      const rarity = achievementData[id]?.rarity || 'CommonAchievement';
-      const level = rarityOrderHere[rarity] || 1;
-      if (level > highestRarityLevel) {
-        highestRarityLevel = level;
-        highestRarity = rarity;
-      }
-    }
-  }
-
-  return rarityToSkin[highestRarity] || 'bronze';
-}
-
-function getUnlockedAchievements() {
-  const data = localStorage.getItem('achievements');
-  return data ? JSON.parse(data) : {};
-}
-
-function setUnlockedAchievements(obj) {
-  localStorage.setItem('achievements', JSON.stringify(obj));
-  updateAchievementCount();
-}
-
 function checkAllAchievementsUnlocked() {
   const allIds = Object.keys(achievementData).filter(id => id !== 'completed' && !achievementData[id].secret);
   const unlocked = getUnlockedAchievements();
@@ -705,26 +766,8 @@ function checkAllAchievementsUnlocked() {
   }
 }
 
-function getUnlockDuration(unlocked) {
-  const timestamps = Object.values(unlocked);
-  if (timestamps.length === 0) return 0;
-
-  const minTime = Math.min(...timestamps);
-  const maxTime = Math.max(...timestamps);
-
-  return maxTime - minTime;
-}
-
-function getPrestigeCount() {
-  return parseInt(localStorage.getItem('prestigeCount')) || 0;
-}
-
-function setPrestigeCount(count) {
-  localStorage.setItem('prestigeCount', count);
-}
-
 function prestige() {
-  unlockedAchievements = getUnlockedAchievements();
+  var unlockedAchievements = getUnlockedAchievements();
   const filteredAchievements = {};
   for (const key in unlockedAchievements) {
     if (achievementData[key]) {
@@ -734,9 +777,8 @@ function prestige() {
     }
   }
   unlockedAchievements = filteredAchievements;
-  currentSkin = 'bronze';
   celebrationCount = 0;
-  applyTrackerSkin(currentSkin);
+  applyTrackerSkin('bronze');
   setUnlockedAchievements(unlockedAchievements);
   let count = getPrestigeCount();
   count++;
@@ -753,7 +795,7 @@ function prestige() {
 
 function checkPrestigeCount() {
   const count = getPrestigeCount();
-  if (count >= 7) {
+  if (count >= 1) {
     achievementUnlocked('prestigious');
   }
 }
@@ -780,10 +822,10 @@ function createConfetti(onCursor = false, nuke = false) {
   }
 
   celebrationCount++;
-  if (celebrationCount >= 7) {
+  if (celebrationCount >= MAGIC_NUMBER) {
     achievementUnlocked('celebrate');
   }
-  if (celebrationCount >= 77) {
+  if (celebrationCount >= CELEBRATION_MAX) {
     achievementUnlocked('skin');
   }
 
@@ -815,7 +857,10 @@ function achievementUnlocked(id) {
   unlocked[id] = Date.now();
   setUnlockedAchievements(unlocked);
 
-  applyTrackerSkin(getHighestUnlockedSkin());
+  const savedSkin = getGameData().achievementTrackerSkin || 'bronze';
+  if (savedSkin != 'prestige') {
+    applyTrackerSkin(getHighestUnlockedSkin());
+  }
 
   let data = achievementData[id] || {
     "icon": "fa fa-trophy",
@@ -837,22 +882,16 @@ function achievementUnlocked(id) {
     if (id != 'completed') {
       checkAllAchievementsUnlocked();
     }
-  }, 5950);
+  }, STEAM_POPUP_TIMEOUT);
 
 }
 
 jQuery(document).ready(function($) {
-  // Remove url text on mouseover for icons links
   $('a').each(function() {
     $(this).attr('onclick', 'window.location.href="' + $(this).attr('href') + '"');
     $(this).removeAttr('href');
   });
-});
 
-jQuery(document).ready(function($) {
-  /**
-   * Set footer always on the bottom of the page
-   */
   function footerAlwayInBottom(footerSelector) {
     var docHeight = $(window).height();
     if (footerSelector.position() != undefined && $('footer').is(":visible")) {
@@ -871,7 +910,7 @@ jQuery(document).ready(function($) {
 
   checkAllAchievementsUnlocked();
 
-  const savedSkin = localStorage.getItem('achievementTrackerSkin');
+  const savedSkin = getGameData().achievementTrackerSkin;
 
   const unlockedAch = getUnlockedAchievements();
 
@@ -888,6 +927,22 @@ jQuery(document).ready(function($) {
 
   document.addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'c') {
+      if (e.altKey) {
+        Swal.fire({
+          title: 'Reset Everything?',
+          text: 'All progression will be lost. This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Reset',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#d33',
+          reverseButtons: true
+        }).then((result) => {
+          if (result & result.value) {
+            resetEverything();
+          }
+        });
+      }
       const unlocked = getUnlockedAchievements();
       if (unlocked['celebrate']) {
         createConfetti(true);
@@ -998,11 +1053,13 @@ jQuery(document).ready(function($) {
         $('body').empty();
         document.body.background = "https://i.imgur.com/ZngZTjQ.png";
         setTimeout(() => {
-        alert('Do not click this ever again. And never look at it too closely.')
+          Swal.fire({
+            title: 'Warning',
+            text: 'Do not click this ever again. And never look at it too closely.',
+            icon: 'error',
+            confirmButtonText: 'I am sorry'
+          }).then(() => location.reload());
         }, 1000);
-        setTimeout(() => {
-          location.reload();
-        }, 3000);
       } else {
         document.querySelectorAll('*').forEach(el => {
           el.classList.add('glitch-text');
@@ -1064,7 +1121,10 @@ jQuery(document).ready(function($) {
                   const remaining = container.querySelectorAll(`img[src="${berserkSrc}"]`).length;
                   if (remaining === 0) {
                     Swal.update({
-                      html: '<div class="glitch-text">Good job! The source of evil is now weakened!</div>',
+                      title: 'Good job!',
+                      showCancelButton: false,
+                      html: '<div class="glitch-text">The source of evil is now weakened!</div>',
+                      icon: 'success',
                       confirmButtonText: "Time to end this!",
                       confirmButtonColor: 'red'
                     });
@@ -1127,7 +1187,7 @@ jQuery(document).ready(function($) {
             else {
               Swal.fire({
                 title: 'Defeat!',
-                text: "You are getting absolutely blasted, you don't stand a chance...",
+                text: "You get absolutely blasted, you don't stand a chance...",
                 icon: 'error',
                 confirmButtonText: 'I will come back later'
               }).then(() => {

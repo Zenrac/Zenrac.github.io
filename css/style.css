@@ -453,10 +453,10 @@ a {
 }
 
 .ani_div {
-  width: 275px;
-  height: 110px;
-  position: fixed;
+  width: 300px;
+  height: 90px;
   bottom: 0;
+  position: fixed;
   right: 0;
   z-index: 1100;
   background-color: #30302e;
@@ -512,7 +512,7 @@ a {
 	flex-direction: column;
 	height: 100%;
  	justify-content: center;
-	gap: 10px;
+	gap: 5px;
 }
 
 .ani_div .description {
