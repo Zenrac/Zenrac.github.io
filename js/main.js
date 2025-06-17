@@ -102,7 +102,7 @@ const achievementData = {
   },
   'evil': {
     secret: true,
-    icon: "fa-solid fa-skull-crossbones",
+    icon: "fa-solid fa-mask",
     group: 'evilorgood',
     title: "Berserker Brother",
     text: "You embraced the rage and became one with madness.",
@@ -129,6 +129,20 @@ const achievementData = {
     title: "The Dice Are Rigged",
     text: "You beat my highest failstack spent on PEN Blackstar.",
     rarity: "PrestigeAchievement",
+  },
+  'arsha': {
+    secret: true,
+    icon: "fa-solid fa-droplet",
+    title: "Red Flag",
+    text: "2x more resources this run, but there was a 10% chance of wasting everything.",
+    rarity: "RareAchievement",
+  },
+  'dead': {
+    secret: true,
+    icon: "fa-solid fa-skull-crossbones",
+    title: "Got PKed",
+    text: "You got PKed and lost all your resources. Better read a PvP guide next time!",
+    rarity: "RareAchievement",
   }
 };
 
@@ -291,6 +305,24 @@ function setUnlockedAchievements(obj) {
 
 function resetEverything() {
     setGameData(defaultGameData);
+    updateAchievementCount();
+}
+
+function askReset() {
+    Swal.fire({
+    title: 'Reset Everything?',
+    text: 'All progression will be lost. This action cannot be undone.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Reset',
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#d33',
+    reverseButtons: true
+  }).then((result) => {
+    if (result && result.value) {
+      resetEverything();
+    }
+  });
 }
 
 function loadCustomPrestigeSkin() {
@@ -443,6 +475,11 @@ function openSkinSelector() {
             ${skinsHTML}
            </div>`,
     showConfirmButton: false,
+    customClass: {
+      popup: 'skin-popup',
+      title: 'skin-title',
+      content: 'skin-content',
+    },
     showCloseButton: true,
     onOpen: () => {
       document.querySelectorAll('.skin-option').forEach(el => {
@@ -499,6 +536,11 @@ function openPrestigeCustomizationPopup() {
 
   Swal.fire({
     title: 'Customize Your Prestige Skin',
+    customClass: {
+      popup: 'prestige-popup',
+      title: 'prestige-title',
+      content: 'prestige-content',
+    },
     html: `
       <div style="text-align: center;">
         <div id="prestige-preview" style="
@@ -801,8 +843,8 @@ function prestige() {
   var data = getGameData();
   let count = data.prestigeCount ?? 0;
   data.prestigeCount = ++count;
-  let stone = data.magicalStone || 0;
-  data.magicalStone = stone + 10;
+  let stone = data.magicalStone ?? 0;
+  data.magicalStone = stone + (unlockedAchievements['arsha'] ? 20 : 10);
   setGameData(data);
   Swal.fire({
     title: 'Prestige Complete!',
@@ -839,7 +881,10 @@ function createConfetti(onCursor = false, nuke = false) {
 
   var game = getGameData();
   var durability = (game.durability ?? 200);
-  game.durability = Math.min(++durability, 200);
+
+  const unlocked = getUnlockedAchievements();
+
+  game.durability = Math.min(durability + (unlocked['arsha'] ? 2 : 1), 200);
   setGameData(game);
 
   if (onCursor) {
@@ -886,7 +931,8 @@ function achievementUnlocked(id) {
   const gameData = getGameData();
   var cron = gameData.cronStone ?? 0;
   var rarityLevel = rarityOrder[achievementData[id]?.rarity] ?? 1;
-  cron += (100 * (rarityLevel * rarityLevel));
+  var bonusCron = (100 * (rarityLevel * rarityLevel));
+  cron += unlocked['arsha'] ? bonusCron * 2 : bonusCron;
   gameData.cronStone = cron;
   setGameData(gameData);
 
@@ -944,14 +990,18 @@ function openBdoEnchant() {
 
     Swal.fire({
       width: 500,
+      customClass: {
+        popup: 'enchant-popup',
+        title: 'enchant-title',
+        content: 'enchant-content',
+      },
       title: 'You need to enhance a PEN Blackstar Axe',
       background: '#121212',
       color: '#e0e0e0',
       html: `
         <div style="font-family: sans-serif; color: #ccc; display: flex; flex-direction: column; align-items: center;">
         
-          <!-- Center line with enchantment items -->
-          <div style="display: flex; align-items: center; gap: 20px; background: #1c1c1c; padding: 15px 20px; border-radius: 8px;">
+          <div style="margin-top: 10px; display: flex; align-items: center; gap: 20px; background: #1c1c1c; padding: 15px 20px; border-radius: 8px;">
             <img src="${stoneUrl}" width="50" alt="Enhancement Stone">
             <div style="text-align: center;">
               <div style="font-size: 24px; font-weight: bold; color: #80ffff;">${totalChance.toFixed(3)}%</div>
@@ -963,7 +1013,6 @@ function openBdoEnchant() {
             </div>
           </div>
 
-          <!-- Enhancement bonus info -->
           <div style="margin-top: 15px; font-size: 14px; background: #111; padding: 10px; border-radius: 6px; width: 100%; max-width: 320px;">
             <p>🔼 Additional Enhancement Chance: <strong>+${failstack}</strong></p>
             <p>🔁 Valks Enhancement Chance: <strong>+${valksBonus}</strong></p>
@@ -981,6 +1030,10 @@ function openBdoEnchant() {
               <img src="${stoneUrl}" width="30" alt="Magical Stone">
               <span><strong>Magical Stones: ${magicalStone}</strong></span>
             </div>
+
+              <div style="margin-top: 8px; font-size: 12px; color: #888; text-align: center; user-select: none;">
+                Press , anytime to get back here
+              </div>
           </div>
 
           <!-- Feedback message -->
@@ -1058,6 +1111,24 @@ function openBdoEnchant() {
   };
 
   showPopup();
+}
+
+function tryOpenBdoEnchant() {
+  const unlocked = getUnlockedAchievements();
+  const prestigeCount = getPrestigeCount();
+  if (unlocked['skin'] || prestigeCount > 0) {
+    openBdoEnchant();
+  } else {
+    Swal.fire({
+      icon: 'info',
+      title: "Erm actually...",
+      html: `
+        You're not skilled enough to go here, come back later and I'll give you free <div style="color: orange">Advice of Valk +150</div><br><br>
+        <img src="https://bdocodex.com/items/new_icon/09_cash/00017800.webp" alt="Advice of Valk +150" style="width:80px; height:auto;">
+      `,
+      confirmButtonText: 'Got it'
+    });
+  }
 }
 
 function openDiscordPopup() {
@@ -1152,23 +1223,20 @@ jQuery(document).ready(function($) {
 
   footerAlwayInBottom($("#footer"));
 
-  document.addEventListener('keydown', (e) => {
+  $('body').keydown((e) => {
     if (e.key.toLowerCase() === 'c') {
       if (e.altKey) {
-        Swal.fire({
-          title: 'Reset Everything?',
-          text: 'All progression will be lost. This action cannot be undone.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Reset',
-          cancelButtonText: 'Cancel',
-          confirmButtonColor: '#d33',
-          reverseButtons: true
-        }).then((result) => {
-          if (result & result.value) {
-            resetEverything();
-          }
-        });
+        if (unlockedAch['arsha'] || unlockedAch['dead']) return;
+        if (Math.random() < 0.10) {
+          achievementUnlocked('dead');
+          var data = getGameData();
+          data.cronStone = 0;
+          data.magicalStone = 0;
+          data.durability = 0;
+          setGameData(data);
+        } else {
+          achievementUnlocked('arsha'); 
+        }
       }
       const unlocked = getUnlockedAchievements();
       if (unlocked['celebrate']) {
@@ -1177,22 +1245,61 @@ jQuery(document).ready(function($) {
     }
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 's') {
-      const unlocked = getUnlockedAchievements();
-      if (unlocked['skin']) {
-        openSkinSelector();
+  $('body').keypress((e) => {
+    if (e.key.toLowerCase() === ',') {
+      const enchantSwal = document.querySelector('.enchant-popup');
+      if (enchantSwal && Swal.isVisible()) {
+        Swal.close();
+      } else {
+        tryOpenBdoEnchant();
       }
     }
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'o') {
-    if (Swal.isVisible()) {
-      Swal.close();
-    } else {
-      openAchievementList();
+  $('body').keydown((e) => {
+    if (e.key.toLowerCase() === 'r') {
+      if (e.altKey) {
+        askReset();
+      }
     }
+  });
+
+  $('body').keypress((e) => {
+    if (e.key.toLowerCase() === 's') {
+      const unlocked = getUnlockedAchievements();
+      if (unlocked['skin']) {
+        const skinSwal = document.querySelector('.skin-popup');
+        if (skinSwal && Swal.isVisible()) {
+          Swal.close();
+        } else {
+          openSkinSelector();
+        }
+      }
+    }
+  });
+
+  $('body').keypress((e) => {
+    if (e.key.toLowerCase() === 'p') {
+      const unlocked = getUnlockedAchievements();
+      if (unlocked['prestigious'] && unlocked['skin']) {
+        const prestigeSwal = document.querySelector('.prestige-popup');
+        if (prestigeSwal && Swal.isVisible()) {
+          Swal.close();
+        } else {
+          openPrestigeCustomizationPopup();
+        }
+      }
+    }
+  });
+
+  $('body').keypress((e) => {
+    if (e.key.toLowerCase() === 'o') {
+      const achievementSwal = document.querySelector('.achievement-popup');
+      if (achievementSwal && Swal.isVisible()) {
+        Swal.close();
+      } else {
+        openAchievementList();
+      }
     }
   });
 
@@ -1210,7 +1317,7 @@ jQuery(document).ready(function($) {
   });
 
   $('body').on('click', '.nerd', () => {
-    openBdoEnchant();
+    tryOpenBdoEnchant();
   });
 
   $(document).on('click', '.achievement-grave_digger', () => {
@@ -1405,7 +1512,7 @@ jQuery(document).ready(function($) {
           confirmButtonText: 'I have no fear'
         }).then((result) => 
           { 
-            prestigeCount = getPrestigeCount();
+            const prestigeCount = getPrestigeCount();
             if (unlocked['skin'] || prestigeCount > 0) {
               achievementUnlocked('edgy') 
               Swal.fire({
@@ -1524,7 +1631,7 @@ jQuery(document).ready(function($) {
     }
   });
 
-  document.addEventListener('keydown', (e) => {
+  $('body').keydown((e) => {
     const key = e.key.toLowerCase();
 
     inputBuffer.push(key);
