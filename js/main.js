@@ -115,6 +115,20 @@ const achievementData = {
     title: "Berserker no More",
     text: "You calmed the chaos and restored the balance.",
     rarity: "PrestigeAchievement",
+  },
+  'rng': {
+    secret: true,
+    icon: "fa-solid fa-clover",
+    title: "RNG Carried",
+    text: "Some people never struggle.",
+    rarity: "PrestigeAchievement",
+  },
+  'unlucky': {
+    secret: true,
+    icon: "fa-solid fa-dice",
+    title: "The Dice Are Rigged",
+    text: "You beat my highest failstack spent on PEN Blackstar.",
+    rarity: "PrestigeAchievement",
   }
 };
 
@@ -156,7 +170,11 @@ const defaultGameData = {
   customPrestige: null,
   achievementTrackerSkin: 'bronze',
   achievements: {},
-  prestigeCount: 0
+  prestigeCount: 0,
+  cronStone: 0,
+  failstack: 150,
+  durability: 200,
+  magicalStone: 0
 };
 
 const MAGIC_NUMBER = 7;
@@ -246,6 +264,9 @@ function getHighestUnlockedSkin() {
   for (const id in unlocked) {
     if (unlocked[id]) {
       const rarity = achievementData[id]?.rarity || 'CommonAchievement';
+      if (rarity == 'PrestigeAchievement' && (!unlocked['skin'] || !unlocked['prestigious'])) {
+        continue;
+      }
       const level = rarityOrder[rarity] || 1;
       if (level > highestRarityLevel) {
         highestRarityLevel = level;
@@ -253,9 +274,6 @@ function getHighestUnlockedSkin() {
       }
     }
   }
-
-  if (highestRarity == 'PrestigeAchievement')
-    highestRarity = 'SecretAchievement';
 
   return rarityToSkin[highestRarity] || 'bronze';
 }
@@ -381,7 +399,7 @@ function openSkinSelector() {
   const unlockedAchievements = getUnlockedAchievements();
 
   const hasSecretAchievement = Object.entries(unlockedAchievements).some(([id, unlocked]) =>
-    unlocked && (achievementData[id]?.rarity === 'SecretAchievement' || achievementData[id]?.rarity === 'PrestigeAchievement')
+    unlocked && (achievementData[id]?.rarity === 'SecretAchievement')
   );
 
   if (hasSecretAchievement) skins.push({ value: 'secret', label: 'Secret', iconClass: 'fa fa-trophy secret' });
@@ -780,9 +798,12 @@ function prestige() {
   celebrationCount = 0;
   applyTrackerSkin('bronze');
   setUnlockedAchievements(unlockedAchievements);
-  let count = getPrestigeCount();
-  count++;
-  setPrestigeCount(count);
+  var data = getGameData();
+  let count = data.prestigeCount ?? 0;
+  data.prestigeCount = ++count;
+  let stone = data.magicalStone || 0;
+  data.magicalStone = stone + 10;
+  setGameData(data);
   Swal.fire({
     title: 'Prestige Complete!',
     text: 'Your achievements and skins have been reset. How fast can you get back to where you were?',
@@ -795,7 +816,7 @@ function prestige() {
 
 function checkPrestigeCount() {
   const count = getPrestigeCount();
-  if (count >= 1) {
+  if (count >= MAGIC_NUMBER) {
     achievementUnlocked('prestigious');
   }
 }
@@ -815,6 +836,11 @@ function createConfetti(onCursor = false, nuke = false) {
 
   let originY = 0.6;
   let originX = null;
+
+  var game = getGameData();
+  var durability = (game.durability ?? 200);
+  game.durability = Math.min(++durability, 200);
+  setGameData(game);
 
   if (onCursor) {
     originX = lastMousePos.x / window.innerWidth;
@@ -857,6 +883,13 @@ function achievementUnlocked(id) {
   unlocked[id] = Date.now();
   setUnlockedAchievements(unlocked);
 
+  const gameData = getGameData();
+  var cron = gameData.cronStone ?? 0;
+  var rarityLevel = rarityOrder[achievementData[id]?.rarity] ?? 1;
+  cron += (100 * (rarityLevel * rarityLevel));
+  gameData.cronStone = cron;
+  setGameData(gameData);
+
   const savedSkin = getGameData().achievementTrackerSkin || 'bronze';
   if (savedSkin != 'prestige') {
     applyTrackerSkin(getHighestUnlockedSkin());
@@ -884,6 +917,200 @@ function achievementUnlocked(id) {
     }
   }, STEAM_POPUP_TIMEOUT);
 
+}
+
+function openBdoEnchant() {
+  let failstack = getGameData().failstack ?? 150;;
+  const valksBonus = 13;
+  const prestigeCount = getPrestigeCount();
+  const permanentBonus = Math.min(Math.max(prestigeCount + 2, 2), 5);
+  let durability = getGameData().durability ?? 200;
+  let cronStones = getGameData().cronStone ?? 0;
+  let magicalStone = getGameData().magicalStone ?? 10;
+
+  const baseChance = 0.2;
+
+  const axeUrl = "https://bdocodex.com/items/new_icon/06_pc_equipitem/00_common/01_weapon/00690563.webp";
+  const cronUrl = "https://bdocodex.com/items/new_icon/03_etc/00016080.webp";
+  const stoneUrl = "https://bdocodex.com/items/new_icon/03_etc/00752021.webp";
+  const memoryFragmentUrl = "https://bdocodex.com/items/new_icon/03_etc/04_dropitem/00044195.webp";
+
+  const getTotalChance = () => baseChance + failstack * 0.02;
+  const getCurrentChance = () => failstack + valksBonus + permanentBonus;
+
+  const showPopup = (feedback = null) => {
+    const totalChance = getTotalChance();
+    const currentChance = getCurrentChance();
+
+    Swal.fire({
+      width: 500,
+      title: 'You need to enhance a PEN Blackstar Axe',
+      background: '#121212',
+      color: '#e0e0e0',
+      html: `
+        <div style="font-family: sans-serif; color: #ccc; display: flex; flex-direction: column; align-items: center;">
+        
+          <!-- Center line with enchantment items -->
+          <div style="display: flex; align-items: center; gap: 20px; background: #1c1c1c; padding: 15px 20px; border-radius: 8px;">
+            <img src="${stoneUrl}" width="50" alt="Enhancement Stone">
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #80ffff;">${totalChance.toFixed(3)}%</div>
+              <div style="font-size: 14px; color: #aaa;">(+${currentChance})</div>
+            </div>
+            <div class="relative">
+              <img src="${axeUrl}" width="60" alt="Blackstar IV"></img>
+              <span class="enhance-level text-lg">IV</span>
+            </div>
+          </div>
+
+          <!-- Enhancement bonus info -->
+          <div style="margin-top: 15px; font-size: 14px; background: #111; padding: 10px; border-radius: 6px; width: 100%; max-width: 320px;">
+            <p>🔼 Additional Enhancement Chance: <strong>+${failstack}</strong></p>
+            <p>🔁 Valks Enhancement Chance: <strong>+${valksBonus}</strong></p>
+            <p>⭐ Permanent Enhancement Chance: <strong>+${permanentBonus}</strong></p>
+            <hr style="border: 1px solid #333;">
+            <div style="align-self: flex-center; align-items: center; gap: 6px;">
+              <img src="${memoryFragmentUrl}" width="30" alt="Memory Fragment">
+              <span><strong>Durability: ${durability} / 200</span>
+            </div>
+            <div style="align-self: flex-center; align-items: center; gap: 6px;">
+              <img src="${cronUrl}" width="30" alt="Cron Stones">
+              <span><strong>Cron Stones: ${cronStones}</strong> / 3670</span>
+            </div>
+            <div style="align-self: flex-center; align-items: center; gap: 6px;">
+              <img src="${stoneUrl}" width="30" alt="Magical Stone">
+              <span><strong>Magical Stones: ${magicalStone}</strong></span>
+            </div>
+          </div>
+
+          <!-- Feedback message -->
+          ${feedback ? `<div style="margin-top: 10px; color: ${feedback.color}; font-weight: bold;">${feedback.message}</div>` : ''}
+
+          <button id="enchantBtn" style="margin-top: 15px; background: #0a0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+            Enchant
+          </button>
+        </div>
+      `,
+      showConfirmButton: false,
+      didOpen: () => {
+        $('#enchantBtn').off('click').on('click', () => {
+          if (durability < 20 || cronStones < 3670 || magicalStone < 1) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Insufficient Materials',
+              html: `<div style="font-size: 15px; font-weight: bold;">You need <div style="color: orange">3670 cron stones</div><div style="color: orange">20 durability</div><div style="color: orange">1 magical stone</div> per attempt.</div>
+              <br><div style="text-decoration: underline;">How to uptain:</div><div>Cron Stones with achievements</div><div>Magical stones by going prestige</div><div>Durability by celebrating!</div>`,
+              background: '#111',
+              confirmButtonText: 'Go back to grind...',
+              color: '#fff'
+            }).then(() => showPopup());
+            return;
+          }
+
+          cronStones -= 3670;
+          magicalStone--;
+
+          const success = Math.random() < (totalChance / 100);
+
+          var data = getGameData();
+
+          if (success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'OMG RNG CARRIED?!!',
+              html: `           
+              <div>Your Blackstar Axe is now PEN (V)!</div> 
+              <div>You used a failstack of <span style="font-weight: bold">${failstack}!</span></div>
+              <br>
+              <div class="relative">
+                <img src="${axeUrl}" width="60" alt="Blackstar V"></img>
+                <span class="enhance-level text-lg">V</span>
+              </div>`,
+              imageHeight: 100,
+              confirmButtonText: 'EZ GAME',
+              background: '#000',
+              color: '#0f0'
+            });
+            data.magicalStone = magicalStone;
+            data.cronStone = cronStones;
+            data.failstack = 150;
+            setGameData(data);
+            achievementUnlocked('rng');
+          } else {
+            failstack += 6;
+            durability -= 20;
+            showPopup({
+              message: '❌ Enhancement failed...',
+              color: '#ff4444'
+            });
+          data.magicalStone = magicalStone;
+          data.cronStone = cronStones;
+          data.durability = durability;
+          data.failstack = failstack;
+          setGameData(data);
+          
+          if (failstack > 349)
+            achievementUnlocked('unlucky');
+          }
+        });
+      }
+    });
+  };
+
+  showPopup();
+}
+
+function openDiscordPopup() {
+  achievementUnlocked('friendship');
+  Swal.fire({
+    title: 'Nice!',
+    width: 700,
+    text: 'I may refuse your friend request btw!',
+    imageUrl: './images/discord.png',
+    imageAlt: 'My discord image',
+    background: '#202225',
+    confirmButtonText: 'Great!',
+    cancelButtonText: 'Fuck you!',
+    showCloseButton: true,
+    showCancelButton: true,
+    focusConfirm: false,
+  }).then((result) => {
+    if (result.dismiss == "cancel") {
+      swal.fire({
+        title: "YOU GOT RICK ROLLED",
+        background: '#202225',
+        width: '500px',
+        confirmButtonText: 'I got destroyed!',
+        cancelButtonText: 'Ahaha, predictable kid.',
+        showCloseButton: true,
+        showCancelButton: true,
+        html:
+        '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
+      }).then((result) => {
+        if (result.dismiss == "cancel") {
+          Swal.fire({
+            title: "CAN'T YOU ADMIT?",
+            html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img id='evil' src=https://i.imgur.com/ZngZTjQ.png /></a>",
+            imageAlt: "BERSERK",
+            confirmButtonText: 'I am sorry!',
+            confirmButtonAriaLabel: 'Thumbs up, great!',
+          }).then((result) => {
+            if (!result.dismiss) {
+              Swal.fire({
+                title: "Erm actually...",
+                text: "You're not 'sorry', you're a user!",
+                width: '500px',
+                imageUrl: 'https://i.imgur.com/ycg38JT.png',
+                customClass: { image: 'nerd' },
+                confirmButtonText: 'Let me out of this nightmare...',
+              })
+              achievementUnlocked('detective');
+            }
+          })
+        }
+      })
+    }
+  })
 }
 
 jQuery(document).ready(function($) {
@@ -914,7 +1141,7 @@ jQuery(document).ready(function($) {
 
   const unlockedAch = getUnlockedAchievements();
 
-  if (savedSkin && (savedSkin != 'prestige' || unlockedAch['prestigious'])) {
+  if (savedSkin && (savedSkin != 'prestige' || unlockedAch['prestigious']) && unlockedAch['bronze']) {
     applyTrackerSkin(savedSkin);
   } else {
     const defaultSkin = getHighestUnlockedSkin();
@@ -982,6 +1209,10 @@ jQuery(document).ready(function($) {
     openAchievementList();
   });
 
+  $('body').on('click', '.nerd', () => {
+    openBdoEnchant();
+  });
+
   $(document).on('click', '.achievement-grave_digger', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['grave_digger']) {
@@ -1041,7 +1272,7 @@ jQuery(document).ready(function($) {
 
   $(document).on('click', '.achievement-prestigious', () => {
     const unlocked = getUnlockedAchievements();
-    if (unlocked['prestigious']) {
+    if (unlocked['prestigious'] && unlocked['skin']) {
       openPrestigeCustomizationPopup();
     }
   });
@@ -1163,6 +1394,7 @@ jQuery(document).ready(function($) {
     if (unlocked['weakened']) {
       choosePath(event);
     } else {
+      if (unlocked['good'] || unlocked['evil']) return;
       event.stopImmediatePropagation();
       event.preventDefault();
       if (!unlocked['edgy']) {
@@ -1235,7 +1467,7 @@ jQuery(document).ready(function($) {
     if (unlocked['completed']) {
       Swal.fire({
         title: isZoomed ? "Congratulation Detective! You're on the right way!" : "Congratulations! You unlocked all achievements!",
-        text: isZoomed ? "Thanks to your detective skills you understand that you may need to celebrate..." : "I mean all of them without talking about the secret ones, right?",
+        text: isZoomed ? "Thanks to your detective skills you understand that you may need to celebrate and that you can use your 'control' on your trophy for that..." : "I mean all of them without talking about the secret ones, right?",
         width: 500,
         confirmButtonText: isZoomed ? 'Celebrate!' : 'If only I had my magnifying glass...',
         confirmButtonColor: isZoomed ? '#B28E00' : ''
@@ -1418,6 +1650,7 @@ jQuery(document).ready(function($) {
       $('.mainblock').show();
     }
   });
+
   $('.docsbots').on('click', function(e) {
     achievementUnlocked('grave_digger');
     Swal.fire({
@@ -1431,63 +1664,9 @@ jQuery(document).ready(function($) {
       showConfirmButton: false,
     })
   });
-  $('.docs').on('click', function(e) {
-    achievementUnlocked('friendship');
-    Swal.fire({
-      title: 'Nice!',
-      width: 700,
-      text: 'I may refuse your friend request btw!',
-      imageUrl: './images/discord.png',
-      imageAlt: 'My discord image',
-      background: '#202225',
-      confirmButtonText:
-      '<i class="fa fa-thumbs-up"></i> Great!',
-      confirmButtonAriaLabel: 'Thumbs up, great!',
-      cancelButtonText:
-      '<i class="fa fa-thumbs-down"></i> Fuck you!',
-      cancelButtonAriaLabel: 'Thumbs down',
-      showCloseButton: true,
-      showCancelButton: true,
-      focusConfirm: false,
-    }).then((result) => {
-      if (result.dismiss == "cancel") {
-
-        swal.fire({
-          title: "YOU GOT RICK ROLLED",
-          background: '#202225',
-          width: '500px',
-          confirmButtonText:
-          '<i class="fa fa-thumbs-up"></i> I got destroyed!',
-          cancelButtonText:
-          '<i class="fa fa-thumbs-down"></i> Ahaha, predictable kid.',
-          showCloseButton: true,
-          showCancelButton: true,
-          html:
-          '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
-        }).then((result) => {
-          if (result.dismiss == "cancel") {
-            Swal.fire({
-              title: "CAN'T YOU ADMIT?",
-              html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img id='evil' src=https://i.imgur.com/ZngZTjQ.png /></a>",
-              imageAlt: "BERSERK",
-              confirmButtonText:
-              '<i class="fa fa-thumbs-up"></i> I am sorry!',
-              confirmButtonAriaLabel: 'Thumbs up, great!',
-            }).then((result) => {
-              if (!result.dismiss) {
-                Swal.fire({
-                  title: "You're not sorry! You're a user! Gotcha",
-                  width: '500px',
-                  html:
-                  '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/K5JLIdAPfdc?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
-                })
-                achievementUnlocked('detective');
-              }
-            })
-          }
-        })
-      }
-    })
+  
+  $('.discord').on('click', function(e) {
+    openDiscordPopup();
   });
 });
 

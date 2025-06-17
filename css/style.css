@@ -382,7 +382,7 @@ a {
  background-color: #171a21;
 }
 
-.docs a i:hover {
+.discordIcon a i:hover {
 	background-color: #7289da;
 }
 
@@ -519,7 +519,7 @@ a {
  color: grey;
 }
 
-.docs {
+.discordIcon {
   transform: scaleX(0.913);
 }
 
@@ -1067,4 +1067,66 @@ body.swal2-height-auto {
 #evilBtn:hover {
   box-shadow: 0 0 20px 8px rgba(255, 0, 0, 1);
   transform: scale(1.1) rotate(-3deg);
+}
+
+.nerd {
+  cursor: pointer;
+}
+.swal2-popup {
+  font-family: 'Segoe UI', sans-serif;
+}
+.bdo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.stats {
+  font-size: 16px;
+}
+.axe-img {
+  width: 100px;
+  height: auto;
+}
+.enchant-btn {
+  padding: 10px 20px;
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.enhance-level {
+  font-weight: 600;
+  line-height: 10px;
+  position: absolute;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #f56565;
+}
+.enhance-level {
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.relative {
+  position: relative;
+}
+
+.text-lg {
+  font-size: 2.5rem;
+  line-height: 1.75rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
 }
