@@ -1225,8 +1225,9 @@ jQuery(document).ready(function($) {
 
   $('body').keydown((e) => {
     if (e.key.toLowerCase() === 'c') {
+      const allunlockedAch = getUnlockedAchievements();
       if (e.altKey) {
-        if (unlockedAch['arsha'] || unlockedAch['dead']) return;
+        if (allunlockedAch['arsha'] || allunlockedAch['dead']) return;
         if (Math.random() < 0.10) {
           achievementUnlocked('dead');
           var data = getGameData();
