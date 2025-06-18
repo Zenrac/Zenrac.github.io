@@ -242,12 +242,13 @@ footer span {
 }
 
 .player {
-	position: absolute;
-	top: 0px;
-	right: 50px;
-	z-index: 1;
-	opacity: 1;
-	transition: opacity 1s ease;
+  position: absolute;
+  left: 50%;
+  bottom: 60px;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 1s ease;
 }
 
 .player a {
@@ -308,6 +309,13 @@ footer span {
 
 .hideInterface:active {
 	box-shadow: none;
+}
+
+.hideInterface {
+  gap: 5px;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .stats img {

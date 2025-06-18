@@ -222,6 +222,12 @@ let currentZoom = 1;
 
 let inputBuffer = [];
 
+const axeUrl = "https://bdocodex.com/items/new_icon/06_pc_equipitem/00_common/01_weapon/00690563.webp";
+const cronUrl = "https://bdocodex.com/items/new_icon/03_etc/00016080.webp";
+const stoneUrl = "https://bdocodex.com/items/new_icon/03_etc/00752021.webp";
+const memoryFragmentUrl = "https://bdocodex.com/items/new_icon/03_etc/04_dropitem/00044195.webp";
+const healthPotionUrl = "https://bdocodex.com/items/new_icon/03_etc/08_potion/00040712.webp";
+
 const GAME_DATA_KEYS = Object.freeze({
   VIEWED_ACHIEVEMENTS: 'viewedAchievements',
   CUSTOM_PRESTIGE: 'customPrestige',
@@ -613,6 +619,193 @@ function openPrestigeCustomizationPopup() {
   });
 }
 
+function startBossMusic() {
+  if ($('.fullscreen').length < 1) {
+    const playButton = document.querySelector('.play');
+    if (playButton) {
+      const ctrlClickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        altKey: true,
+        ctrlKey: true
+      });
+      playButton.dispatchEvent(ctrlClickEvent);
+    }
+  }
+}
+
+function stopBossMusic() {
+  if ($('.fullscreen').length > 0) {
+    const playButton = document.querySelector('.play');
+    if (playButton) {
+      const ctrlClickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+      playButton.dispatchEvent(ctrlClickEvent);
+    }
+  }
+}
+
+function startBoss(pathChoosen) {
+
+  startBossMusic();
+
+  if ($('.mainblock').is(":visible")) {
+    $('.hideInterface').html($('.hideInterface').html().replace('Hide', 'Show').replace('fa-eye-slash', 'fa-eye'));
+    $('.mainblock').hide();
+  } else {
+    $('.hideInterface').html($('.hideInterface').html().replace('Show', 'Hide').replace('fa-eye', 'fa-eye-slash'));
+    $('.mainblock').show();
+  }
+
+  setTimeout(function () {
+    bossBattle(pathChoosen);  
+  }, pathChoosen == 'impossible' ? 0 : 2000);
+
+}
+
+function bossBattle(pathChoosen) {
+
+  let bossHP = 100;
+  let playerHP = 100;
+  let canAttack = true;
+  let bossAttackInterval;
+
+  const unlocked = getUnlockedAchievements();
+  const penBs = unlocked['rng'];
+
+  Swal.fire({
+    title: 'A giant berserk smile attacks!',
+    width: 600,
+    background: '#111',
+    color: '#fff',
+    html: `
+      <div style="margin-top: 15px;">
+
+        <!-- Player HP -->
+        <div id="player-hp-label">Your HP: 100%</div>
+        <div style="background: #333; border-radius: 8px; overflow: hidden; height: 20px; margin: 5px 0;">
+          <div id="player-hp-bar" style="background: limegreen; width: 100%; height: 100%; transition: width 0.3s;"></div>
+        </div>
+
+        <!-- Boss HP -->
+        <div id="boss-hp-label">Boss HP: 100%</div>
+        <div style="background: #333; border-radius: 8px; overflow: hidden; height: 20px; margin: 5px 0;">
+          <div id="boss-hp-bar" style="background: red; width: 100%; height: 100%; transition: width 0.3s;"></div>
+        </div>
+
+        <!-- Weapon display and attack button -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px;">
+
+          <button id="attack-btn" style="padding: 6px 12px; background: crimson; color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span class="relative">
+              <img src="${axeUrl}" width="60" alt="Blackstar IV">
+              <span class="enhance-level text-lg">${penBs ? 'V' : 'IV'}</span>
+            </span>
+            <span>Attack!</span>
+          </button>
+
+          <button id="heal-btn" style="padding: 6px 12px; background: green; color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <img src="${healthPotionUrl}" width="60" alt="Potion">
+            <span>Heal!</span>
+          </button>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      const attackBtn = document.getElementById('attack-btn');
+      const healBtn = document.getElementById('heal-btn');
+      const hpBar = document.getElementById('boss-hp-bar');
+      const hpLabel = document.getElementById('boss-hp-label');
+
+      const playerHpBar = document.getElementById('player-hp-bar');
+      const playerHpLabel = document.getElementById('player-hp-label');
+
+      attackBtn.addEventListener('click', () => {
+        if (!canAttack) return;
+
+        canAttack = false;
+        attackBtn.disabled = true;
+        const beforeAttack = attackBtn.innerHTML;
+        attackBtn.innerHTML = attackBtn.innerHTML.replace('Attack!', 'Attacking...');
+
+        let dmg = Math.floor(Math.random() * 5 + 5);
+        if (penBs) dmg *= 4;
+
+        bossHP = Math.max(0, bossHP - dmg);
+        hpBar.style.width = `${bossHP}%`;
+        hpLabel.innerText = `Boss HP: ${bossHP}%`;
+
+        if (bossHP <= 0) {
+          stopBossMusic();
+          clearInterval(bossAttackInterval);
+          Swal.fire({
+            title: '🎉 Victory!',
+            text: 'You defeated the boss!',
+            icon: 'success',
+            background: '#111',
+            color: '#0f0',
+            confirmButtonText: 'Nice!'
+          });
+          achievementUnlocked(pathChoosen);
+          return;
+        }
+
+        setTimeout(() => {
+          canAttack = true;
+          attackBtn.disabled = false;
+          attackBtn.innerHTML = beforeAttack;
+        }, 1000);
+      });
+
+      healBtn.addEventListener('click', () => {
+        if (playerHP >= 100) return;
+
+        var beforeHeal = healBtn.innerHTML;
+
+        playerHP = Math.min(100, playerHP + 8);
+        playerHpBar.style.width = `${playerHP}%`;
+        playerHpLabel.textContent = `Your HP: ${playerHP}%`;
+
+        healBtn.disabled = true;
+        healBtn.innerHTML = healBtn.innerHTML.replace('Heal!', 'Healing...');
+
+        setTimeout(() => {
+          healBtn.disabled = false;
+          healBtn.innerHTML = beforeHeal;
+        }, 2000);
+      });
+
+      bossAttackInterval = setInterval(() => {
+        var dmg = Math.floor(Math.random() * 10 + 5);
+        if (pathChoosen == 'impossible') dmg = 9999;
+        playerHP = Math.max(0, playerHP - dmg);
+        playerHpBar.style.width = `${playerHP}%`;
+        playerHpLabel.innerText = `Your HP: ${playerHP}%`;
+
+        if (playerHP <= 0) {
+          stopBossMusic();
+          clearInterval(bossAttackInterval);
+          Swal.fire({
+            title: '💀 You Died!',
+            text: 'The boss defeated you...' + ((pathChoosen == 'impossible') ? 'There is no way you can win in the glitched zone.' : 'Maybe try to enhance your weapon?'),
+            icon: 'error',
+            background: '#111',
+            color: '#f00',
+            confirmButtonText: (pathChoosen == 'impossible') ? 'This was a stupid idea..' : 'Retry'
+          }).then(() => (pathChoosen == 'impossible') ? location.reload() : startBoss(pathChoosen));
+        }
+      }, 1000);
+    }
+  });
+}
+
 function choosePath(event) {
   const unlocked = getUnlockedAchievements();
   if (!unlocked['berserk'] || unlocked['good'] || unlocked['evil']) return;
@@ -647,7 +840,7 @@ function choosePath(event) {
             cancelButtonText: 'Cancel'
           }).then(result => {
             if (result && result.value) {
-              achievementUnlocked('evil');
+              startBoss('evil')
             }
             else {
               choosePath(event);
@@ -667,7 +860,7 @@ function choosePath(event) {
             cancelButtonText: 'Cancel'
           }).then(result => {
             if (result && result.value) {
-              achievementUnlocked('good');
+              startBoss('good');
             }
             else {
               choosePath(event);
@@ -827,7 +1020,7 @@ function checkAllAchievementsUnlocked() {
 }
 
 function prestige() {
-  var unlockedAchievements = getUnlockedAchievements();
+  let unlockedAchievements = getUnlockedAchievements();
   const filteredAchievements = {};
   for (const key in unlockedAchievements) {
     if (achievementData[key]) {
@@ -975,11 +1168,6 @@ function openBdoEnchant() {
   let magicalStone = getGameData().magicalStone ?? 10;
 
   const baseChance = 0.2;
-
-  const axeUrl = "https://bdocodex.com/items/new_icon/06_pc_equipitem/00_common/01_weapon/00690563.webp";
-  const cronUrl = "https://bdocodex.com/items/new_icon/03_etc/00016080.webp";
-  const stoneUrl = "https://bdocodex.com/items/new_icon/03_etc/00752021.webp";
-  const memoryFragmentUrl = "https://bdocodex.com/items/new_icon/03_etc/04_dropitem/00044195.webp";
 
   const getTotalChance = () => baseChance + failstack * 0.02;
   const getCurrentChance = () => failstack + valksBonus + permanentBonus;
@@ -1373,6 +1561,7 @@ jQuery(document).ready(function($) {
           altKey: true,
           ctrlKey: isZoomed
         });
+        ctrlClickEvent.isSecret = true;
         playButton.dispatchEvent(ctrlClickEvent);
       }
     }
@@ -1675,45 +1864,68 @@ jQuery(document).ready(function($) {
 	  if ($('.fullscreen').length < 1) {
 		  var iframe = document.createElement('iframe');
       var firstSong = 'WRLD';
-      var params = '';
+      var params = '&autoSong=loop&autoSongDelay=3';
       if (e.altKey) {
         firstSong = 'L';
       }
       if (e.ctrlKey && e.altKey) {
         firstSong = 'NOAH';
-        params += '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false';
-        Swal.fire({
-          title: 'Is that a boss music?',
-          text: 'This is the song that will play during the boss battle, but where\'s the boss? I already saw this big smile somewhere..',
-          confirmButtonText: 'Umh okay?',
-          icon: 'question',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-        });
+        params = '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
+        if (e.originalEvent.isSecret) {
+          Swal.fire({
+            title: 'Is that a boss music?',
+            text: 'This is the song that will play during the boss battle, but where\'s the boss? I already saw this big smile somewhere..',
+            confirmButtonText: 'Umh okay?',
+            icon: 'question',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          });
+        }
       }
       if (document.body.classList.contains('glitch-text')) {
         iframe.classList.add('glitch-text');
         firstSong = 'NOAH';
         if (e.altKey)
           firstSong = 'Clockmaker'
-        params += '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false';
+        else {
+          Swal.fire({
+            title: 'The boss is here!',
+            text: "You can't win in this glitched zone, you better run for your life!",
+            confirmButtonText: 'I NEVER RUN',
+            cancelButtonColor: 'red',
+            cancelButtonText: 'Escape',
+            icon: 'warning',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCancelButton: true
+          }).then(result => {
+            if (result.isConfirmed) {
+              startBoss('impossible');
+            } else if (result.isDismissed) {
+              location.reload();
+            }
+          });
+        }
+        params = '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
         achievementUnlocked('berserk');
       }
   
       if (firstSong == 'L')
         achievementUnlocked('L');
       
-      iframe.src = `./0x40/?song=${firstSong}&autoSong=loop&autoSongDelay=3${params}`;
+      iframe.src = `./0x40/?song=${firstSong}${params}`;
 		  iframe.classList.add('fullscreen');
 		  $('body').prepend(iframe)
 		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
 		  $('#footer').addClass('hidden');
+      $('#achievement-tracker').css('bottom', '10px');
 		  var hideButton = $('.play').clone();
-		  hideButton.html(hideButton.html().replace('fa-stop', 'fa-eye-slash').replace('Stop', 'Hide'))
+		  hideButton.html(hideButton.html().replace('fa-stop', 'fa-eye-slash').replace('Stop', 'Hide Interface'))
 		  hideButton.removeClass('play')
       hideButton.removeClass('hover')
       hideButton.removeClass('rasberry-dropshadow')
 		  hideButton.addClass('hideInterface')
+      $('#achievement-tracker').css('opacity', '0.8')
       $('.player').css('opacity', '0.8')
 		  $('.player').append(hideButton);
       // Hack to simulate a click on the preloader 0x40
@@ -1737,7 +1949,9 @@ jQuery(document).ready(function($) {
       $('.hideInterface').remove();
       $('.play').html($('.play').html().replace('fa-stop', 'fa-play').replace('Stop', 'Play'))
       $('#footer').removeClass('hidden');
+      $('#achievement-tracker').css('bottom', '100px');
       $('.player').css('opacity', '1')
+      $('#achievement-tracker').css('opacity', '1')
       if (!$('.mainblock').is(":visible")) {
         $('.mainblock').show();
       }
