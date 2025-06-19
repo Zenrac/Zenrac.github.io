@@ -736,7 +736,7 @@ function bossBattle(pathChoosen) {
         attackBtn.innerHTML = attackBtn.innerHTML.replace('Attack!', 'Attacking...');
 
         let dmg = Math.floor(Math.random() * 5 + 5);
-        if (penBs) dmg *= 4;
+        if (penBs) dmg *= 2;
 
         bossHP = Math.max(0, bossHP - dmg);
         hpBar.style.width = `${bossHP}%`;
@@ -751,9 +751,20 @@ function bossBattle(pathChoosen) {
             icon: 'success',
             background: '#111',
             color: '#0f0',
-            confirmButtonText: 'Nice!'
-          });
-          achievementUnlocked(pathChoosen);
+            confirmButtonText: 'Ez trash noob',
+            didOpen: () => {
+              const confirmBtn = Swal.getConfirmButton();
+              const cancelBtn = Swal.getCancelButton();
+
+              if (confirmBtn) confirmBtn.disabled = true;
+              if (cancelBtn) cancelBtn.disabled = true;
+
+              setTimeout(() => {
+                if (confirmBtn) confirmBtn.disabled = false;
+                if (cancelBtn) cancelBtn.disabled = false;
+              }, 1000); // 1 second delay
+            }
+          }).then(() => achievementUnlocked(pathChoosen));
           return;
         }
 
@@ -769,7 +780,7 @@ function bossBattle(pathChoosen) {
 
         var beforeHeal = healBtn.innerHTML;
 
-        playerHP = Math.min(100, playerHP + 8);
+        playerHP = Math.min(100, playerHP + 10);
         playerHpBar.style.width = `${playerHP}%`;
         playerHpLabel.textContent = `Your HP: ${playerHP}%`;
 
@@ -798,8 +809,28 @@ function bossBattle(pathChoosen) {
             icon: 'error',
             background: '#111',
             color: '#f00',
-            confirmButtonText: (pathChoosen == 'impossible') ? 'This was a stupid idea..' : 'Retry'
-          }).then(() => (pathChoosen == 'impossible') ? location.reload() : startBoss(pathChoosen));
+            confirmButtonText: (pathChoosen == 'impossible') ? 'This was a stupid idea..' : 'Retry',
+            showCancelButton: (pathChoosen != 'impossible'),
+            cancelButtonColor: 'red',
+            cancelButtonText: 'Escape',
+            didOpen: () => {
+              const confirmBtn = Swal.getConfirmButton();
+              const cancelBtn = Swal.getCancelButton();
+
+              if (confirmBtn) confirmBtn.disabled = true;
+              if (cancelBtn) cancelBtn.disabled = true;
+
+              setTimeout(() => {
+                if (confirmBtn) confirmBtn.disabled = false;
+                if (cancelBtn) cancelBtn.disabled = false;
+              }, 1000);
+            }
+          }).then((result) => {
+            if ((pathChoosen == 'impossible') || (result.isDismissed)) { 
+              location.reload() 
+            };
+            startBoss(pathChoosen)
+          });
         }
       }, 1000);
     }
@@ -1435,7 +1466,7 @@ jQuery(document).ready(function($) {
   });
 
   $('body').keypress((e) => {
-    if (e.key.toLowerCase() === ',') {
+    if (e.key.toLowerCase() === ',' || e.key.toLowerCase() === '?') {
       const enchantSwal = document.querySelector('.enchant-popup');
       if (enchantSwal && Swal.isVisible()) {
         Swal.close();
