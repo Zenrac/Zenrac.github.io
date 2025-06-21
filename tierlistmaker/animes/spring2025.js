@@ -271,6 +271,11 @@ window.animeSeasons['Spring 2025'] = [
     "url": "https://myanimelist.net/anime/60535/Everyday_Host"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
+    "title": "Beyblade X",
+    "url": "https://myanimelist.net/anime/56566/Beyblade_X"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1831/149970.jpg",
     "title": "Princession Orchestra",
     "url": "https://myanimelist.net/anime/59078/Princession_Orchestra"
