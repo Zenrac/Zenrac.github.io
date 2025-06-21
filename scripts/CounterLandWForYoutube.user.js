@@ -6,6 +6,8 @@
 // @author       Zenrac
 // @match        https://www.youtube.com/live_chat?*
 // @grant        none
+// @license      MIT
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // ==/UserScript==
 
 (function() {

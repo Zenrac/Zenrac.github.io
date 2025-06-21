@@ -97,61 +97,6 @@ function exportImages(format) {
 	document.getElementById("export-menu").style.display = "none";
 }
 
-function getElementsFromMal() {
-    var videos = document.getElementsByClassName("js-anime-type-1");
-    var videoList = [];
-
-    for (video of videos) {
-        var member = video.querySelectorAll("div.scormem-item.member");
-        var memberCount = member[0].innerText.trim();
-        var count = 0;
-
-        if (memberCount.includes('K')) {
-            count = parseFloat(memberCount.replace("K", "")) * 1000;
-        } else if (memberCount.includes('M')) {
-            count = parseFloat(memberCount.replace("M", "")) * 1000000;
-        } else {
-            count = parseInt(memberCount);
-        }
-
-        if (count > 5000) {
-            let date = video.getElementsByClassName('prodsrc')[0].getElementsByClassName('info')[0].getElementsByClassName('item')[0].innerHTML;
-            let animeDate = new Date(date);
-            let lastYearDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-
-            if (animeDate > lastYearDate) {
-                let imgDiv = video.querySelectorAll("img")[0];
-                let img = imgDiv.src;
-                let url = imgDiv.parentNode.href;
-                let title = video.querySelectorAll(".link-title")[0].innerText;
-
-                if (img != undefined && img.trim().length != 0) {
-                    var videoInfo = {
-                        img: img,
-                        title: title,
-                        url: url,
-                        count: count
-                    };
-                    videoList.push(videoInfo);
-                }
-            }
-        }
-    }
-
-    videoList.sort((a, b) => b.count - a.count);
-
-	var finalList = videoList.map(video => {
-        return {
-            img: video.img,
-            title: video.title,
-            url: video.url
-        };
-    });
-
-    var jsonOutput = JSON.stringify(finalList, null, 2);
-    console.log(jsonOutput);
-}
-
 function changeImageColorBasedOnSearch() {
 
 	let search_input = document.getElementById('search-input');
@@ -413,6 +358,32 @@ function refreshTierListStyle() {
 	unsaved_changes = true;
 }
 
+function isDefaultTierlist(data) {
+	var dropdown = document.getElementById("dropdown");
+	var dropdownType = document.getElementById("dropdowntype");
+
+	var expectedTitle = `Tierlist ${dropdown.value} ${dropdownType.value}`;
+	if (data.title !== expectedTitle) {
+		return false;
+	}
+
+	if (data.rows.length !== DEFAULT_TIERS.length) {
+		return false;
+	}
+
+	for (let i = 0; i < DEFAULT_TIERS.length; i++) {
+		const row = data.rows[i];
+		if (row.name !== DEFAULT_TIERS[i]) {
+			return false;
+		}
+		if (!Array.isArray(row.imgs) || row.imgs.length !== 0) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 function initialize_dropdown_type() {
 	var dropdownType = document.getElementById("dropdowntype");
 	var dropdown = document.getElementById("dropdown");
@@ -587,12 +558,19 @@ function save_tierlist() {
 			}
 		});
 	}
+
 	var dropdown = document.getElementById("dropdown");
 	var dropdownType = document.getElementById("dropdowntype");
 	var filename = dropdown.value
 	if (!cookieData[filename])
 		cookieData[filename] = {};
 	cookieData[filename][dropdownType.value] = serialized_tierlist;
+	if (isDefaultTierlist(serialized_tierlist)) {
+		delete cookieData[filename][dropdownType.value];
+		if (Object.keys(cookieData[filename]).length === 0) {
+			delete cookieData[filename];
+		}
+	}
 	saveToLocalStorage(saveTierListsCookieName, cookieData);
 }
 
