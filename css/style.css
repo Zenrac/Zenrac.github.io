@@ -787,6 +787,125 @@ a {
   animation: secretGlitchShift 1.5s infinite;
 }
 
+#achievement-tracker.ultra i,
+.skin-option i.ultra {
+  position: relative;
+  color: #4B7AF2;
+  text-shadow:
+    0 0 6px gold,
+    0 0 12px #e63946,
+    0 0 18px #7f00ff,
+    0 0 25px #3498db;
+  filter: none;
+  animation: prestigeGlow 2s infinite;
+}
+
+#achievement-tracker.supreme i,
+.skin-option i.supreme {
+  position: relative;
+  color: #74b9ff;
+  text-shadow:
+    0 0 4px #00e6f6,
+    0 0 10px #8c7ae6,
+    0 0 18px #5f27cd,
+    0 0 30px #00cec9;
+  filter: none;
+  animation: prestigeGlow 2s infinite;
+}
+
+#achievement-tracker.divine i,
+.skin-option i.divine {
+  position: relative;
+  color: #f9ca24;
+  text-shadow:
+    0 0 4px #fff200,
+    0 0 10px #f0932b,
+    0 0 20px #e67e22,
+    0 0 30px #ff6b6b;
+  filter: none;
+  animation: prestigeGlow 2s infinite;
+}
+
+#achievement-tracker.transcendent i,
+.skin-option i.transcendent {
+  position: relative;
+  color: #b388ff;
+  text-shadow:
+    0 0 5px #a29bfe,
+    0 0 12px #6c5ce7,
+    0 0 20px #9c88ff,
+    0 0 28px #a55eea;
+  animation: prestigeGlow 2s infinite;
+}
+
+#achievement-tracker.ascended i,
+.skin-option i.ascended {
+  position: relative;
+  color: #fffa65;
+  text-shadow:
+    0 0 6px #ffeaa7,
+    0 0 14px #fdcb6e,
+    0 0 24px #fab1a0,
+    0 0 32px #e17055;
+  animation: prestigeGlow 2.5s infinite;
+}
+
+#achievement-tracker.eternal i,
+.skin-option i.eternal {
+  position: relative;
+  color: #00d2d3;
+  text-shadow:
+    0 0 6px #01a3a4,
+    0 0 14px #00cec9,
+    0 0 22px #48dbfb,
+    0 0 34px #10ac84;
+  animation: prestigeGlow 3s infinite;
+}
+
+#achievement-tracker.godslayer i,
+.skin-option i.godslayer {
+  position: relative;
+  color: #ff6b81;
+  text-shadow:
+    0 0 8px #ff4757,
+    0 0 16px #ff6b81,
+    0 0 28px #e84118,
+    0 0 40px #c23616;
+  animation: prestigeGlow 1.5s infinite;
+}
+
+#achievement-tracker.\3F\3F\3F i,
+.skin-option i.\3F\3F\3F {
+  position: relative;
+  color: #ffffff;
+  text-shadow:
+    0 0 3px #000,
+    0 0 6px #ff00ff,
+    0 0 12px #00ffff,
+    0 0 24px #ff00ff,
+    0 0 32px #00ffff;
+  animation: glitchPulse 1s infinite;
+}
+
+@keyframes glitchPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 3px #000,
+      0 0 6px #ff00ff,
+      0 0 12px #00ffff,
+      0 0 24px #ff00ff,
+      0 0 32px #00ffff;
+    transform: translate(0, 0);
+  }
+  50% {
+    text-shadow:
+      0 0 6px #00ffff,
+      0 0 12px #ff00ff,
+      0 0 20px #ffffff;
+    transform: translate(1px, -1px);
+  }
+}
+
 @keyframes secretGlitchShift {
   0%, 100% {
     text-shadow:
@@ -956,7 +1075,7 @@ a {
   transition: transform 0.2s ease;
   cursor: pointer;
 }
-.skin-option:hover {
+.skin-option:hover:not(#crow-perch) {
   transform: scale(1.15);
 }
 
@@ -1185,20 +1304,37 @@ body.swal2-height-auto {
 #crow-perch {
   position: fixed;
   left: 20px;
-  bottom: 90px;
+  bottom: 89px;
   display: flex;
   gap: 8px;
-  z-index: 9999;
-  pointer-events: none;
 }
 
 #crow-perch .crow-icon {
-  font-size: 24px;
+  font-size: 40px;
   color: black;
   animation: perch-bob 2s ease-in-out infinite;
+  cursor: pointer;
 }
 
 @keyframes perch-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
+}
+
+.cat-hint {
+  display: inline-block;
+  background: lightseagreen;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 20px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  animation: floatHint 1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes floatHint {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-5px); }
 }

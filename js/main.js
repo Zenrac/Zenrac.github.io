@@ -179,6 +179,34 @@ const rarityToSkin = {
   'PrestigeAchievement': 'prestige'
 };
 
+const crowRarity = {
+  'normal': 1,
+  'bronze': 2,
+  'silver': 5,
+  'gold': 10,
+  'mythic': 20,
+  'secret': 50,
+  'ultra': 100,
+  'supreme' : 200,
+  'divine' : 500,
+  'transcendent': 1000,
+  'ascended': 2500,
+  'eternal': 5000,
+  'godslayer': 10000,
+  '???': 99999
+}
+
+function getCurrentRarity() {
+  const total = getCapturedCrow();
+  if (total >= 100) return 'PrestigeAchievement';
+  if (total >= 50) return 'MythicAchievement';
+  if (total >= 20) return 'LegendaryAchievement';
+  if (total >= 10) return 'EpicAchievement';
+  if (total >= 6) return 'RareAchievement';
+  if (total >= 3) return 'UncommonAchievement';
+  return 'CommonAchievement';
+}
+
 const defaultGameData = {
   viewedAchievements: {},
   customPrestige: null,
@@ -233,18 +261,6 @@ const DEFAULT_PRESTIGE_SKIN = { animation: 'prestigeGlow', color: '#0069FD' }
 
 const crowHowlAudio = new Audio('./sounds/crow.mp3');
 crowHowlAudio.volume = 0.3;
-
-const GAME_DATA_KEYS = Object.freeze({
-  VIEWED_ACHIEVEMENTS: 'viewedAchievements',
-  CUSTOM_PRESTIGE: 'customPrestige',
-  ACHIEVEMENT_TRACKER_SKIN: 'achievementTrackerSkin',
-  ACHIEVEMENTS: 'achievements',
-  PRESTIGE_COUNT: 'prestigeCount'
-});
-
-Object.values(GAME_DATA_KEYS).forEach(key => {
-  localStorage.removeItem(key);
-});
 
 function getGameData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -308,9 +324,10 @@ function getCapturedCrow() {
   return getGameData().crow || 0;
 }
 
-function increaseCapturedCrow(count = 1) {
+function increaseCapturedCrow(countToAdd = 1) {
   var count = getCapturedCrow();
-  setCapturedCrow(count + 1);
+  setCapturedCrow(count + countToAdd);
+  updateCrowIcons();
 }
 
 function setCapturedCrow(count) {
@@ -652,6 +669,28 @@ function openPrestigeCustomizationPopup() {
       applyPrestigeSkin(animation, color);
     }
   });
+}
+
+function decomposeCrowsLimited(total, maxIcons = 10) {
+  let remaining = total;
+  const result = [];
+
+  const rarities = Object.entries(crowRarity).sort((a,b) => b[1] - a[1]);
+
+  for (const [rarity, value] of rarities) {
+    if (remaining >= value) {
+      const maxCount = maxIcons - result.reduce((acc, cur) => acc + cur.count, 0);
+      if(maxCount <= 0) break;
+
+      const count = Math.min(Math.floor(remaining / value), maxCount);
+      if(count > 0) {
+        remaining -= count * value;
+        result.push({ rarity, count, value });
+      }
+    }
+  }
+
+  return { decomposition: result, remainder: remaining };
 }
 
 function startBossMusic() {
@@ -1084,7 +1123,28 @@ function checkAllAchievementsUnlocked() {
   }
 }
 
+function showCatHint() {
+  if (document.querySelector('.cat-hint')) return;
+
+  const hint = document.createElement('div');
+  hint.textContent = 'Quick! The cat will help you!';
+  hint.className = 'cat-hint';
+  document.body.appendChild(hint);
+
+  const cat = document.querySelector('.github-cat');
+  const rect = cat.getBoundingClientRect();
+  hint.style.position = 'fixed';
+  hint.style.right = `10px`;
+  hint.style.top = `80px`;
+}
+
+function removeCatHint() {
+  document.querySelector('.cat-hint')?.remove();
+}
+
 function spawnFollowerCrow() {
+  showCatHint();
+
   const wrapper = document.createElement('span');
   wrapper.className = 'crow-wrapper';
 
@@ -1096,8 +1156,32 @@ function spawnFollowerCrow() {
 
   const offsetX = Math.floor(Math.random() * 100 - 50);
   const offsetY = Math.floor(Math.random() * 100 - 50);
-  const startX = lastMousePos.x + offsetX;
-  const startY = lastMousePos.y + offsetY;
+
+  const entrySides = ['top', 'bottom', 'left', 'right'];
+  const side = entrySides[Math.floor(Math.random() * entrySides.length)];
+
+  let startX, startY;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  switch (side) {
+    case 'top':
+      startX = Math.random() * screenWidth;
+      startY = -100;
+      break;
+    case 'bottom':
+      startX = Math.random() * screenWidth;
+      startY = screenHeight + 100;
+      break;
+    case 'left':
+      startX = -100;
+      startY = Math.random() * screenHeight;
+      break;
+    case 'right':
+      startX = screenWidth + 100;
+      startY = Math.random() * screenHeight;
+      break;
+  }
 
   wrapper.style.transform = `translate(${startX}px, ${startY}px)`;
 
@@ -1115,7 +1199,6 @@ function spawnFollowerCrow() {
 function startHowling(element, interval = 1000) {
   var crowSound = 0.8 + Math.random() * 0.4;
   element._howlInterval = setInterval(() => {
-    console.log(element);
       var crowOffSet = Math.random() * 1000;
       setTimeout(() => {
         playCrowHowl(crowSound);
@@ -1123,9 +1206,9 @@ function startHowling(element, interval = 1000) {
   }, interval);
 }
 
-function playCrowHowl(playbackRate = 1) {
+function playCrowHowl(playbackRate = null) {
   const audioClone = crowHowlAudio.cloneNode();
-  audioClone.playbackRate = playbackRate;
+  audioClone.playbackRate = playbackRate || (0.8 + Math.random() * 0.4);
   audioClone.play();
 }
 
@@ -1150,8 +1233,9 @@ function animateFollowers() {
     const lerpSpeed = 0.1;
 
     if (dist > 1) {
-      crow.x += dx * lerpSpeed;
-      crow.y += dy * lerpSpeed;
+      const moveDist = Math.min(dist, 5);
+      crow.x += (dx / dist) * moveDist;
+      crow.y += (dy / dist) * moveDist;
     }
 
     const flip = (crow.x > lastMousePos.x) ? -1 : 1;
@@ -1185,15 +1269,42 @@ function spawnCrow() {
   crow.addEventListener('click', () => {
     crow.classList.add('captured');
     crow.removeEventListener('animationend', removeIfNotClicked);
-    if (Math.random() < 0.10) {
-      const count = 5 + Math.floor(Math.random() * 6); // 5 to 10 followers
-      for (let i = 0; i < count; i++) {
-        spawnFollowerCrow(i);
-      }
-    }
-    increaseCapturedCrow(1);
+
+    const perch = document.getElementById('crow-perch');
+    if (!perch) return;
+
+    const crowX = lastMousePos.x;
+    const crowY = lastMousePos.y;
+
+    const perchRect = perch.getBoundingClientRect();
+    const targetX = perchRect.left + perchRect.width / 2;
+    const targetY = perchRect.top + perchRect.height / 2;
+
+    const deltaX = targetX - crowX;
+    const deltaY = targetY - crowY;
+
+    crow.style.position = 'fixed';
+    crow.style.left = `${crowX}px`;
+    crow.style.top = `${crowY}px`;
+    crow.style.transform = 'none';
+    crow.style.transition = 'none';
+
+    crow.offsetHeight;
+
+    crow.style.transition = 'transform 2s ease-in-out';
+    crow.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
     playCrowHowl();
-    setTimeout(() => crow.remove(), 400);
+
+    if (Math.random() < 0.20 && followerCrows.length == 0) {
+      const count = 5 + Math.floor(Math.random() * 6);
+      for (let i = 0; i < count; i++) spawnFollowerCrow(i);
+    }
+
+    crow.addEventListener('transitionend', () => {
+      increaseCapturedCrow(1);
+      crow.remove();
+    }, { once: true });
   });
 
   function removeIfNotClicked() {
@@ -1206,22 +1317,21 @@ function spawnCrow() {
 function randomSpawnLoop(firstSkipped = false) {
   if (firstSkipped) spawnCrow();
 
-  const delay = 30000 + Math.random() * 500000;
+  const delay = 30000 + Math.random() * 90000;
   setTimeout(() => randomSpawnLoop(true), delay);
 }
 
 function absorbCrowsIntoCat() {
+  removeCatHint();
   const cat = document.querySelector('.octo-body');
   const rect = cat.getBoundingClientRect();
   const targetX = rect.left + rect.width / 3;
   const targetY = rect.top + rect.height / 3;
 
-  increaseCapturedCrow(followerCrows.length);
-
   followerCrows.forEach((crow, i) => {
     setTimeout(() => {
-      crow.el.style.transition = 'transform 0.6s ease-in';
-      crow.el.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.2) rotate(${Math.random() * 360}deg)`;
+      crow.el.style.transition = 'transform 2s ease-in';
+      crow.el.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.4) rotate(${Math.random() * 360}deg)`;
     }, i * 50);
 
     if (crow.el._howlInterval) {
@@ -1232,9 +1342,10 @@ function absorbCrowsIntoCat() {
   });
 
   setTimeout(() => {
+    increaseCapturedCrow(followerCrows.length);
     followerCrows.forEach(c => c.el.remove());
     followerCrows.length = 0;
-  }, 1000);
+  }, 2300);
 }
 
 function prestige() {
@@ -1271,6 +1382,54 @@ function checkPrestigeCount() {
   const count = getPrestigeCount();
   if (count >= MAGIC_NUMBER) {
     achievementUnlocked('prestigious');
+  }
+}
+
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function updateCrowIcons() {
+  ensureCrowPerchContainer();
+
+  const perch = document.getElementById('crow-perch');
+  const totalCaptured = getCapturedCrow();
+  perch.innerHTML = '';
+
+  const { decomposition, remainder } = decomposeCrowsLimited(totalCaptured, 10);
+
+  for (const {rarity, count, value} of decomposition) {
+    const skinClass = rarity;
+
+    for (let i = 0; i < count; i++) {
+      const icon = document.createElement('i');
+      icon.className = `fas fa-crow crow-icon ${skinClass}`;
+      icon.title = `${capitalizeFirstLetter(rarity)} crow with a value of ${value} crow${value !== 1 ? 's' : ''}. Total captured: ${totalCaptured}`;      
+      if (Math.random() < 0.5) icon.style.transform = 'scaleX(-1)';
+      icon.addEventListener('click', () => {
+        playCrowHowl();
+      });
+      perch.appendChild(icon);
+    }
+  }
+
+  if(remainder > 0) {
+    const more = document.createElement('span');
+    more.textContent = `+${remainder}`;
+    more.style.color = 'white';
+    more.style.fontWeight = 'bold';
+    more.style.fontSize = '18px';
+    more.style.marginLeft = '8px';
+    perch.appendChild(more);
+  }
+}
+
+function ensureCrowPerchContainer() {
+  if (!document.getElementById('crow-perch')) {
+    const perch = document.createElement('div');
+    perch.id = 'crow-perch';
+    perch.classList.add('skin-option');
+    document.body.appendChild(perch);
   }
 }
 
@@ -1629,6 +1788,8 @@ jQuery(document).ready(function($) {
   checkPrestigeCount();
 
   footerAlwayInBottom($("#footer"));
+
+  updateCrowIcons();
 
   $('body').keydown((e) => {
     if (e.key.toLowerCase() === 'c') {
@@ -2109,7 +2270,9 @@ jQuery(document).ready(function($) {
     });
   });
 
-
+  document.addEventListener('click', () => {
+    randomSpawnLoop();
+  }, { once: true });
 
   // Apply when page is fully loaded
   $(window).on("load", function() {
