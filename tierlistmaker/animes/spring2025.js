@@ -71,11 +71,6 @@ window.animeSeasons['Spring 2025'] = [
     "url": "https://myanimelist.net/anime/59457/Haite_Kudasai_Takamine-san"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1660/143460.jpg",
-    "title": "Kimi to Boku no Saigo no Senjou, Aruiwa Sekai ga Hajimaru Seisen Season II",
-    "url": "https://myanimelist.net/anime/49981/Kimi_to_Boku_no_Saigo_no_Senjou_Aruiwa_Sekai_ga_Hajimaru_Seisen_Season_II"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1211/147335.jpg",
     "title": "Isshun de Chiryou shiteita noni Yakutatazu to Tsuihou sareta Tensai Chiyushi, Yami Healer toshite Tanoshiku Ikiru",
     "url": "https://myanimelist.net/anime/58359/Isshun_de_Chiryou_shiteita_noni_Yakutatazu_to_Tsuihou_sareta_Tensai_Chiyushi_Yami_Healer_toshite_Tanoshiku_Ikiru"
@@ -84,11 +79,6 @@ window.animeSeasons['Spring 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1722/148906.jpg",
     "title": "Kijin Gentoushou",
     "url": "https://myanimelist.net/anime/49778/Kijin_Gentoushou"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1897/149800.jpg",
-    "title": "A-Rank Party wo Ridatsu shita Ore wa, Moto Oshiego-tachi to Meikyuu Shinbu wo Mezasu.",
-    "url": "https://myanimelist.net/anime/59730/A-Rank_Party_wo_Ridatsu_shita_Ore_wa_Moto_Oshiego-tachi_to_Meikyuu_Shinbu_wo_Mezasu"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1955/148360.jpg",
@@ -236,11 +226,6 @@ window.animeSeasons['Spring 2025'] = [
     "url": "https://myanimelist.net/anime/59819/Bye_Bye_Earth_2nd_Season"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1214/142185.jpg",
-    "title": "Haigakura",
-    "url": "https://myanimelist.net/anime/56420/Haigakura"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1770/148195.jpg",
     "title": "Chuuzenji-sensei Mononoke Kougiroku: Sensei ga Nazo wo Hodoite Shimau kara.",
     "url": "https://myanimelist.net/anime/60009/Chuuzenji-sensei_Mononoke_Kougiroku__Sensei_ga_Nazo_wo_Hodoite_Shimau_kara"
@@ -281,11 +266,6 @@ window.animeSeasons['Spring 2025'] = [
     "url": "https://myanimelist.net/anime/59078/Princession_Orchestra"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1277/147358.jpg",
-    "title": "Kimi to Idol Precure♪",
-    "url": "https://myanimelist.net/anime/60407/Kimi_to_Idol_Precure%E2%99%AA"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1564/148380.jpg",
     "title": "Classic★Stars",
     "url": "https://myanimelist.net/anime/59199/Classic%E2%98%85Stars"
@@ -294,11 +274,6 @@ window.animeSeasons['Spring 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1472/148029.jpg",
     "title": "Miru: Watashi no Mirai",
     "url": "https://myanimelist.net/anime/55727/Miru__Watashi_no_Mirai"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1533/146981.jpg",
-    "title": "Koupen-chan",
-    "url": "https://myanimelist.net/anime/60534/Koupen-chan"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1410/150097.jpg",

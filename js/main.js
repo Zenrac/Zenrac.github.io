@@ -1,7 +1,7 @@
 const achievementData = {
   "detective": {
     icon: "fa fa-magnifying-glass",
-    title: "Inspector Gadget",
+    title: "Detective Andy",
     text: "Clicked so many things, you're basically a detective now.",
     rarity: "EpicAchievement",
   },
@@ -188,15 +188,14 @@ const defaultGameData = {
   cronStone: 0,
   failstack: 150,
   durability: 200,
-  magicalStone: 0
+  magicalStone: 0,
+  crow: 0
 };
 
 const MAGIC_NUMBER = 7;
 const CELEBRATION_MAX = 77;
 const STEAM_POPUP_TIMEOUT = 5950;
-
 const STORAGE_KEY = 'easterEggs';
-
 const berserkSrc = 'https://i.imgur.com/ZngZTjQ.png';
 
 const sortedAchievements = Object.entries(achievementData)
@@ -212,7 +211,7 @@ const konamiSequences = [
   ['z', 'z', 's', 's', 'q', 'd', 'q', 'd', 'b', 'a']  // AZERTY
 ];
 
-let lastMousePos = { x: 0, y: 0 };
+let lastMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
 let celebrationCount = 0;
 
@@ -227,6 +226,13 @@ const cronUrl = "https://bdocodex.com/items/new_icon/03_etc/00016080.webp";
 const stoneUrl = "https://bdocodex.com/items/new_icon/03_etc/00752021.webp";
 const memoryFragmentUrl = "https://bdocodex.com/items/new_icon/03_etc/04_dropitem/00044195.webp";
 const healthPotionUrl = "https://bdocodex.com/items/new_icon/03_etc/08_potion/00040712.webp";
+
+const followerCrows = [];
+
+const DEFAULT_PRESTIGE_SKIN = { animation: 'prestigeGlow', color: '#0069FD' }
+
+const crowHowlAudio = new Audio('./sounds/crow.mp3');
+crowHowlAudio.volume = 0.3;
 
 const GAME_DATA_KEYS = Object.freeze({
   VIEWED_ACHIEVEMENTS: 'viewedAchievements',
@@ -298,6 +304,21 @@ function getHighestUnlockedSkin() {
   return rarityToSkin[highestRarity] || 'bronze';
 }
 
+function getCapturedCrow() {
+  return getGameData().crow || 0;
+}
+
+function increaseCapturedCrow(count = 1) {
+  var count = getCapturedCrow();
+  setCapturedCrow(count + 1);
+}
+
+function setCapturedCrow(count) {
+  const data = getGameData();
+  data.crow = count;
+  setGameData(data);
+}
+
 function getUnlockedAchievements() {
   return getGameData().achievements || {};
 }
@@ -312,6 +333,7 @@ function setUnlockedAchievements(obj) {
 function resetEverything() {
     setGameData(defaultGameData);
     updateAchievementCount();
+    location.reload();
 }
 
 function askReset() {
@@ -335,8 +357,13 @@ function loadCustomPrestigeSkin() {
   const tracker = document.getElementById('achievement-tracker');
   if (!tracker) return;
 
-  const saved = getGameData().customPrestige;
-  if (!saved) return;
+  let saved = DEFAULT_PRESTIGE_SKIN;
+  try {
+    const savedPrestige = getGameData().customPrestige;
+    if (savedPrestige && savedPrestige.animation && savedPrestige.color) {
+      saved = savedPrestige;
+    }
+  } catch {}
 
   try {
 
@@ -417,6 +444,12 @@ function changeZoom(value) {
   }
 }
 
+function unZoom() {
+    if (isZoomed) {
+    toggleZoom();
+  }
+}
+
 function toggleZoom() {
     if (isZoomed) {
       changeZoom(1);
@@ -427,6 +460,7 @@ function toggleZoom() {
 }
 
 function openSkinSelector() {
+  unZoom();
   const skins = [
     { value: 'bronze', label: 'Bronze', iconClass: 'fa fa-trophy bronze' },
     { value: 'silver', label: 'Silver', iconClass: 'fa fa-trophy silver' },
@@ -447,7 +481,7 @@ function openSkinSelector() {
   }
 
   const savedSkin = getGameData().achievementTrackerSkin || 'bronze';
-  let prestigeSettings = { animation: 'bronzeGlow', color: '#ff0077' };
+  let prestigeSettings = DEFAULT_PRESTIGE_SKIN;
   try {
     const savedPrestige = getGameData().customPrestige;
     if (savedPrestige && savedPrestige.animation && savedPrestige.color) {
@@ -508,6 +542,7 @@ function openSkinSelector() {
 }
 
 function openPrestigeCustomizationPopup() {
+  unZoom();
   const availableAnimations = [
     'bronzeGlow', 'silverGlow', 'goldGlow',
     'mythicGlow', 'secretGlow', 'secretGlitchShift', 'prestigeGlow'
@@ -524,8 +559,8 @@ function openPrestigeCustomizationPopup() {
   };
 
   let savedSettings = getGameData().customPrestige;
-  let defaultColor = '#ff0077';
-  let defaultAnimation = 'bronzeGlow';
+  let defaultColor = DEFAULT_PRESTIGE_SKIN.color;
+  let defaultAnimation = DEFAULT_PRESTIGE_SKIN.animation;
 
   if (savedSettings) {
     try {
@@ -620,18 +655,19 @@ function openPrestigeCustomizationPopup() {
 }
 
 function startBossMusic() {
-  if ($('.fullscreen').length < 1) {
-    const playButton = document.querySelector('.play');
-    if (playButton) {
-      const ctrlClickEvent = new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-        altKey: true,
-        ctrlKey: true
-      });
+  const playButton = document.querySelector('.play');
+  if (playButton) {
+    const ctrlClickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+      altKey: true,
+      ctrlKey: true
+    });
+    if ($('.fullscreen').length > 0) {
       playButton.dispatchEvent(ctrlClickEvent);
     }
+    playButton.dispatchEvent(ctrlClickEvent);
   }
 }
 
@@ -735,7 +771,7 @@ function bossBattle(pathChoosen) {
         const beforeAttack = attackBtn.innerHTML;
         attackBtn.innerHTML = attackBtn.innerHTML.replace('Attack!', 'Attacking...');
 
-        let dmg = Math.floor(Math.random() * 5 + 5);
+        let dmg = Math.floor(Math.random() * 5 + 3);
         if (penBs) dmg *= 2;
 
         bossHP = Math.max(0, bossHP - dmg);
@@ -1024,9 +1060,7 @@ function openAchievementList() {
       cancelButtonColor: '#B28E00',
       buttonsStyling: true,
     }).then((result) => {
-      if (isZoomed) {
-        toggleZoom();
-      }
+      unZoom();
       let unlocked = getUnlockedAchievements();
       if (result.dismiss == "cancel") {
         if (unlocked['skin']) {
@@ -1048,6 +1082,159 @@ function checkAllAchievementsUnlocked() {
   if (allUnlocked) {
     achievementUnlocked('completed');
   }
+}
+
+function spawnFollowerCrow() {
+  const wrapper = document.createElement('span');
+  wrapper.className = 'crow-wrapper';
+
+  const crow = document.createElement('i');
+  crow.className = 'fas fa-crow follower-crow';
+
+  wrapper.appendChild(crow);
+  document.body.appendChild(wrapper);
+
+  const offsetX = Math.floor(Math.random() * 100 - 50);
+  const offsetY = Math.floor(Math.random() * 100 - 50);
+  const startX = lastMousePos.x + offsetX;
+  const startY = lastMousePos.y + offsetY;
+
+  wrapper.style.transform = `translate(${startX}px, ${startY}px)`;
+
+  followerCrows.push({
+    el: wrapper,
+    x: startX,
+    y: startY,
+    offsetX,
+    offsetY
+  });
+
+  startHowling(wrapper);
+}
+
+function startHowling(element, interval = 1000) {
+  var crowSound = 0.8 + Math.random() * 0.4;
+  element._howlInterval = setInterval(() => {
+    console.log(element);
+      var crowOffSet = Math.random() * 1000;
+      setTimeout(() => {
+        playCrowHowl(crowSound);
+      }, crowOffSet);
+  }, interval);
+}
+
+function playCrowHowl(playbackRate = 1) {
+  const audioClone = crowHowlAudio.cloneNode();
+  audioClone.playbackRate = playbackRate;
+  audioClone.play();
+}
+
+let startTime = performance.now();
+
+function animateFollowers() {
+  const now = performance.now();
+  const elapsed = (now - startTime) / 1000;
+
+  followerCrows.forEach((crow, i) => {
+    if (crow.absorbed) return;
+    const radius = 50 + crow.offsetX;
+    const speed = 1 + (crow.offsetY / 100);
+    const angle = speed * elapsed + i * (Math.PI * 2 / followerCrows.length);
+
+    const targetX = lastMousePos.x + radius * Math.cos(angle);
+    const targetY = lastMousePos.y + radius * Math.sin(angle);
+
+    const dx = targetX - crow.x;
+    const dy = targetY - crow.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const lerpSpeed = 0.1;
+
+    if (dist > 1) {
+      crow.x += dx * lerpSpeed;
+      crow.y += dy * lerpSpeed;
+    }
+
+    const flip = (crow.x > lastMousePos.x) ? -1 : 1;
+
+    crow.el.style.transform = `translate(${crow.x}px, ${crow.y}px) scaleX(${flip})`;
+  });
+
+  requestAnimationFrame(animateFollowers);
+}
+
+function spawnCrow() {
+  const crow = document.createElement('i');
+  crow.className = 'fas fa-crow';
+
+  const maxY = window.innerHeight * 0.8;
+  const minY = window.innerHeight * 0.1;
+  const randomTop = Math.floor(minY + Math.random() * (maxY - minY));
+  crow.style.position = 'fixed';
+  crow.style.left = '-100px';
+  crow.style.top = `${randomTop}px`;
+  crow.style.fontSize = '40px';
+  crow.style.color = 'black';
+  crow.style.zIndex = 9999;
+  crow.style.cursor = 'pointer';
+
+  document.body.appendChild(crow);
+  requestAnimationFrame(() => {
+    crow.classList.add('crow');
+  });
+
+  crow.addEventListener('click', () => {
+    crow.classList.add('captured');
+    crow.removeEventListener('animationend', removeIfNotClicked);
+    if (Math.random() < 0.10) {
+      const count = 5 + Math.floor(Math.random() * 6); // 5 to 10 followers
+      for (let i = 0; i < count; i++) {
+        spawnFollowerCrow(i);
+      }
+    }
+    increaseCapturedCrow(1);
+    playCrowHowl();
+    setTimeout(() => crow.remove(), 400);
+  });
+
+  function removeIfNotClicked() {
+    crow.remove();
+  }
+
+  crow.addEventListener('animationend', removeIfNotClicked);
+}
+
+function randomSpawnLoop(firstSkipped = false) {
+  if (firstSkipped) spawnCrow();
+
+  const delay = 30000 + Math.random() * 500000;
+  setTimeout(() => randomSpawnLoop(true), delay);
+}
+
+function absorbCrowsIntoCat() {
+  const cat = document.querySelector('.octo-body');
+  const rect = cat.getBoundingClientRect();
+  const targetX = rect.left + rect.width / 3;
+  const targetY = rect.top + rect.height / 3;
+
+  increaseCapturedCrow(followerCrows.length);
+
+  followerCrows.forEach((crow, i) => {
+    setTimeout(() => {
+      crow.el.style.transition = 'transform 0.6s ease-in';
+      crow.el.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.2) rotate(${Math.random() * 360}deg)`;
+    }, i * 50);
+
+    if (crow.el._howlInterval) {
+      clearInterval(crow.el._howlInterval);
+      crow.el._howlInterval = null;
+    }
+    crow.absorbed = true;
+  });
+
+  setTimeout(() => {
+    followerCrows.forEach(c => c.el.remove());
+    followerCrows.length = 0;
+  }, 1000);
 }
 
 function prestige() {
@@ -1306,6 +1493,7 @@ function openBdoEnchant() {
             data.magicalStone = magicalStone;
             data.cronStone = cronStones;
             data.failstack = 150;
+            data.durability = 200;
             setGameData(data);
             achievementUnlocked('rng');
           } else {
@@ -1476,9 +1664,9 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('body').keydown((e) => {
+  $('body').keypress((e) => {
     if (e.key.toLowerCase() === 'r') {
-      if (e.altKey) {
+      if (e.shiftKey) {
         askReset();
       }
     }
@@ -1556,10 +1744,10 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['friendship']) {
       Swal.fire({
-        title: isZoomed ? "What do you think of Nova on BDO?" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? (unlocked['konami'] ? "Good job Detective!" : "What do you think of Nova on BDO?") : "An easter egg into an easter egg? Really?",
         width: 500,
         html:
-        isZoomed ? "Nova released as a heavy tank class with a giant door shield. But did you know that Nova awakening was so broken that everyone though they were using 'cheat codes'..? Funny isnt it?" :
+        isZoomed ? (unlocked['konami'] ? "It was indeed the famous Konami Code!" : "Nova was released as a heavy tank class with a giant door shield. But did you know that Nova awakening was so broken that everyone thought they were using <span class='bold'>*cheat codes*</span>?<br><br>Did you try to use the most famous one on the main page by the way?") :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/J7BiQPD6qUg?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
     }
@@ -1592,13 +1780,22 @@ jQuery(document).ready(function($) {
           altKey: true,
           ctrlKey: isZoomed
         });
+        unZoom();
+        const prestigeCount = getPrestigeCount();
         ctrlClickEvent.isSecret = true;
+        ctrlClickEvent.isSkilled = (unlocked['skin'] || prestigeCount > 0);
+        ctrlClickEvent.isDone = (unlocked['good'] || unlocked['evil']);
+        console.log('ctrlClickEvent', ctrlClickEvent);
+        if ($('.fullscreen').length > 0) {
+          playButton.dispatchEvent(ctrlClickEvent);
+        }
         playButton.dispatchEvent(ctrlClickEvent);
       }
     }
   });
 
   $(document).on('click', '.achievement-prestigious', () => {
+    unZoom();
     const unlocked = getUnlockedAchievements();
     if (unlocked['prestigious'] && unlocked['skin']) {
       openPrestigeCustomizationPopup();
@@ -1630,20 +1827,26 @@ jQuery(document).ready(function($) {
   $(document).on('click', '.achievement-weakened', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['weakened']) {
-      if (!isZoomed) {
-        $('body').empty();
-        document.body.background = "https://i.imgur.com/ZngZTjQ.png";
-        setTimeout(() => {
-        alert('Do not click this ever again. And never look at it too closely.')
-        }, 1000);
-        setTimeout(() => {
-          location.reload();
-        }, 3000);
+      if (!isZoomed || unlocked['rng']) {
+        Swal.fire({
+          title: 'Good job!',
+          showCancelButton: false,
+          html: '<div class="glitch-text">The source of evil is now weakened!</div>',
+          icon: 'success',
+          confirmButtonText: "Time to end this!",
+          confirmButtonColor: 'red'
+        })
       } else {
-        document.querySelectorAll('*').forEach(el => {
-          el.classList.add('glitch-text');
-        });
+          Swal.fire({
+          title: 'Good job!',
+          showCancelButton: false,
+          html: 'You have weakened the source of evil, now you can try to defeat it, maybe you should try to enhance your axe first?',
+          icon: 'success',
+          confirmButtonText: "Time to end this!",
+          confirmButtonColor: 'red'
+        })
       }
+      unZoom();
     }
   });
 
@@ -1710,6 +1913,9 @@ jQuery(document).ready(function($) {
               view: window,
               altKey: true
             });
+            if ($('.fullscreen').length > 0) {
+              playButton.dispatchEvent(ctrlClickEvent);
+            }
             playButton.dispatchEvent(ctrlClickEvent);
           }, 3000);
         }
@@ -1769,10 +1975,10 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['blind']) {
       Swal.fire({
-        title: isZoomed ? "Is this a hint ?" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? (unlocked['L'] ? "Good job Detective!" : "Is this a hint ?") : "An easter egg into an easter egg? Really?",
         width: 500,
         html:
-        isZoomed ? 'Thanks to your detective skills you understand that you may need to repeat what you did but with more "control" or was it the other one..?' :
+        isZoomed ? (unlocked['L'] ? "It was indeed the ALT key!" : 'You may need to repeat what you did to get this achievement, but this time try to put more <span class="bold">*control*</span> on it, or was it the other one..?') :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/-iwYHk_SwNA?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
     }
@@ -1782,9 +1988,9 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['konami']) {
       Swal.fire({
-        title: isZoomed ? "Nothing to see here Detective" : "An easter egg into an easter egg? Really?",
+        title: isZoomed ? ((unlocked['arsha'] || unlocked['dead']) ? "Good job Detective!" : "It's time for du-du-duel!") : "An easter egg into an easter egg? Really?",
         width: 500,
-        html:
+        html: isZoomed ? ((unlocked['arsha'] || unlocked['dead']) ? 'Looks like you found the BDO shortcut to enable PvP (ALT-C)' : "Do you know the BDO shortcut to enable PvP?") :
         '<iframe width="80%" height:"auto" src="https://www.youtube.com/embed/_MnCeDBSbzA?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>',
       }).then((result) => { openAchievementList(); });
     }
@@ -1794,18 +2000,17 @@ jQuery(document).ready(function($) {
     const unlocked = getUnlockedAchievements();
     if (unlocked['completed']) {
       Swal.fire({
-        title: isZoomed ? "Congratulation Detective! You're on the right way!" : "Congratulations! You unlocked all achievements!",
-        text: isZoomed ? "Thanks to your detective skills you understand that you may need to celebrate and that you can use your 'control' on your trophy for that..." : "I mean all of them without talking about the secret ones, right?",
+        title: isZoomed ? (unlocked['celebrate'] ? "Congratulation Detective!" : "Congratulation Detective! You're on the right way!") : "Congratulations! You unlocked all achievements!",
+        text: isZoomed ? (unlocked['celebrate'] ? "You correctly celebrated more than 7 times!" : "Thanks to your detective skills you understand that you may need to celebrate and that you can use your 'control' on your trophy for that...")
+         : "I mean all of them without talking about the secret ones, right?",
         width: 500,
         confirmButtonText: isZoomed ? 'Celebrate!' : 'If only I had my magnifying glass...',
         confirmButtonColor: isZoomed ? '#B28E00' : ''
       }).then((result) => { 
         if (isZoomed && result.value) {
           createConfetti(); 
-          document.body.style.transform = "";
-          document.body.style.transformOrigin = "";
-          isZoomed = false;
         }
+        unZoom();
       });
     }
   });
@@ -1831,11 +2036,28 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $(document).on('click', '.achievement-good', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['good']) {
+      Swal.close();
+      startBoss('good');
+    }
+  });
+
+  $(document).on('click', '.achievement-evil', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['evil']) {
+      Swal.close();
+      startBoss('evil');
+    }
+  });
+
   $(document).on('click', '.achievement-bronze', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['bronze']) {
       const durationMs = getUnlockDuration(unlocked);
       const readableDuration = formatDuration(durationMs);
+      unZoom();
       Swal.fire({
         title: "Do you want to prestige?",
         width: 500,
@@ -1870,10 +2092,24 @@ jQuery(document).ready(function($) {
     }
   });
 
+  animateFollowers();
+
   document.addEventListener('mousemove', (e) => {
     lastMousePos.x = e.clientX;
     lastMousePos.y = e.clientY;
   });
+
+  document.addEventListener('mousemove', (e) => {
+    followerCrows.forEach((crow, i) => {
+      const offsetX = parseInt(crow.el.dataset.offsetX);
+      const offsetY = parseInt(crow.el.dataset.offsetY);
+
+      crow.el.style.left = `${e.clientX + offsetX}px`;
+      crow.el.style.top = `${e.clientY + offsetY}px`;
+    });
+  });
+
+
 
   // Apply when page is fully loaded
   $(window).on("load", function() {
@@ -1903,14 +2139,26 @@ jQuery(document).ready(function($) {
         firstSong = 'NOAH';
         params = '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
         if (e.originalEvent.isSecret) {
-          Swal.fire({
-            title: 'Is that a boss music?',
-            text: 'This is the song that will play during the boss battle, but where\'s the boss? I already saw this big smile somewhere..',
-            confirmButtonText: 'Umh okay?',
-            icon: 'question',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-          });
+          if (e.originalEvent.isDone) {
+            Swal.fire({
+              title: 'You did it!',
+              text: 'You already have defeated the boss!',
+              confirmButtonText: 'Let\'s go!',
+              icon: 'success',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            });
+          }
+          else {
+            Swal.fire({
+              title: 'Is that a boss music?',
+              text: 'This is the song that will play during the boss battle, but where\'s the boss? I already saw this big smile somewhere..' + ((!e.originalEvent.isSkilled) ? ' You may need to be more skilled to win this fight. Maybe at least able to achieve metamorphosis..' : ''),
+              confirmButtonText: 'Umh okay?',
+              icon: 'question',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            });
+          }
         }
       }
       if (document.body.classList.contains('glitch-text')) {
@@ -1992,6 +2240,7 @@ jQuery(document).ready(function($) {
 
   $('.github-corner').on('mouseenter', function () {
     achievementUnlocked('cat');
+    absorbCrowsIntoCat();
   });
 
   $('body').on('click', '.hideInterface', function(e) {

@@ -105,6 +105,10 @@ function displayResults(results, files) {
         headerRow.appendChild(th);
     });
 
+    const diffTh = document.createElement('th');
+    diffTh.textContent = "Difference";
+    headerRow.appendChild(diffTh);
+
     results.forEach((result, index) => {
         const row = document.createElement('tr');
         
@@ -154,6 +158,19 @@ function displayResults(results, files) {
             }
         });
 
+        const diffCell = document.createElement('td');
+        let diffValue = '-';
+        if (minValue !== Infinity && maxValue !== -Infinity) {
+            diffValue = maxValue - minValue;
+            diffCell.textContent = diffValue;
+        } else {
+            diffCell.textContent = '-';
+        }
+        row.appendChild(diffCell);
+
+        if (!window._diffCells) window._diffCells = [];
+        window._diffCells.push({ cell: diffCell, value: diffValue });
+
         tableBody.appendChild(row);
     });
 
@@ -163,6 +180,25 @@ function displayResults(results, files) {
     toggleTierlistButton();
 
     enableColumnReordering();
+    highlightDifferenceExtremes();
+}
+
+function highlightDifferenceExtremes() {
+    const diffCells = (window._diffCells || []).filter(c => typeof c.value === "number");
+    if (diffCells.length === 0) return;
+
+    const minDiff = Math.min(...diffCells.map(c => c.value));
+    const maxDiff = Math.max(...diffCells.map(c => c.value));
+
+    diffCells.forEach(({ cell, value }) => {
+        if (value === minDiff) {
+            cell.classList.add("lowest-value");
+        } else if (value === maxDiff) {
+            cell.classList.add("highest-value");
+        }
+    });
+
+    window._diffCells = [];
 }
 
 function sortResultsByRank(ascending) {
