@@ -863,6 +863,11 @@ function bossBattle(pathChoosen) {
     width: 600,
     background: '#111',
     color: '#fff',
+      customClass: {
+        popup: 'boss-popup',
+        title: 'boss-title',
+        content: 'boss-content',
+      },
     html: `
       <div style="margin-top: 15px; text-align: center;">
 
@@ -918,19 +923,6 @@ function bossBattle(pathChoosen) {
         const beforeAttack = attackBtn.innerHTML;
         attackBtn.innerHTML = attackBtn.innerHTML.replace('Attack!', 'Attacking...');
 
-        if (pathChoosen === 'crow') {
-          if (data?.sovereign?.level >= MAGIC_NUMBER) {
-            showCrowDialogueOnPerch(true);
-            bossLabel.innerText = 'The crow does not dodge your attack!';
-
-          }
-          else {
-            showCrowDialogueOnPerch();
-            bossLabel.innerText = 'The crow swiftly dodges your attack!';
-            return;
-          }
-        }
-
         let dmg = Math.floor(Math.random() * 5 + 3);
 
         const sovereign = (data.blackstar ?? 0) >= 2;
@@ -940,6 +932,19 @@ function bossBattle(pathChoosen) {
         dmg *= dmgMulti;
 
         if (pathChoosen == 'crow') dmg = Math.floor(dmg / 10);
+
+        if (pathChoosen === 'crow') {
+          if (data?.sovereign?.level >= MAGIC_NUMBER) {
+            showCrowDialogueOnPerch(true);
+            bossLabel.innerText = 'The crow does not dodge your attack!';
+
+          }
+          else {
+            showCrowDialogueOnPerch();
+            bossLabel.innerText = 'The crow swiftly dodges your attack!';
+            dmg = 0;
+          }
+        }
 
         bossHP = Math.max(0, bossHP - dmg);
         if (hpBar) hpBar.style.width = `${bossHP}%`;
@@ -1612,11 +1617,54 @@ function spawnCrow() {
 
 function randomSpawnLoop(firstSkipped = false) {
   if (document.visibilityState === 'visible') {
-    if (firstSkipped) spawnCrow();
+    const bossSwall = document.querySelector('.boss-popup');
+    if (!bossSwall) {
+      if (firstSkipped) {
+        const random = Math.random();
+
+        if (random < 0.10) {
+          showSwarmWarning();
+          setTimeout(() => {
+            spawnCrowSwarm();
+          }, 5000);
+        } else {
+          spawnCrow();
+        }
+      }
+    }
   }
 
   const delay = 30000 + Math.random() * 90000;
   setTimeout(() => randomSpawnLoop(true), delay);
+}
+
+function spawnCrowSwarm() {
+  const numberOfCrows = 10 + Math.floor(Math.random() * 10);
+  for (let i = 0; i < numberOfCrows; i++) {
+    setTimeout(() => spawnCrow(), i * 100);
+  }
+}
+
+function showSwarmWarning() {
+  const warning = document.createElement('div');
+  warning.textContent = 'A SWARM OF CROWS IS APPROACHING!';
+  warning.style.position = 'fixed';
+  warning.style.bottom = '120px';
+  warning.style.left = '50%';
+  warning.style.transform = 'translateX(-50%)';
+  warning.style.padding = '12px 24px';
+  warning.style.background = 'rgba(0,0,0,0.85)';
+  warning.style.color = 'white';
+  warning.style.fontSize = '20px';
+  warning.style.fontWeight = 'bold';
+  warning.style.zIndex = 9999;
+  warning.style.border = '2px solid white';
+  warning.style.borderRadius = '8px';
+  warning.style.boxShadow = '0 0 10px white';
+
+  document.body.appendChild(warning);
+
+  setTimeout(() => warning.remove(), 5000);
 }
 
 function absorbCrowsIntoCat() {
