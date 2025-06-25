@@ -1,3 +1,4 @@
+(function() {
 const achievementData = {
   "detective": {
     icon: "fa fa-magnifying-glass",
@@ -344,13 +345,40 @@ function getNextDialogue(alternative = false) {
   return dialogues[dialoguePool.pop()];
 }
 
-function getGameData() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : { ...defaultGameData };
+function toBase64(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+    String.fromCharCode('0x' + p1)
+  ));
+}
+function fromBase64(str) {
+  return decodeURIComponent(Array.prototype.map.call(atob(str), c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
 }
 
 function setGameData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const json = JSON.stringify(data);
+  const encoded = toBase64(json);
+  localStorage.setItem(STORAGE_KEY, encoded);
+}
+
+function getGameData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return { ...defaultGameData };
+  try {
+    // Try new base64 format
+    const json = fromBase64(raw);
+    return JSON.parse(json);
+  } catch {
+    // Try old plain JSON and migrate
+    try {
+      const data = JSON.parse(raw);
+      setGameData(data);
+      return data;
+    } catch {
+      return { ...defaultGameData };
+    }
+  }
 }
 
 function getPrestigeCount() {
@@ -2989,5 +3017,4 @@ jQuery(document).ready(function($) {
     openDiscordPopup();
   });
 });
-
-
+})();
