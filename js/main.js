@@ -78,7 +78,7 @@ const achievementData = {
   },
   'edgy': {
     secret: true,
-    icon: "fa-solid fa-crow",
+    icon: "fa-solid fa-spider",
     title: "Edgy Crow",
     group: 'evilorgood',
     text: "You ventured into the shadows, and they welcomed you.",
@@ -143,7 +143,21 @@ const achievementData = {
     title: "Got PKed",
     text: "You got PKed and lost all your resources. Better read a PvP guide next time!",
     rarity: "RareAchievement",
-  }
+  },
+  'crow': {
+    secret: true,
+    icon: "fa-solid fa-crow",
+    title: "Ultra Instinct Crow",
+    text: "You captured the strongest crow.",
+    rarity: "UltraAchievement",
+  },
+  'cheater': {
+    secret: true,
+    icon: "fa-solid fa-terminal",
+    title: "Cheater",
+    text: "There's no way to get to this point without cheating.. right?",
+    rarity: "SupremeAchievement",
+  },
 };
 
 const rarityOrder = {
@@ -154,7 +168,9 @@ const rarityOrder = {
   'LegendaryAchievement': 5,
   'MythicAchievement': 6,
   'SecretAchievement' : 7,
-  'PrestigeAchievement': 8
+  'PrestigeAchievement': 8,
+  'UltraAchievement': 9,
+  'SupremeAchievement': 10
 };
 
 const rarityColors = {
@@ -165,7 +181,9 @@ const rarityColors = {
   LegendaryAchievement: '#ffb84e',
   MythicAchievement: '#ff4500',
   SecretAchievement: '#ff69b4',
-  PrestigeAchievement: 'white'
+  PrestigeAchievement: 'white',
+  UltraAchievement: '#4B7AF2',
+  SupremeAchievement: '#74b9ff'
 };
 
 const rarityToSkin = {
@@ -176,7 +194,9 @@ const rarityToSkin = {
   'LegendaryAchievement': 'gold',
   'MythicAchievement': 'mythic',
   'SecretAchievement': 'secret',
-  'PrestigeAchievement': 'prestige'
+  'PrestigeAchievement': 'prestige',
+  'UltraAchievement': 'ultra',
+  'SupremeAchievement': 'supreme'
 };
 
 const crowRarity = {
@@ -217,14 +237,39 @@ const defaultGameData = {
   failstack: 150,
   durability: 200,
   magicalStone: 0,
-  crow: 0
+  primordialStone: 0,
+  crow: 0,
+  blackstar: 0,
+  sovereign: {
+    level: 0,
+    durability: 200,
+    failstack: 50,
+  }
+};
+
+const SOVEREIGN_FAILSTACKS = [20, 30, 50, 75, 100, 150, 175, 200, 250, 300]
+const SOVEREIGN_CRONS = [0, 320, 560, 780, 970, 1350, 1550, 2250, 2760, 3920]
+const SOVEREIGN_BASE_CHANCE = [8.55, 4.12, 2, 0.91, 0.469, 0.273, 0.16, 0.1075, 0.04845, 0.0242]
+const SOVEREIGN_INCREASE = [0.855, 0.412, 0.2, 0.091, 0.047, 0.027, 0.016, 0.0105, 0.00455, 0.0018]
+const SOVEREIGN_LEVELS = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+const ENCHANT_TO_DEC = {
+  'I': 'PRI',
+  'II': 'DUO',
+  'III': 'TRI',
+  'IV': 'TET',
+  'V': 'PEN',
+  'VI': 'HEX',
+  'VII': 'SEP',
+  'VIII': 'OCT',
+  'IX': 'NOV',
+  'X': 'DEC'
 };
 
 const MAGIC_NUMBER = 7;
 const CELEBRATION_MAX = 77;
 const STEAM_POPUP_TIMEOUT = 5950;
 const STORAGE_KEY = 'easterEggs';
-const berserkSrc = 'https://i.imgur.com/ZngZTjQ.png';
 
 const sortedAchievements = Object.entries(achievementData)
   .sort(([, a], [, b]) => rarityOrder[a.rarity] - rarityOrder[b.rarity])
@@ -249,18 +294,55 @@ let currentZoom = 1;
 
 let inputBuffer = [];
 
-const axeUrl = "https://bdocodex.com/items/new_icon/06_pc_equipitem/00_common/01_weapon/00690563.webp";
-const cronUrl = "https://bdocodex.com/items/new_icon/03_etc/00016080.webp";
-const stoneUrl = "https://bdocodex.com/items/new_icon/03_etc/00752021.webp";
-const memoryFragmentUrl = "https://bdocodex.com/items/new_icon/03_etc/04_dropitem/00044195.webp";
-const healthPotionUrl = "https://bdocodex.com/items/new_icon/03_etc/08_potion/00040712.webp";
+const crowDialogues = ["OMG", "EZ", "LOL", "OUTPLAYED!", "EZ TRASH NOOB", "GGEZ", "BOT?", "COOP VS IA??", "XDDDD"];
+const crowDialoguesCry = ["WAIT?", "WTF?", "CHEAT?", "STOP!", "PLEASE STOP", "SORRY", "IT WAS A JOKE", "I BEG YOU", "WE ARE SORRY"];
+
+
+let dialoguePool = [];
+
+const berserkSrc = './images/berserk.png';
+const axeUrl = "./images/blackstar_axe.png";
+const sovereignAxeUrl = "./images/sovereign_axe.png";
+const cronUrl = "./images/cron.png";
+const magicalStoneUrl = "./images/magical_stone.png";
+const primordialStoneUrl = "./images/primordial_stone.png";
+const memoryFragmentUrl = "./images/memory_fragment.png";
+const healthPotionUrl = "./images/health_potion.png";
 
 const followerCrows = [];
 
 const DEFAULT_PRESTIGE_SKIN = { animation: 'prestigeGlow', color: '#0069FD' }
 
-const crowHowlAudio = new Audio('./sounds/crow.mp3');
+const crowHowlAudio = new Audio('./sounds/crow.wav');
 crowHowlAudio.volume = 0.3;
+
+function getWeaponImage(gameData, showSovereign = false, isEnchanting = false) {
+  const penBs = gameData.achievements['rng'] && !isEnchanting;
+  const sovereign = (gameData.blackstar ?? 0) >= 2 && showSovereign;
+  const imgUrl = sovereign ? sovereignAxeUrl : axeUrl;
+  const enchantLevel = sovereign ? (SOVEREIGN_LEVELS[gameData?.sovereign?.level ?? 0]) : (penBs ? 'V' : 'IV'); 
+  const altText = sovereign ? `${enchantLevel} Sovereign Axe` : `${enchantLevel} Blackstar Axe`;
+  return `<span class="relative">
+            <img src="${imgUrl}" width="60" alt="${altText}">
+            ${enchantLevel != '' ? `<span class="enhance-level text-lg">${enchantLevel}</span>` : ''}
+          </span>`
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function getNextDialogue(alternative = false) {
+  dialogues = alternative ? crowDialoguesCry : crowDialogues;
+  if (dialoguePool.length === 0) {
+    dialoguePool = dialogues.map((_, i) => i);
+    shuffleArray(dialoguePool);
+  }
+  return dialogues[dialoguePool.pop()];
+}
 
 function getGameData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -306,10 +388,10 @@ function getHighestUnlockedSkin() {
   for (const id in unlocked) {
     if (unlocked[id]) {
       const rarity = achievementData[id]?.rarity || 'CommonAchievement';
-      if (rarity == 'PrestigeAchievement' && (!unlocked['skin'] || !unlocked['prestigious'])) {
+      if ((rarityOrder[rarity] >= 8) && (!unlocked['skin'] || !unlocked['prestigious'])) {
         continue;
       }
-      const level = rarityOrder[rarity] || 1;
+      const level = Math.min(rarityOrder[rarity], 8) || 1;
       if (level > highestRarityLevel) {
         highestRarityLevel = level;
         highestRarity = rarity;
@@ -320,12 +402,22 @@ function getHighestUnlockedSkin() {
   return rarityToSkin[highestRarity] || 'bronze';
 }
 
+function increasePrimordialStone(countToAdd = 1) {
+  const data = getGameData();  
+  data.sovereign ??= {}
+  var primordialStoneCount = data.sovereign.primordialStone ?? 0;
+  data.sovereign.primordialStone = primordialStoneCount + countToAdd;
+  setGameData(data);
+}
+
 function getCapturedCrow() {
   return getGameData().crow || 0;
 }
 
 function increaseCapturedCrow(countToAdd = 1) {
   var count = getCapturedCrow();
+  const unlocked = getUnlockedAchievements();
+  increasePrimordialStone(unlocked['arsha'] ? countToAdd * 2 : countToAdd);
   setCapturedCrow(count + countToAdd);
   updateCrowIcons();
 }
@@ -478,6 +570,8 @@ function toggleZoom() {
 
 function openSkinSelector() {
   unZoom();
+  const unlockedAchievements = getUnlockedAchievements();
+
   const skins = [
     { value: 'bronze', label: 'Bronze', iconClass: 'fa fa-trophy bronze' },
     { value: 'silver', label: 'Silver', iconClass: 'fa fa-trophy silver' },
@@ -485,13 +579,21 @@ function openSkinSelector() {
     { value: 'mythic', label: 'Mythic', iconClass: 'fa fa-trophy mythic' },
   ];
 
-  const unlockedAchievements = getUnlockedAchievements();
+  const rareTiers = [
+    { rarity: 'SecretAchievement', value: 'secret', label: 'Secret' },
+    { rarity: 'UltraAchievement', value: 'ultra', label: 'Ultra' },
+    { rarity: 'SupremeAchievement', value: 'supreme', label: 'Supreme' },
+  ];
 
-  const hasSecretAchievement = Object.entries(unlockedAchievements).some(([id, unlocked]) =>
-    unlocked && (achievementData[id]?.rarity === 'SecretAchievement')
-  );
+  rareTiers.forEach(({ rarity, value, label }) => {
+    const hasThisRarity = Object.entries(unlockedAchievements).some(
+      ([id, unlocked]) => unlocked && achievementData[id]?.rarity === rarity
+    );
+    if (hasThisRarity) {
+      skins.push({ value, label, iconClass: `fa fa-trophy ${value}` });
+    }
+  });
 
-  if (hasSecretAchievement) skins.push({ value: 'secret', label: 'Secret', iconClass: 'fa fa-trophy secret' });
 
   if (getUnlockedAchievements()['prestigious']) {
     skins.push({ value: 'prestige', label: 'Prestige', iconClass: 'fa fa-trophy prestige' });
@@ -693,16 +795,15 @@ function decomposeCrowsLimited(total, maxIcons = 10) {
   return { decomposition: result, remainder: remaining };
 }
 
-function startBossMusic() {
+function startBossMusic(pathChoosen) {
   const playButton = document.querySelector('.play');
   if (playButton) {
     const ctrlClickEvent = new MouseEvent('click', {
       bubbles: true,
       cancelable: true,
-      view: window,
-      altKey: true,
-      ctrlKey: true
+      view: window
     });
+    ctrlClickEvent.pathChoosen = pathChoosen;
     if ($('.fullscreen').length > 0) {
       playButton.dispatchEvent(ctrlClickEvent);
     }
@@ -726,7 +827,7 @@ function stopBossMusic() {
 
 function startBoss(pathChoosen) {
 
-  startBossMusic();
+  startBossMusic(pathChoosen);
 
   if ($('.mainblock').is(":visible")) {
     $('.hideInterface').html($('.hideInterface').html().replace('Hide', 'Show').replace('fa-eye-slash', 'fa-eye'));
@@ -736,6 +837,10 @@ function startBoss(pathChoosen) {
     $('.mainblock').show();
   }
 
+  if (pathChoosen == 'crow') {
+    $('#crow-perch').removeClass('hidden');
+  }
+
   setTimeout(function () {
     bossBattle(pathChoosen);  
   }, pathChoosen == 'impossible' ? 0 : 2000);
@@ -743,30 +848,36 @@ function startBoss(pathChoosen) {
 }
 
 function bossBattle(pathChoosen) {
-
   let bossHP = 100;
   let playerHP = 100;
   let canAttack = true;
-  let bossAttackInterval;
+  let BossesAttackInterval;
+
+  const data = getGameData();
 
   const unlocked = getUnlockedAchievements();
   const penBs = unlocked['rng'];
 
   Swal.fire({
-    title: 'A giant berserk smile attacks!',
+    title: pathChoosen === 'crow' ? 'A swift crow challenges you!' : 'A giant berserk smile attacks!',
     width: 600,
     background: '#111',
     color: '#fff',
     html: `
-      <div style="margin-top: 15px;">
+      <div style="margin-top: 15px; text-align: center;">
 
-        <!-- Player HP -->
+        ${pathChoosen === 'crow' ? `
+          <div style="font-size: 100px; color: black; margin: 10px 0;">
+            <i class="fas fa-crow ultra-instinct" style="color: black" title="Ultra Instinct Crow"></i>
+          </div>
+          <div id="boss-label" style="color: #888;">The crow dodges all your attacks!</div>
+        ` : ''}
+
         <div id="player-hp-label">Your HP: 100%</div>
         <div style="background: #333; border-radius: 8px; overflow: hidden; height: 20px; margin: 5px 0;">
           <div id="player-hp-bar" style="background: limegreen; width: 100%; height: 100%; transition: width 0.3s;"></div>
         </div>
-
-        <!-- Boss HP -->
+        
         <div id="boss-hp-label">Boss HP: 100%</div>
         <div style="background: #333; border-radius: 8px; overflow: hidden; height: 20px; margin: 5px 0;">
           <div id="boss-hp-bar" style="background: red; width: 100%; height: 100%; transition: width 0.3s;"></div>
@@ -774,12 +885,8 @@ function bossBattle(pathChoosen) {
 
         <!-- Weapon display and attack button -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px;">
-
           <button id="attack-btn" style="padding: 6px 12px; background: crimson; color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <span class="relative">
-              <img src="${axeUrl}" width="60" alt="Blackstar IV">
-              <span class="enhance-level text-lg">${penBs ? 'V' : 'IV'}</span>
-            </span>
+            ${getWeaponImage(getGameData(), true)}
             <span>Attack!</span>
           </button>
 
@@ -796,8 +903,9 @@ function bossBattle(pathChoosen) {
     didOpen: () => {
       const attackBtn = document.getElementById('attack-btn');
       const healBtn = document.getElementById('heal-btn');
-      const hpBar = document.getElementById('boss-hp-bar');
       const hpLabel = document.getElementById('boss-hp-label');
+      const bossLabel = document.getElementById('boss-label');
+      const hpBar = document.getElementById('boss-hp-bar');
 
       const playerHpBar = document.getElementById('player-hp-bar');
       const playerHpLabel = document.getElementById('player-hp-label');
@@ -810,16 +918,36 @@ function bossBattle(pathChoosen) {
         const beforeAttack = attackBtn.innerHTML;
         attackBtn.innerHTML = attackBtn.innerHTML.replace('Attack!', 'Attacking...');
 
+        if (pathChoosen === 'crow') {
+          if (data?.sovereign?.level >= MAGIC_NUMBER) {
+            showCrowDialogueOnPerch(true);
+            bossLabel.innerText = 'The crow does not dodge your attack!';
+
+          }
+          else {
+            showCrowDialogueOnPerch();
+            bossLabel.innerText = 'The crow swiftly dodges your attack!';
+            return;
+          }
+        }
+
         let dmg = Math.floor(Math.random() * 5 + 3);
-        if (penBs) dmg *= 2;
+
+        const sovereign = (data.blackstar ?? 0) >= 2;
+        const enchantLevel = sovereign ? (SOVEREIGN_LEVELS[data?.sovereign?.level ?? 0]) : (penBs ? 'V' : 'IV'); 
+
+        let dmgMulti = (sovereign ? Math.max(Object.values(ENCHANT_TO_DEC).indexOf(ENCHANT_TO_DEC[enchantLevel]), 2) : (penBs ? 2 : 1));
+        dmg *= dmgMulti;
+
+        if (pathChoosen == 'crow') dmg = Math.floor(dmg / 10);
 
         bossHP = Math.max(0, bossHP - dmg);
-        hpBar.style.width = `${bossHP}%`;
+        if (hpBar) hpBar.style.width = `${bossHP}%`;
         hpLabel.innerText = `Boss HP: ${bossHP}%`;
 
         if (bossHP <= 0) {
           stopBossMusic();
-          clearInterval(bossAttackInterval);
+          clearInterval(BossesAttackInterval);
           Swal.fire({
             title: '🎉 Victory!',
             text: 'You defeated the boss!',
@@ -837,7 +965,7 @@ function bossBattle(pathChoosen) {
               setTimeout(() => {
                 if (confirmBtn) confirmBtn.disabled = false;
                 if (cancelBtn) cancelBtn.disabled = false;
-              }, 1000); // 1 second delay
+              }, 1000);
             }
           }).then(() => achievementUnlocked(pathChoosen));
           return;
@@ -853,7 +981,7 @@ function bossBattle(pathChoosen) {
       healBtn.addEventListener('click', () => {
         if (playerHP >= 100) return;
 
-        var beforeHeal = healBtn.innerHTML;
+        const beforeHeal = healBtn.innerHTML;
 
         playerHP = Math.min(100, playerHP + 10);
         playerHpBar.style.width = `${playerHP}%`;
@@ -868,8 +996,9 @@ function bossBattle(pathChoosen) {
         }, 2000);
       });
 
-      bossAttackInterval = setInterval(() => {
-        var dmg = Math.floor(Math.random() * 10 + 5);
+      BossesAttackInterval = setInterval(() => {
+        let dmg = Math.floor(Math.random() * 10 + 5);
+        if (pathChoosen == 'crow') dmg = Math.floor(Math.random() * 2 + 5);
         if (pathChoosen == 'impossible') dmg = 9999;
         playerHP = Math.max(0, playerHP - dmg);
         playerHpBar.style.width = `${playerHP}%`;
@@ -877,7 +1006,7 @@ function bossBattle(pathChoosen) {
 
         if (playerHP <= 0) {
           stopBossMusic();
-          clearInterval(bossAttackInterval);
+          clearInterval(BossesAttackInterval);
           Swal.fire({
             title: '💀 You Died!',
             text: 'The boss defeated you...' + ((pathChoosen == 'impossible') ? 'There is no way you can win in the glitched zone.' : 'Maybe try to enhance your weapon?'),
@@ -901,10 +1030,11 @@ function bossBattle(pathChoosen) {
               }, 1000);
             }
           }).then((result) => {
-            if ((pathChoosen == 'impossible') || (result.isDismissed)) { 
-              location.reload() 
-            };
-            startBoss(pathChoosen)
+            if (pathChoosen === 'impossible') {
+              location.reload();
+            } else if (result.isConfirmed) {
+              startBoss(pathChoosen);
+            }
           });
         }
       }, 1000);
@@ -1197,12 +1327,19 @@ function spawnFollowerCrow() {
 }
 
 function startHowling(element, interval = 1000) {
-  var crowSound = 0.8 + Math.random() * 0.4;
+  const crowSound = 0.8 + Math.random() * 0.4;
+
   element._howlInterval = setInterval(() => {
-      var crowOffSet = Math.random() * 1000;
-      setTimeout(() => {
-        playCrowHowl(crowSound);
-      }, crowOffSet);
+    if (!document.body.contains(element)) {
+      clearInterval(element._howlInterval);
+      element._howlInterval = null;
+      return;
+    }
+
+    const crowOffset = Math.random() * 1000;
+    setTimeout(() => {
+      playCrowHowl(crowSound);
+    }, crowOffset);
   }, interval);
 }
 
@@ -1246,6 +1383,153 @@ function animateFollowers() {
   requestAnimationFrame(animateFollowers);
 }
 
+function getSafeDodge(crow, currentLeft, currentTop) {
+  const rect = crow.getBoundingClientRect();
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  let dodgeX = (Math.random() < 0.5 ? -1 : 1) * (40 + Math.random() * 7);
+  let dodgeY = (Math.random() < 0.5 ? -1 : 1) * (80 + Math.random() * 4);
+
+  let newLeft = currentLeft + dodgeX;
+  let newTop = currentTop + dodgeY;
+
+  const margin = 5;
+
+  if (newLeft < margin) {
+    dodgeX = margin - currentLeft;
+  } else if (newLeft + rect.width > screenWidth - margin) {
+    dodgeX = screenWidth - margin - rect.width - currentLeft;
+  }
+
+  if (newTop < margin) {
+    dodgeY = margin - currentTop;
+  } else if (newTop + rect.height > screenHeight - margin) {
+    dodgeY = screenHeight - margin - rect.height - currentTop;
+  }
+
+  return { dodgeX, dodgeY };
+}
+
+function ultraInstinctCrow(crow, stay = false) {
+  if (!crow._ultra) {
+    crow._ultra = {
+      remaining: 12,
+      totalEsquives: 0,
+      timeoutId: null,
+      animating: false,
+      invincible: false
+    };
+  }
+
+  if (crow._ultra.invincible) {
+    return;
+  }
+
+  if (crow._ultra.remaining <= 0) {
+    startBoss('crow');
+    if (!stay) crow.remove();
+    return;
+  }
+
+  crow._ultra.invincible = true;
+
+  showCrowDialogueOnPerch(stay);
+
+  crow.classList.add('ultra-instinct');
+
+  if (crow._ultra.timeoutId) {
+    clearTimeout(crow._ultra.timeoutId);
+    crow._ultra.timeoutId = null;
+  }
+
+  const esquiveIndex = crow._ultra.totalEsquives;
+  if (esquiveIndex < 12) {
+    const audio = new Audio(`./sounds/ultra-${esquiveIndex}.wav`);
+    audio.play().catch(() => {});
+  }
+
+  crow._ultra.remaining--;
+
+  if (crow._ultra.remaining <= 0) {
+    startBoss('crow');
+    if (!stay) crow.remove();
+    return;
+  }
+
+  crow._ultra.totalEsquives++;
+
+  if (stay) {
+    crow._ultra.invincible = false; 
+    return; 
+  }
+  crow._ultra.animating = true;
+
+  const crowRect = crow.getBoundingClientRect();
+  const currentLeft = crowRect.left;
+  const currentTop = crowRect.top;
+
+  crow.style.animation = 'none';
+  crow.style.transition = 'none';
+
+  crow.style.position = 'fixed';
+  crow.style.left = `${currentLeft}px`;
+  crow.style.top = `${currentTop}px`;
+  crow.style.transform = 'none';
+
+  crow.offsetHeight;
+
+  const { dodgeX, dodgeY } = getSafeDodge(crow, currentLeft, currentTop);
+
+  crow.style.transition = 'transform 40ms ease-out';
+  crow.style.transform = `translate(${dodgeX}px, ${dodgeY}px)`;
+
+  setTimeout(() => {
+    crow._ultra.invincible = false;
+  }, 200);
+
+  setTimeout(() => {
+    crow._ultra.animating = false;
+    crow.style.transition = 'none';
+    crow.style.transform = 'none';
+
+    const newLeft = currentLeft + dodgeX;
+    const newTop = currentTop + dodgeY;
+
+    crow.style.left = `${newLeft}px`;
+    crow.style.top = `${newTop}px`;
+
+    crow._ultra.timeoutId = setTimeout(() => {
+      crow._ultra.timeoutId = null;
+      if (crow._ultra.animating) return;
+      restartFlyAcrossFromPosition(crow, newLeft, newTop);
+    }, 2000);
+  }, 200);
+}
+
+function restartFlyAcrossFromPosition(crow, startLeft, startTop) {
+  const endLeft = window.innerWidth * 1.1;
+  const distance = endLeft - startLeft;
+  const speed = 300;
+  const duration = distance / speed * 1000;
+
+  const animationId = `fly-across-from-${startLeft.toFixed(0)}-${Date.now()}`;
+
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes ${animationId} {
+      0% { left: ${startLeft}px; }
+      100% { left: ${endLeft}px; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  crow.style.position = 'fixed';
+  crow.style.top = `${startTop}px`;
+
+  crow.style.animation = `${animationId} ${duration}ms linear forwards, flap 0.6s ease-in-out infinite`;
+}
+
 function spawnCrow() {
   const crow = document.createElement('i');
   crow.className = 'fas fa-crow';
@@ -1267,6 +1551,18 @@ function spawnCrow() {
   });
 
   crow.addEventListener('click', () => {
+    if (crow.classList.contains('ultra-instinct')) {
+      ultraInstinctCrow(crow);
+      return;
+    }
+    const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon');
+    const unlocked = getUnlockedAchievements();
+    if (!unlocked['crow']) {
+      if ((capturedCrowIcons.length > 3 && Math.random() < 0.30)  && !document.querySelector('.ultra-instinct')) {
+        ultraInstinctCrow(crow);
+        return;
+      }
+    }
     crow.classList.add('captured');
     crow.removeEventListener('animationend', removeIfNotClicked);
 
@@ -1295,7 +1591,7 @@ function spawnCrow() {
     crow.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
     playCrowHowl();
-
+    
     if (Math.random() < 0.20 && followerCrows.length == 0) {
       const count = 5 + Math.floor(Math.random() * 6);
       for (let i = 0; i < count; i++) spawnFollowerCrow(i);
@@ -1315,7 +1611,9 @@ function spawnCrow() {
 }
 
 function randomSpawnLoop(firstSkipped = false) {
-  if (firstSkipped) spawnCrow();
+  if (document.visibilityState === 'visible') {
+    if (firstSkipped) spawnCrow();
+  }
 
   const delay = 30000 + Math.random() * 90000;
   setTimeout(() => randomSpawnLoop(true), delay);
@@ -1344,7 +1642,6 @@ function absorbCrowsIntoCat() {
   setTimeout(() => {
     increaseCapturedCrow(followerCrows.length);
     followerCrows.forEach(c => c.el.remove());
-    followerCrows.length = 0;
   }, 2300);
 }
 
@@ -1353,7 +1650,7 @@ function prestige() {
   const filteredAchievements = {};
   for (const key in unlockedAchievements) {
     if (achievementData[key]) {
-      if (achievementData[key]?.rarity == 'PrestigeAchievement') {
+      if (rarityOrder[achievementData[key]?.rarity] >= 8)  {
         filteredAchievements[key] = unlockedAchievements[key];
       }
     }
@@ -1389,14 +1686,77 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function showCrowDialogueOnPerch(alternative = false) {
+  const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon');
+  if (capturedCrowIcons.length === 0) return;
+
+  const crowIcon = capturedCrowIcons[Math.floor(Math.random() * capturedCrowIcons.length)];
+  const phrase = getNextDialogue(alternative);
+
+  const bubble = document.createElement('div');
+  bubble.className = 'crow-dialogue-bubble';
+  bubble.textContent = phrase;
+
+  const rect = crowIcon.getBoundingClientRect();
+  const padding = 10;
+  const bubbleWidth = phrase.length > 5 ? 160 : 120; 
+  const bubbleHeight = 32;
+
+  const headRatio = 0.65;
+  let left = rect.left + rect.width * headRatio - bubbleWidth / 2;
+  let top = rect.top - bubbleHeight - 10;
+
+  left = Math.max(padding, Math.min(left, window.innerWidth - bubbleWidth - padding));
+  top = Math.max(padding, top);
+
+  bubble.style.position = 'fixed';
+  bubble.style.left = `${left}px`;
+  bubble.style.top = `${top}px`;
+  bubble.style.width = `${bubbleWidth}px`;
+  bubble.style.height = `${bubbleHeight}px`;
+  bubble.style.lineHeight = `${bubbleHeight}px`;
+  bubble.style.textAlign = 'center';
+  bubble.style.padding = '0 10px';
+  bubble.style.borderRadius = '15px';
+  bubble.style.boxShadow = '0 0 6px rgba(0,0,0,0.5)';
+  bubble.style.fontWeight = 'bold';
+  bubble.style.fontSize = '16px';
+  bubble.style.color = 'white';
+  bubble.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+  bubble.style.pointerEvents = 'none';
+  bubble.style.opacity = '1';
+  bubble.style.transition = 'opacity 0.5s ease';
+  bubble.style.zIndex = '10000';
+  bubble.style.overflow = 'visible';
+  bubble.style.userSelect = 'none';
+
+  // Calcul position flèche dans la bulle (distance en px depuis le bord gauche de la bulle)
+  const crowHeadX = rect.left + rect.width * headRatio;
+  const arrowLeft = crowHeadX - left;
+
+  // Clamp de la flèche pour ne pas sortir de la bulle
+  const maxArrowLeft = bubbleWidth - 10; // marge droite
+  const clampedArrowLeft = Math.min(Math.max(arrowLeft, 10), maxArrowLeft);
+
+  bubble.style.setProperty('--arrow-left', `${clampedArrowLeft}px`);
+
+  document.body.appendChild(bubble);
+
+  setTimeout(() => {
+    bubble.style.opacity = '0';
+    setTimeout(() => bubble.remove(), 500);
+  }, 1500);
+}
+
 function updateCrowIcons() {
+  const unlocked = getUnlockedAchievements();
   ensureCrowPerchContainer();
 
   const perch = document.getElementById('crow-perch');
   const totalCaptured = getCapturedCrow();
   perch.innerHTML = '';
 
-  const { decomposition, remainder } = decomposeCrowsLimited(totalCaptured, 10);
+  const { decomposition, remainder } = decomposeCrowsLimited(totalCaptured, 5);
 
   for (const {rarity, count, value} of decomposition) {
     const skinClass = rarity;
@@ -1405,22 +1765,20 @@ function updateCrowIcons() {
       const icon = document.createElement('i');
       icon.className = `fas fa-crow crow-icon ${skinClass}`;
       icon.title = `${capitalizeFirstLetter(rarity)} crow with a value of ${value} crow${value !== 1 ? 's' : ''}. Total captured: ${totalCaptured}`;      
-      if (Math.random() < 0.5) icon.style.transform = 'scaleX(-1)';
       icon.addEventListener('click', () => {
         playCrowHowl();
       });
       perch.appendChild(icon);
     }
   }
-
-  if(remainder > 0) {
-    const more = document.createElement('span');
-    more.textContent = `+${remainder}`;
-    more.style.color = 'white';
-    more.style.fontWeight = 'bold';
-    more.style.fontSize = '18px';
-    more.style.marginLeft = '8px';
-    perch.appendChild(more);
+  if (unlocked['crow'])  {
+    const icon = document.createElement('i');
+    icon.className = `fas fa-crow crow-icon ultra-instinct`;
+    icon.title = `Ultra Instinct crow. Total captured: ${totalCaptured}`;      
+    icon.addEventListener('click', () => {
+      ultraInstinctCrow(icon, true);
+    });
+    perch.appendChild(icon);
   }
 }
 
@@ -1450,11 +1808,15 @@ function createConfetti(onCursor = false, nuke = false) {
   let originX = null;
 
   var game = getGameData();
+  game.sovereign ??= {}
+
   var durability = (game.durability ?? 200);
+  var sovereignDurability = (game.sovereign.durability ?? 200)
 
   const unlocked = getUnlockedAchievements();
 
   game.durability = Math.min(durability + (unlocked['arsha'] ? 2 : 1), 200);
+  game.sovereign.durability = Math.min(sovereignDurability + (unlocked['arsha'] ? 2 : 1), 200);
   setGameData(game);
 
   if (onCursor) {
@@ -1535,21 +1897,101 @@ function achievementUnlocked(id) {
 
 }
 
+function changeLevelSovereign() {
+  const data = getGameData();
+  const currentLevel = data.sovereign?.level ?? 1;
+
+  Swal.fire({
+    title: 'Change Level of Sovereign Weapon',
+    html: `
+      ${getWeaponImage(data, true)}
+      <label for="downgrade-level" style="display:block; margin-bottom:8px; font-weight:bold; color:#eee;">
+        Select new Sovereign level:
+      </label>
+      <select id="downgrade-level" class="swal2-select" style="width: 100%; padding: 8px; font-size: 16px;">
+        <option value="0" ${currentLevel === 0 ? 'selected' : ''}>Base</option>
+        <option value="1" ${currentLevel === 1 ? 'selected' : ''}>PRI (I)</option>
+        <option value="2" ${currentLevel === 2 ? 'selected' : ''}>DUO (II)</option>
+        <option value="3" ${currentLevel === 3 ? 'selected' : ''}>TRI (III)</option>
+        <option value="4" ${currentLevel === 4 ? 'selected' : ''}>TET (IV)</option>
+        <option value="5" ${currentLevel === 5 ? 'selected' : ''}>PEN (V)</option>
+        <option value="6" ${currentLevel === 6 ? 'selected' : ''}>HEX (VI)</option>
+        <option value="7" ${currentLevel === 7 ? 'selected' : ''}>SEP (VII)</option>
+        <option value="8" ${currentLevel === 8 ? 'selected' : ''}>OCT (VIII)</option>
+        <option value="9" ${currentLevel === 9 ? 'selected' : ''}>NOV (IX)</option>
+        <option value="10" ${currentLevel === 10 ? 'selected' : ''}>DEC (X)</option>
+      </select>
+    `,
+    background: '#121212',
+    color: '#e0e0e0',
+    showCancelButton: true,
+    confirmButtonText: 'Change',
+    cancelButtonText: 'Cancel',
+    preConfirm: () => {
+      const select = Swal.getPopup().querySelector('#downgrade-level');
+      return parseInt(select.value);
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const data = getGameData();
+      data.sovereign = data.sovereign || {};
+      data.sovereign.level = result.value;
+      setGameData(data);
+      Swal.fire({
+        icon: 'success',
+        title: `Changed Sovereign weapon to level ${result.value == 0 ? 'BASE' : `${ENCHANT_TO_DEC[SOVEREIGN_LEVELS[result.value]]} (${SOVEREIGN_LEVELS[result.value]})`} successfully!`,
+        html: getWeaponImage(getGameData(), true),
+        background: '#121212',
+        color: '#0f0'
+      });
+    }
+  });
+}
+
 function openBdoEnchant() {
-  let failstack = getGameData().failstack ?? 150;;
+  const unlocked = getUnlockedAchievements();
+
+
+  let blackstar = getGameData().blackstar ?? (unlocked['rng'] ? 1 : 0);
+
+  let showSovereign = blackstar >= 2;
+
   const valksBonus = 13;
   const prestigeCount = getPrestigeCount();
-  const permanentBonus = Math.min(Math.max(prestigeCount + 2, 2), 5);
-  let durability = getGameData().durability ?? 200;
+  const permanentBonus = Math.min(Math.floor(prestigeCount / 2), 5);
+  
   let cronStones = getGameData().cronStone ?? 0;
-  let magicalStone = getGameData().magicalStone ?? 10;
-
-  const baseChance = 0.2;
-
-  const getTotalChance = () => baseChance + failstack * 0.02;
-  const getCurrentChance = () => failstack + valksBonus + permanentBonus;
 
   const showPopup = (feedback = null) => {
+    let magicalStone = getGameData().magicalStone ?? 10;
+    if (showSovereign) magicalStone = getGameData().sovereign?.primordialStone ?? 0;
+
+    let durability = getGameData().durability ?? 200;
+    if (showSovereign) durability = getGameData().sovereign?.durability ?? 200;
+
+    let sovereignLevel = getGameData().sovereign?.level ?? 0;
+
+    if (sovereignLevel >= 10) showSovereign = false;
+
+    let failstack = getGameData().failstack ?? Math.min(150 + (50 * blackstar));
+    if (showSovereign) failstack = getGameData().sovereign?.failstack ?? SOVEREIGN_FAILSTACKS[sovereignLevel];
+
+    let chance_gain = 0.02;
+    if (showSovereign) chance_gain = SOVEREIGN_INCREASE[sovereignLevel];
+    let baseChance = 0.2;
+    if (showSovereign) baseChance = SOVEREIGN_BASE_CHANCE[sovereignLevel];
+
+    let cronCost = 3670;
+    if (showSovereign) cronCost = SOVEREIGN_CRONS[sovereignLevel];
+
+    let failstack_gain = 6;
+    if (showSovereign) failstack_gain = sovereignLevel + 2;
+
+    const enchantLevel = showSovereign ? (SOVEREIGN_LEVELS[sovereignLevel + 1]) : 'V'; 
+
+    const getTotalChance = () => baseChance + getCurrentChance() * chance_gain;
+    const getCurrentChance = () => failstack + valksBonus + permanentBonus;
+
     const totalChance = getTotalChance();
     const currentChance = getCurrentChance();
 
@@ -1560,22 +2002,19 @@ function openBdoEnchant() {
         title: 'enchant-title',
         content: 'enchant-content',
       },
-      title: 'You need to enhance a PEN Blackstar Axe',
+      title: `Enhance a${unlocked['rng'] && !showSovereign ? 'nother' : ''} ${ENCHANT_TO_DEC[enchantLevel]} (${enchantLevel}) ${showSovereign ? 'Sovereign' : 'Blackstar'} Axe`,
       background: '#121212',
       color: '#e0e0e0',
       html: `
         <div style="font-family: sans-serif; color: #ccc; display: flex; flex-direction: column; align-items: center;">
         
           <div style="margin-top: 10px; display: flex; align-items: center; gap: 20px; background: #1c1c1c; padding: 15px 20px; border-radius: 8px;">
-            <img src="${stoneUrl}" width="50" alt="Enhancement Stone">
+            <img src="${showSovereign ? primordialStoneUrl : magicalStoneUrl}" width="50" alt="Enhancement Stone">
             <div style="text-align: center;">
               <div style="font-size: 24px; font-weight: bold; color: #80ffff;">${totalChance.toFixed(3)}%</div>
               <div style="font-size: 14px; color: #aaa;">(+${currentChance})</div>
             </div>
-            <div class="relative">
-              <img src="${axeUrl}" width="60" alt="Blackstar IV"></img>
-              <span class="enhance-level text-lg">IV</span>
-            </div>
+            ${getWeaponImage(getGameData(), showSovereign, true)}
           </div>
 
           <div style="margin-top: 15px; font-size: 14px; background: #111; padding: 10px; border-radius: 6px; width: 100%; max-width: 320px;">
@@ -1588,12 +2027,12 @@ function openBdoEnchant() {
               <span><strong>Durability: ${durability} / 200</span>
             </div>
             <div style="align-self: flex-center; align-items: center; gap: 6px;">
-              <img src="${cronUrl}" width="30" alt="Cron Stones">
-              <span><strong>Cron Stones: ${cronStones}</strong> / 3670</span>
+              <img src="${cronUrl}" width="30" title="Super Cron Stones that still give all fallstacks when protecting! How convenient!" alt="Cron Stones">
+              <span><strong>Cron Stones: ${cronStones}</strong> / ${cronCost}</span>
             </div>
             <div style="align-self: flex-center; align-items: center; gap: 6px;">
-              <img src="${stoneUrl}" width="30" alt="Magical Stone">
-              <span><strong>Magical Stones: ${magicalStone}</strong></span>
+              <img src="${showSovereign ? primordialStoneUrl : magicalStoneUrl}" width="30" alt="${showSovereign ? 'Primordial Stone' : 'Magical Stone'}">
+              <span><strong>${showSovereign ? 'Primordial Stones' : 'Magical Stones'}: ${magicalStone}</strong></span>
             </div>
 
               <div style="margin-top: 8px; font-size: 12px; color: #888; text-align: center; user-select: none;">
@@ -1603,21 +2042,27 @@ function openBdoEnchant() {
 
           <!-- Feedback message -->
           ${feedback ? `<div style="margin-top: 10px; color: ${feedback.color}; font-weight: bold;">${feedback.message}</div>` : ''}
-
-          <button id="enchantBtn" style="margin-top: 15px; background: #0a0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
-            Enchant
-          </button>
+          <div class="flex flex-col">
+            ${blackstar >= 2 ? `
+              <button ${(sovereignLevel >= 10) ? 'disabled' : ''} id="changeWeaponBtn" style="margin-top: 10px; background: #444; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                ${showSovereign ? 'Enchant Blackstar' : (sovereignLevel >= 10) ? 'Sovereign already max!' : 'Enchant Sovereign'}
+              </button>` : ''}
+      
+            <button id="enchantBtn" style="margin-top: 15px; background: #0a0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+              Enchant
+            </button>
+          </div>
         </div>
       `,
       showConfirmButton: false,
       didOpen: () => {
         $('#enchantBtn').off('click').on('click', () => {
-          if (durability < 20 || cronStones < 3670 || magicalStone < 1) {
+          if (durability < 20 || cronStones < cronCost || magicalStone < 1) {
             Swal.fire({
               icon: 'warning',
               title: 'Insufficient Materials',
-              html: `<div style="font-size: 15px; font-weight: bold;">You need <div style="color: orange">3670 cron stones</div><div style="color: orange">20 durability</div><div style="color: orange">1 magical stone</div> per attempt.</div>
-              <br><div style="text-decoration: underline;">How to uptain:</div><div>Cron Stones with achievements</div><div>Magical stones by going prestige</div><div>Durability by celebrating!</div>`,
+              html: `<div style="font-size: 15px; font-weight: bold;">You need <div style="color: orange">${cronCost} cron stones</div><div style="color: orange">20 durability</div><div style="color: orange">1 ${showSovereign ? 'primordial stone' : 'magical stone'}</div> per attempt.</div>
+              <br><div style="text-decoration: underline;">How to uptain:</div><div>Cron Stones with achievements</div><div>${showSovereign ? 'Primordial stone by capturing crows' : 'Magical stones by going prestige'}</div><div>Durability by celebrating!</div>`,
               background: '#111',
               confirmButtonText: 'Go back to grind...',
               color: '#fff'
@@ -1625,53 +2070,74 @@ function openBdoEnchant() {
             return;
           }
 
-          cronStones -= 3670;
+          cronStones -= cronCost;
           magicalStone--;
 
           const success = Math.random() < (totalChance / 100);
 
           var data = getGameData();
+          data.sovereign ??= {};
 
           if (success) {
+            data.cronStone = cronStones;
+            if (showSovereign) {
+              data.primordialStone = magicalStone;
+              data.sovereign.level = sovereignLevel + 1;
+              data.sovereign.failstack = null;
+              setGameData(data);
+              if (data.sovereign.level >= 10) {
+                achievementUnlocked('cheater');
+              }
+            }
+            else {
+              data.failstack = null;
+              data.magicalStone = magicalStone;
+              data.durability = 200;
+              data.blackstar = blackstar + 1;
+              setGameData(data);
+              achievementUnlocked('rng');
+            }
             Swal.fire({
               icon: 'success',
               title: 'OMG RNG CARRIED?!!',
               html: `           
-              <div>Your Blackstar Axe is now PEN (V)!</div> 
+              <div>Your ${showSovereign ? 'Sovereign' : 'Blackstar'} Axe is now ${ENCHANT_TO_DEC[enchantLevel]} (${enchantLevel})!</div> 
               <div>You used a failstack of <span style="font-weight: bold">${failstack}!</span></div>
               <br>
-              <div class="relative">
-                <img src="${axeUrl}" width="60" alt="Blackstar V"></img>
-                <span class="enhance-level text-lg">V</span>
-              </div>`,
+              ${getWeaponImage(getGameData(), showSovereign, false)}`,
               imageHeight: 100,
               confirmButtonText: 'EZ GAME',
               background: '#000',
               color: '#0f0'
-            });
-            data.magicalStone = magicalStone;
-            data.cronStone = cronStones;
-            data.failstack = 150;
-            data.durability = 200;
-            setGameData(data);
-            achievementUnlocked('rng');
+            }).then(() => showPopup());
           } else {
-            failstack += 6;
+            failstack += failstack_gain;
             durability -= 20;
+            data.cronStone = cronStones;
+            if (showSovereign) {
+              data.sovereign.primordialStone = magicalStone;
+              data.sovereign.durability = durability;
+              data.sovereign.failstack = failstack;
+            } else {
+              data.magicalStone = magicalStone;
+              data.durability = durability;
+              data.failstack = failstack;
+            }
+            setGameData(data);
             showPopup({
               message: '❌ Enhancement failed...',
               color: '#ff4444'
             });
-          data.magicalStone = magicalStone;
-          data.cronStone = cronStones;
-          data.durability = durability;
-          data.failstack = failstack;
-          setGameData(data);
-          
-          if (failstack > 349)
-            achievementUnlocked('unlucky');
-          }
+            if (!showSovereign && failstack > 349)
+              achievementUnlocked('unlucky');
+            }
         });
+        if (blackstar >= 2) {
+          $('#changeWeaponBtn').off('click').on('click', () => {
+            showSovereign = !showSovereign;
+            showPopup().then(() => showPopup());
+          });
+        }
       }
     });
   };
@@ -1727,7 +2193,7 @@ function openDiscordPopup() {
         if (result.dismiss == "cancel") {
           Swal.fire({
             title: "CAN'T YOU ADMIT?",
-            html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img id='evil' src=https://i.imgur.com/ZngZTjQ.png /></a>",
+            html: "<a href='https://zenrac.wixsite.com/souriredeberserk-fs'><img id='evil' src=./images/berserk.png /></a>",
             imageAlt: "BERSERK",
             confirmButtonText: 'I am sorry!',
             confirmButtonAriaLabel: 'Thumbs up, great!',
@@ -1737,7 +2203,7 @@ function openDiscordPopup() {
                 title: "Erm actually...",
                 text: "You're not 'sorry', you're a user!",
                 width: '500px',
-                imageUrl: 'https://i.imgur.com/ycg38JT.png',
+                imageUrl: './images/nerdface.png',
                 customClass: { image: 'nerd' },
                 confirmButtonText: 'Let me out of this nightmare...',
               })
@@ -1946,7 +2412,6 @@ jQuery(document).ready(function($) {
         ctrlClickEvent.isSecret = true;
         ctrlClickEvent.isSkilled = (unlocked['skin'] || prestigeCount > 0);
         ctrlClickEvent.isDone = (unlocked['good'] || unlocked['evil']);
-        console.log('ctrlClickEvent', ctrlClickEvent);
         if ($('.fullscreen').length > 0) {
           playButton.dispatchEvent(ctrlClickEvent);
         }
@@ -2205,11 +2670,40 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $(document).on('click', '.achievement-crow', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['crow']) {
+      Swal.close();
+      startBoss('crow');
+    }
+  });
+
   $(document).on('click', '.achievement-evil', () => {
     const unlocked = getUnlockedAchievements();
     if (unlocked['evil']) {
       Swal.close();
       startBoss('evil');
+    }
+  });
+
+  $(document).on('click', '.achievement-rng', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['rng']) {
+      openBdoEnchant();
+    }
+  });
+
+  $(document).on('click', '.achievement-unlucky', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['unlucky']) {
+      openBdoEnchant();
+    }
+  });
+
+  $(document).on('click', '.achievement-cheater', () => {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['cheater']) {
+      changeLevelSovereign();
     }
   });
 
@@ -2254,6 +2748,7 @@ jQuery(document).ready(function($) {
   });
 
   animateFollowers();
+  randomSpawnLoop();
 
   document.addEventListener('mousemove', (e) => {
     lastMousePos.x = e.clientX;
@@ -2270,9 +2765,6 @@ jQuery(document).ready(function($) {
     });
   });
 
-  document.addEventListener('click', () => {
-    randomSpawnLoop();
-  }, { once: true });
 
   // Apply when page is fully loaded
   $(window).on("load", function() {
@@ -2300,7 +2792,7 @@ jQuery(document).ready(function($) {
       }
       if (e.ctrlKey && e.altKey) {
         firstSong = 'NOAH';
-        params = '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
+        params = '&respacks=BossesA.zip,SongsD.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
         if (e.originalEvent.isSecret) {
           if (e.originalEvent.isDone) {
             Swal.fire({
@@ -2348,8 +2840,16 @@ jQuery(document).ready(function($) {
             }
           });
         }
-        params = '&respacks=BerserkImage.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
+        params = '&respacks=BossesA.zip,SongsD.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
         achievementUnlocked('berserk');
+      }
+      if (e.originalEvent.pathChoosen == 'evil' || e.originalEvent.pathChoosen == 'good') {
+        firstSong = 'NOAH';
+        params = '&respacks=BossesA.zip&firstImage=Berserk&fullAuto=false&autoSong=loop';
+      }
+      if (e.originalEvent.pathChoosen == 'crow') {
+        firstSong = 'Ultra';
+        params = '&respacks=BossesA.zip&firstImage=UltraCrow&fullAuto=false&autoSong=loop';
       }
   
       if (firstSong == 'L')
@@ -2360,6 +2860,7 @@ jQuery(document).ready(function($) {
 		  $('body').prepend(iframe)
 		  $('.play').html($('.play').html().replace('fa-play', 'fa-stop').replace('Play', 'Stop'))
 		  $('#footer').addClass('hidden');
+      $('#crow-perch').addClass('hidden');
       $('#achievement-tracker').css('bottom', '10px');
 		  var hideButton = $('.play').clone();
 		  hideButton.html(hideButton.html().replace('fa-stop', 'fa-eye-slash').replace('Stop', 'Hide Interface'))
@@ -2390,6 +2891,7 @@ jQuery(document).ready(function($) {
       $('.fullscreen').remove();
       $('.hideInterface').remove();
       $('.play').html($('.play').html().replace('fa-stop', 'fa-play').replace('Stop', 'Play'))
+      $('#crow-perch').removeClass('hidden');
       $('#footer').removeClass('hidden');
       $('#achievement-tracker').css('bottom', '100px');
       $('.player').css('opacity', '1')
