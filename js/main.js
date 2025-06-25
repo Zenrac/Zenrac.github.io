@@ -1951,10 +1951,10 @@ function changeLevelSovereign() {
 function openBdoEnchant() {
   const unlocked = getUnlockedAchievements();
 
-
   let blackstar = getGameData().blackstar ?? (unlocked['rng'] ? 1 : 0);
+  let sovereignLevel = getGameData().sovereign?.level ?? 0;
 
-  let showSovereign = blackstar >= 2;
+  let showSovereign = (blackstar >= 2) && (sovereignLevel < 10);
 
   const valksBonus = 13;
   const prestigeCount = getPrestigeCount();
@@ -1971,7 +1971,10 @@ function openBdoEnchant() {
 
     let sovereignLevel = getGameData().sovereign?.level ?? 0;
 
-    if (sovereignLevel >= 10) showSovereign = false;
+    if (showSovereign && sovereignLevel >= 10) {
+      changeLevelSovereign();
+      return;
+    }
 
     let failstack = getGameData().failstack ?? Math.min(150 + (50 * blackstar));
     if (showSovereign) failstack = getGameData().sovereign?.failstack ?? SOVEREIGN_FAILSTACKS[sovereignLevel];
@@ -2044,8 +2047,8 @@ function openBdoEnchant() {
           ${feedback ? `<div style="margin-top: 10px; color: ${feedback.color}; font-weight: bold;">${feedback.message}</div>` : ''}
           <div class="flex flex-col">
             ${blackstar >= 2 ? `
-              <button ${(sovereignLevel >= 10) ? 'disabled' : ''} id="changeWeaponBtn" style="margin-top: 10px; background: #444; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                ${showSovereign ? 'Enchant Blackstar' : (sovereignLevel >= 10) ? 'Sovereign already max!' : 'Enchant Sovereign'}
+              <button id="changeWeaponBtn" style="margin-top: 10px; background: #444; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                ${showSovereign ? 'Enchant Blackstar' : (sovereignLevel >= 10) ? 'Change Sovereign Level' : 'Enchant Sovereign'}
               </button>` : ''}
       
             <button id="enchantBtn" style="margin-top: 15px; background: #0a0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
@@ -2135,7 +2138,7 @@ function openBdoEnchant() {
         if (blackstar >= 2) {
           $('#changeWeaponBtn').off('click').on('click', () => {
             showSovereign = !showSovereign;
-            showPopup().then(() => showPopup());
+            showPopup();
           });
         }
       }
