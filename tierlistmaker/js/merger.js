@@ -3,6 +3,16 @@ let uploadedFiles = [];
 
 let animeSeasons = [];
 
+const tieColors = [
+    'rgba(255,179,71,0.18)',
+    'rgba(71,179,255,0.18)',
+    'rgba(179,255,71,0.18)',
+    'rgba(255,71,179,0.18)',
+    'rgba(255,255,71,0.18)',
+    'rgba(179,71,255,0.18)',
+    'rgba(71,255,179,0.18)',
+];
+
 document.addEventListener("DOMContentLoaded", () => {
     const iframe = document.getElementById("indexFrame");
     iframe.addEventListener("load", () => {
@@ -81,7 +91,22 @@ function calculateAverageRankings(allData, files) {
         });
     }
 
-    globalImageList.sort((a, b) => a.averagePosition - b.averagePosition); // Sort by average position
+    globalImageList.sort((a, b) => {
+        if (a.averagePosition !== b.averagePosition) {
+            return a.averagePosition - b.averagePosition;
+        }
+        const bestA = Math.min(...a.positions);
+        const bestB = Math.min(...b.positions);
+        if (bestA !== bestB) {
+            return bestA - bestB;
+        }
+        const countBestA = a.positions.filter(pos => pos === bestA).length;
+        const countBestB = b.positions.filter(pos => pos === bestB).length;
+        if (countBestA !== countBestB) {
+            return countBestB - countBestA;
+        }
+        return a.imgId.localeCompare(b.imgId);
+    });
     resetTable();
     displayResults(globalImageList, filesArray);
 }
@@ -109,11 +134,31 @@ function displayResults(results, files) {
     diffTh.textContent = "Difference";
     headerRow.appendChild(diffTh);
 
+    const averageCount = {};
+    results.forEach(r => {
+        const avg = r.averagePosition;
+        averageCount[avg] = (averageCount[avg] || 0) + 1;
+    });
+
+    const tieColorMap = {};
+    let tieColorIdx = 0;
+    Object.keys(averageCount).forEach(avg => {
+        if (averageCount[avg] > 1) {
+            tieColorMap[avg] = tieColors[tieColorIdx % tieColors.length];
+            tieColorIdx++;
+        }
+    });
+
     results.forEach((result, index) => {
         const row = document.createElement('tr');
         
         const rankCell = document.createElement('td');
-        rankCell.textContent = index + 1;
+        let rankText = (index + 1).toString();
+        if (averageCount[result.averagePosition] > 1) {
+            rankCell.style.backgroundColor = tieColorMap[result.averagePosition];
+        }
+        rankCell.textContent = `${rankText} (${result.averagePosition.toFixed(2)})`;
+        prevAverage = result.averagePosition;
 
         const imgCell = document.createElement('td');
         if (animeSeasons) {
@@ -121,8 +166,6 @@ function displayResults(results, files) {
         } else {
             imgCell.textContent = result.imgId;
         }
-
-        rankCell.textContent += ` (${result.averagePosition.toFixed(2)})`
 
         row.appendChild(rankCell);
         row.appendChild(imgCell);
@@ -254,26 +297,26 @@ function displayColumnStats() {
         document.body.appendChild(statsContainer);
     }
 
-    statsContainer.innerHTML = "<h3>Stats</h3>";
-
     const table = document.createElement("table");
-    table.innerHTML = `
+table.innerHTML = `
         <thead>
             <tr>
-                <th>Fichier</th>
-                <th>Lowest 🟢</th>
-                <th>Highest 🔴</th>
-                <th>Neutral ⚪</th>
+                <th></th>
+                <th class="lowest-value">Best Ranked</th>
+                <th class="highest-value">Worst Ranked</th>
+                <th>Neutral</th>
             </tr>
         </thead>
         <tbody>
             ${Object.keys(minCount).map(file => {
+                let displayFile = file.replace(/\.json$/i, '');
+                displayFile = displayFile.charAt(0).toUpperCase() + displayFile.slice(1);
                 const minFileCount = minCount[file] || 0;
                 const maxFileCount = maxCount[file] || 0;
                 const neutralFileCount = neutralCount[file] || 0;
                 return `
                     <tr>
-                        <td>${file}</td>
+                        <td>${displayFile}</td>
                         <td>${minFileCount}</td>
                         <td>${maxFileCount}</td>
                         <td>${neutralFileCount}</td>
@@ -289,13 +332,20 @@ function displayColumnStats() {
 function exportResults(redirect = false) {
     const resultJson = {
         title: "Merged - " + uploadedFiles.map(file => file.name.replace('.json', '')).join(", "),
-        rows: [],  // This will hold the rows (S, A, B, etc.)
-        untiered: []  // This will hold the untiered images
+        rows: [],
+        untiered: []
     };
 
-    const rankGroups = ['S', 'A', 'B', 'C', 'D'];  // Define ranks
+    const imagesPerRank = 10;
+    const totalImages = globalImageList.length;
+    const numRanks = Math.ceil(totalImages / imagesPerRank);
 
-    // Group images into different tiers based on average positions
+    const alphabet = 'SABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const rankGroups = [];
+    for (let i = 0; i < numRanks; i++) {
+        rankGroups.push(alphabet[i] || `Rank${i+1}`);
+    }
+
     resultJson.rows = rankGroups.map(rank => ({
         name: rank,
         imgs: []
@@ -304,19 +354,8 @@ function exportResults(redirect = false) {
     globalImageList.sort((a, b) => a.averagePosition - b.averagePosition);
 
     globalImageList.forEach((result, index) => {
-        const imgId = result.imgId;
-    
-        if (index < 10) {
-            resultJson.rows[0].imgs.push(imgId); 
-        } else if (index < 20) {
-            resultJson.rows[1].imgs.push(imgId);
-        } else if (index < 30) {
-            resultJson.rows[2].imgs.push(imgId);
-        } else if (index < 40) {
-            resultJson.rows[3].imgs.push(imgId);
-        } else {
-            resultJson.rows[4].imgs.push(imgId);
-        }
+        const rankIndex = Math.floor(index / imagesPerRank);
+        resultJson.rows[rankIndex].imgs.push(result.imgId);
     });
 
     // Add any untiered images
