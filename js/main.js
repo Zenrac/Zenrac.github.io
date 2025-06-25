@@ -1950,26 +1950,27 @@ function changeLevelSovereign() {
 
 function openBdoEnchant() {
   const unlocked = getUnlockedAchievements();
-
   let blackstar = getGameData().blackstar ?? (unlocked['rng'] ? 1 : 0);
   let sovereignLevel = getGameData().sovereign?.level ?? 0;
-
   let showSovereign = (blackstar >= 2) && (sovereignLevel < 10);
 
-  const valksBonus = 13;
-  const prestigeCount = getPrestigeCount();
-  const permanentBonus = Math.min(Math.floor(prestigeCount / 2), 5);
-  
-  let cronStones = getGameData().cronStone ?? 0;
-
   const showPopup = (feedback = null) => {
+    const unlocked = getUnlockedAchievements();
+
+    let blackstar = getGameData().blackstar ?? (unlocked['rng'] ? 1 : 0);
+    let sovereignLevel = getGameData().sovereign?.level ?? 0;
+
+    const valksBonus = 13;
+    const prestigeCount = getPrestigeCount();
+    const permanentBonus = Math.min(Math.floor(prestigeCount / 2), 5);
+    
+    let cronStones = getGameData().cronStone ?? 0;
+
     let magicalStone = getGameData().magicalStone ?? 10;
     if (showSovereign) magicalStone = getGameData().sovereign?.primordialStone ?? 0;
 
     let durability = getGameData().durability ?? 200;
     if (showSovereign) durability = getGameData().sovereign?.durability ?? 200;
-
-    let sovereignLevel = getGameData().sovereign?.level ?? 0;
 
     if (showSovereign && sovereignLevel >= 10) {
       changeLevelSovereign();
@@ -2097,6 +2098,7 @@ function openBdoEnchant() {
               data.magicalStone = magicalStone;
               data.durability = 200;
               data.blackstar = blackstar + 1;
+              showSovereign = data.blackstar >= 2;
               setGameData(data);
               achievementUnlocked('rng');
             }
