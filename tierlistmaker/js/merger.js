@@ -37,7 +37,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function processFiles() {
     const files = document.getElementById('fileInput').files;
-    if (files.length === 0 || files.length === 1) {
+    if (files.length === 0) {
+        alert('Please select at least 1 file.');
+        return;
+    }
+
+    // If only one file, allow importing a merged/tierlist file or a details export
+    if (files.length === 1) {
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                let jsonData = JSON.parse(event.target.result);
+
+                // If it's an array (details export), reconstruct as a single tierlist and extract users
+                if (Array.isArray(jsonData)) {
+                    // Collect all unique usernames from positions keys
+                    const userSet = new Set();
+                    jsonData.forEach(item => {
+                        if (item.positions && typeof item.positions === "object") {
+                            Object.keys(item.positions).forEach(user => userSet.add(user));
+                        }
+                    });
+                    const userList = Array.from(userSet);
+
+                    // Build rows (all images in one tier)
+                    jsonData = {
+                        title: file.name.replace('.json', ''),
+                        rows: [{
+                            name: "All",
+                            imgs: jsonData.map(item => item.imgId)
+                        }],
+                        untiered: [],
+                        details: event.target.result ? JSON.parse(event.target.result) : []
+                    };
+
+                    uploadedFiles = userList.map(name => ({ name }));
+                } else {
+                    // If it's a merged/tierlist file, use the real file as uploadedFiles
+                    uploadedFiles = [file];
+                }
+
+                // If it's not a valid merged/tierlist file, show error
+                if (
+                    !jsonData ||
+                    typeof jsonData !== "object" ||
+                    !Array.isArray(jsonData.rows) ||
+                    !Array.isArray(jsonData.untiered)
+                ) {
+                    alert('You need to import at least 2 files or 1 merged file.');
+                    return;
+                }
+
+                let allData = [jsonData];
+                calculateAverageRankings(allData, uploadedFiles);
+            } catch (e) {
+                alert('Error parsing file: ' + file.name);
+                throw e;
+            }
+        };
+        reader.readAsText(file);
+        return;
+    }
+
+    // Multiple files: require at least 2
+    if (files.length < 2) {
         alert('Please select at least 2 files.');
         return;
     }
@@ -50,12 +114,25 @@ function processFiles() {
         const reader = new FileReader();
         reader.onload = function(event) {
             try {
-                const jsonData = JSON.parse(event.target.result);
+                let jsonData = JSON.parse(event.target.result);
+
+                // If it's an array (details export), wrap as a single tier
+                if (Array.isArray(jsonData)) {
+                    jsonData = {
+                        title: file.name.replace('.json', ''),
+                        rows: [{
+                            name: "All",
+                            imgs: jsonData.map(item => item.imgId)
+                        }],
+                        untiered: []
+                    };
+                }
+
                 allData.push(jsonData);
                 filesProcessed++;
 
                 if (filesProcessed === files.length) {
-                    calculateAverageRankings(allData, uploadedFiles); // Pass the uploaded files
+                    calculateAverageRankings(allData, uploadedFiles);
                 }
             } catch (e) {
                 alert('Error parsing file: ' + file.name);
@@ -71,25 +148,40 @@ function showTable() {
 }
 
 function calculateAverageRankings(allData, files) {
-    let globalRank = {};  // To store the image IDs with their global positions
+    let globalRank = {};
     let position = 1;
     globalImageList = [];
-    const filesArray = files; // Use the globally stored files
+    const filesArray = files;
 
-    filesArray.forEach((file, fileIndex) => {
-        let fileRank = 1;
-        const data = allData[fileIndex];
-        data.rows.forEach(row => {
-            row.imgs.forEach(imgId => {
-                if (!globalRank[imgId]) {
-                    globalRank[imgId] = { positions: [], files: [] };
+    // Handle details import (single details file)
+    if (allData.length === 1 && Array.isArray(allData[0].details) && filesArray.every(f => f.name)) {
+        const details = allData[0].details;
+        details.forEach(item => {
+            globalRank[item.imgId] = { positions: [], files: [] };
+            filesArray.forEach(user => {
+                const pos = item.positions[user.name];
+                if (typeof pos === "number") {
+                    globalRank[item.imgId].positions.push(pos);
+                    globalRank[item.imgId].files.push(user.name);
                 }
-                globalRank[imgId].positions.push(fileRank);
-                globalRank[imgId].files.push(file.name); // Store the filename
-                fileRank++;
             });
         });
-    });
+    } else {
+        filesArray.forEach((file, fileIndex) => {
+            let fileRank = 1;
+            const data = allData[fileIndex];
+            data.rows.forEach(row => {
+                row.imgs.forEach(imgId => {
+                    if (!globalRank[imgId]) {
+                        globalRank[imgId] = { positions: [], files: [] };
+                    }
+                    globalRank[imgId].positions.push(fileRank);
+                    globalRank[imgId].files.push(file.name);
+                    fileRank++;
+                });
+            });
+        });
+    }
 
     for (const [imgId, info] of Object.entries(globalRank)) {
         const totalPosition = info.positions.reduce((sum, pos) => sum + pos, 0);
@@ -308,6 +400,8 @@ function displayColumnStats() {
         document.body.appendChild(statsContainer);
     }
 
+    statsContainer.innerHTML = "";
+
     const table = document.createElement("table");
 table.innerHTML = `
         <thead>
@@ -341,6 +435,11 @@ table.innerHTML = `
 }
 
 function exportWithDetails() {
+    const resultJson = {
+        title: "Merged - " + uploadedFiles.map(file => file.name.replace('.json', '')).join(", "),
+        rows: [],
+        untiered: []
+    };
     const details = globalImageList.map((result, index) => {
         const positionsByFile = {};
         result.files.forEach((file, i) => {
@@ -360,7 +459,7 @@ function exportWithDetails() {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', 'details.json');
+    link.setAttribute('download', resultJson.title + '_details.json');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -377,7 +476,7 @@ function exportResults(redirect = false) {
     const totalImages = globalImageList.length;
     const numRanks = Math.ceil(totalImages / imagesPerRank);
 
-    const alphabet = 'SABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const alphabet = 'SABCDEFGHIJKLMNOPQRTUVWXYZ';
     const rankGroups = [];
     for (let i = 0; i < numRanks; i++) {
         rankGroups.push(alphabet[i] || `Rank${i+1}`);
@@ -465,10 +564,10 @@ function detectAnime(img) {
     for (const [season, items] of Object.entries(animeSeasons)) {
         const anime = items.find(item => item.img && item.img.includes(img));
         if (anime) {
-            return anime.title; // Retourne le titre de l'anime
+            return anime.title;
         }
     }
-    return img; // Si non trouvé, retourne l'ID original
+    return img;
 }
 
 function enableColumnReordering() {

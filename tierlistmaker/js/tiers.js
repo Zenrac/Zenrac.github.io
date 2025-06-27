@@ -430,7 +430,6 @@ function initialize_dropdown_tierlists() {
 	dropdownPicker.addEventListener("change", function() {
 		dropdown.value = dropdownPicker.value;
 		dropdown.dispatchEvent(new Event('change', { bubbles: true }));
-
 	});
 }
 
@@ -578,8 +577,8 @@ function load_tierlist(serialized_tierlist) {
 	hard_reset_list()
 	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
 	if (detected) {
-		var dropdown = document.getElementById("dropdown");
-		dropdown.value = detected;
+		var dropdownPicker = document.getElementById("seasonPicker");
+		dropdownPicker.value = detected;
 	}
 	document.querySelector('.title-label').innerText = serialized_tierlist.title;
 	for (let idx in serialized_tierlist.rows) {
@@ -989,7 +988,7 @@ let previousValue = input.value;
 
 function restorePreviousValue() {
 	if (input.value === "Selecting...") {
-	input.value = previousValue;
+		input.value = previousValue;
 	}
 }
 
