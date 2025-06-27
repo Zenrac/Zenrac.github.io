@@ -22,6 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
         }
     });
+
+    const exportButton = document.querySelector("#exportBtn");
+    if (exportButton) {
+        exportButton.addEventListener("click", function(e) {
+            if (e.shiftKey) {
+                exportWithDetails();
+            } else {
+                exportResults();
+            }
+        });
+    }
 });
 
 function processFiles() {
@@ -327,6 +338,32 @@ table.innerHTML = `
     `;
 
     statsContainer.appendChild(table);
+}
+
+function exportWithDetails() {
+    const details = globalImageList.map((result, index) => {
+        const positionsByFile = {};
+        result.files.forEach((file, i) => {
+            positionsByFile[file] = result.positions[i];
+        });
+
+        return {
+            imgId: result.imgId,
+            rank: index + 1,
+            average: result.averagePosition,
+            positions: positionsByFile,
+            title: detectAnime(result.imgId)
+        };
+    });
+
+    const blob = new Blob([JSON.stringify(details, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'details.json');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function exportResults(redirect = false) {
