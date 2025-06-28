@@ -265,7 +265,7 @@ function displayResults(results, files) {
 
         const imgCell = document.createElement('td');
         if (animeSeasons) {
-            imgCell.textContent = detectAnime(result.imgId);
+            imgCell.textContent = detectAnimeTitle(result.imgId);
         } else {
             imgCell.textContent = result.imgId;
         }
@@ -446,12 +446,22 @@ function exportWithDetails() {
             positionsByFile[file] = result.positions[i];
         });
 
+        const animeObj = detectAnime(result.imgId);
+        let url = animeObj && animeObj.url ? animeObj.url : '';
+        let id = '';
+        if (url) {
+            const match = url.match(/anime\/(\d+)/);
+            if (match) id = match[1];
+        }
+
         return {
             imgId: result.imgId,
+            id: id,
+            url: url,
             rank: index + 1,
             average: result.averagePosition,
             positions: positionsByFile,
-            title: detectAnime(result.imgId)
+            title: animeObj ? animeObj.title : ''
         };
     });
 
@@ -560,7 +570,7 @@ function toggleTierlistButton() {
     }
 }
 
-function detectAnime(img) {
+function detectAnimeTitle(img) {
     for (const [season, items] of Object.entries(animeSeasons)) {
         const anime = items.find(item => item.img && item.img.includes(img));
         if (anime) {
@@ -568,6 +578,16 @@ function detectAnime(img) {
         }
     }
     return img;
+}
+
+function detectAnime(img) {
+    for (const [season, items] of Object.entries(animeSeasons)) {
+        const anime = items.find(item => item.img && item.img.includes(img));
+        if (anime) {
+            return anime;
+        }
+    }
+    return null;
 }
 
 function enableColumnReordering() {
