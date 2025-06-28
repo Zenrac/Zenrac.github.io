@@ -1727,9 +1727,8 @@ function absorbCrowsIntoCat() {
   setTimeout(() => {
     increaseCapturedCrow(followerCrows.length);
     followerCrows.forEach(c => c.el.remove());
+    followerCrows.length = 0;
   }, 2300);
-
-  followerCrows.length = 0;
 }
 
 function prestige() {
