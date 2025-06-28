@@ -579,6 +579,8 @@ function load_tierlist(serialized_tierlist) {
 	if (detected) {
 		var dropdownPicker = document.getElementById("seasonPicker");
 		dropdownPicker.value = detected;
+		var dropdown = document.getElementById("dropdown");
+		dropdown.value = detected;
 	}
 	document.querySelector('.title-label').innerText = serialized_tierlist.title;
 	for (let idx in serialized_tierlist.rows) {
