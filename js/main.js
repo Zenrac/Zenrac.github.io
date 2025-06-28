@@ -295,6 +295,8 @@ let currentZoom = 1;
 
 let inputBuffer = [];
 
+let ultraInstinctBlocked = false;
+
 const crowDialogues = ["OMG", "EZ", "LOL", "OUTPLAYED!", "EZ TRASH NOOB", "GGEZ", "BOT?", "COOP VS IA??", "XDDDD"];
 const crowDialoguesCry = ["WAIT?", "WTF?", "CHEAT?", "STOP!", "PLEASE STOP", "SORRY", "IT WAS A JOKE", "I BEG YOU", "WE ARE SORRY"];
 
@@ -1591,7 +1593,8 @@ function spawnCrow() {
     const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon');
     const unlocked = getUnlockedAchievements();
     if (!unlocked['crow']) {
-      if ((capturedCrowIcons.length > 3 && Math.random() < 0.30)  && !document.querySelector('.ultra-instinct')) {
+      if (!ultraInstinctBlocked && (capturedCrowIcons.length > 3 && Math.random() < 0.30) && !document.querySelector('.ultra-instinct')) {
+        ultraInstinctBlocked = true;
         ultraInstinctCrow(crow);
         return;
       }
@@ -1632,11 +1635,15 @@ function spawnCrow() {
 
     crow.addEventListener('transitionend', () => {
       increaseCapturedCrow(1);
+      ultraInstinctBlocked = false;
       crow.remove();
     }, { once: true });
   });
 
   function removeIfNotClicked() {
+  if (crow.classList.contains('ultra-instinct')) {
+    ultraInstinctBlocked = true;
+  }
     crow.remove();
   }
 
@@ -1650,7 +1657,7 @@ function randomSpawnLoop(firstSkipped = false) {
       if (firstSkipped) {
         const random = Math.random();
 
-        if (random < 0.10) {
+        if (random < 0.25) {
           showSwarmWarning();
           setTimeout(() => {
             spawnCrowSwarm();
