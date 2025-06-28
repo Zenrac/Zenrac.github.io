@@ -694,6 +694,101 @@ a {
   animation: prestigeGlow 2s infinite;
 }
 
+.AchievementIconWrapper[class*="???Achievement"] .AchievementIconGlow {
+  background: radial-gradient(
+    circle,
+    rgba(0,0,0,0.8) 0%,
+    rgba(255,0,255,0.18) 30%,
+    rgba(0,255,255,0.18) 60%,
+    rgba(0,0,0,0.95) 100%
+  );
+  box-shadow:
+    0 0 12px 4px #000,
+    0 0 24px 8px #ff00ff,
+    0 0 36px 12px #00ffff;
+  animation: glitchPulse 1.2s infinite alternate, secretGlitchShift 1.5s infinite;
+}
+
+.AchievementIconWrapper[class*="???Achievement"]  .ani_icon {
+  color: #fff;
+  text-shadow:
+    0 0 6px #000,
+    0 0 12px #ff00ff,
+    0 0 18px #00ffff,
+    0 0 30px #ff00ff,
+    0 0 40px #00ffff;
+  box-shadow:
+    0 0 8px 2px #000,
+    0 0 16px 4px #ff00ff,
+    0 0 24px 8px #00ffff;
+  animation: glitchPulse 1s infinite, glitchShift 1.2s infinite;
+  filter: brightness(1.2) contrast(1.4);
+}
+
+.AchievementIconWrapper[class*="???Achievement"] .fa-crow {
+  animation: crowGlitch 0.7s steps(2, end) infinite;
+  filter: drop-shadow(0 0 6px #ff00ff) drop-shadow(0 0 12px #00ffff);
+}
+
+.AchievementIconWrapper[class*="???Achievement"].cracked {
+  box-shadow: 0 0 0 4px #fff, 0 0 20px 4px #ff00ff, 0 0 40px 8px #00ffff;
+  border: 2px dashed #fff;
+  animation: crackShake 0.2s steps(2, end) infinite;
+  position: relative;
+}
+.AchievementIconWrapper[class*="???Achievement"].cracked::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  background: url('img/crack.png') center/cover no-repeat;
+  opacity: 0.7;
+  z-index: 2;
+}
+@keyframes crackShake {
+  0%, 100% { transform: translate(0,0) rotate(0deg);}
+  20% { transform: translate(-2px, 2px) rotate(-2deg);}
+  40% { transform: translate(2px, -2px) rotate(2deg);}
+  60% { transform: translate(-1px, 1px) rotate(-1deg);}
+  80% { transform: translate(1px, -1px) rotate(1deg);}
+}
+
+@keyframes crowGlitch {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  10% {
+    transform: translate(-2px, 2px) scale(1.05) rotate(-5deg);
+  }
+  20% {
+    transform: translate(2px, -1px) scale(0.98) rotate(3deg);
+  }
+  30% {
+    transform: translate(-1px, 1px) scale(1.03) rotate(-2deg);
+  }
+  40% {
+    transform: translate(1px, -2px) scale(1.01) rotate(2deg);
+  }
+  50% {
+    transform: translate(-3px, 0px) scale(1.04) rotate(4deg);
+  }
+  60% {
+    transform: translate(2px, 2px) scale(0.97) rotate(-3deg);
+  }
+  70% {
+    transform: translate(-2px, -2px) scale(1.02) rotate(2deg);
+  }
+  80% {
+    transform: translate(1px, 1px) scale(1) rotate(-1deg);
+  }
+  90% {
+    transform: translate(-1px, -1px) scale(1.03) rotate(1deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
 @keyframes ultraPulseGlow {
   from { box-shadow: 0 0 5px rgba(75, 122, 242, 0.4); }
   to   { box-shadow: 0 0 15px rgba(75, 122, 242, 0.8); }

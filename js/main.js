@@ -80,7 +80,7 @@ const achievementData = {
   'edgy': {
     secret: true,
     icon: "fa-solid fa-spider",
-    title: "Edgy Crow",
+    title: "Darkness",
     group: 'evilorgood',
     text: "You ventured into the shadows, and they welcomed you.",
     rarity: "SecretAchievement",
@@ -159,6 +159,13 @@ const achievementData = {
     text: "There's no way to get to this point without cheating.. right?",
     rarity: "SupremeAchievement",
   },
+  '???': {
+    secret: true,
+    icon: "fa-solid fa-crow",
+    title: "Roka",
+    text: " ??????? ???? ??? ?????? ?? ??? ????? ???",
+    rarity: "???Achievement",
+  }
 };
 
 const rarityOrder = {
@@ -171,7 +178,8 @@ const rarityOrder = {
   'SecretAchievement' : 7,
   'PrestigeAchievement': 8,
   'UltraAchievement': 9,
-  'SupremeAchievement': 10
+  'SupremeAchievement': 10,
+  '???Achievement': 99
 };
 
 const rarityColors = {
@@ -184,7 +192,8 @@ const rarityColors = {
   SecretAchievement: '#ff69b4',
   PrestigeAchievement: 'white',
   UltraAchievement: '#4B7AF2',
-  SupremeAchievement: '#74b9ff'
+  SupremeAchievement: '#74b9ff',
+  "???Achievement": '#990099'
 };
 
 const rarityToSkin = {
@@ -197,7 +206,8 @@ const rarityToSkin = {
   'SecretAchievement': 'secret',
   'PrestigeAchievement': 'prestige',
   'UltraAchievement': 'ultra',
-  'SupremeAchievement': 'supreme'
+  'SupremeAchievement': 'supreme',
+  '???Achievement': '???'
 };
 
 const crowRarity = {
@@ -239,6 +249,7 @@ const defaultGameData = {
   durability: 200,
   magicalStone: 0,
   primordialStone: 0,
+  capturedGlitch: 0,
   crow: 0,
   blackstar: 0,
   sovereign: {
@@ -299,7 +310,6 @@ let ultraInstinctBlocked = false;
 
 const crowDialogues = ["OMG", "EZ", "LOL", "OUTPLAYED!", "EZ TRASH NOOB", "GGEZ", "BOT?", "COOP VS IA??", "XDDDD"];
 const crowDialoguesCry = ["WAIT?", "WTF?", "CHEAT?", "STOP!", "PLEASE STOP", "SORRY", "IT WAS A JOKE", "I BEG YOU", "WE ARE SORRY"];
-
 
 let dialoguePool = [];
 
@@ -368,11 +378,9 @@ function getGameData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return { ...defaultGameData };
   try {
-    // Try new base64 format
     const json = fromBase64(raw);
     return JSON.parse(json);
   } catch {
-    // Try old plain JSON and migrate
     try {
       const data = JSON.parse(raw);
       setGameData(data);
@@ -381,6 +389,48 @@ function getGameData() {
       return { ...defaultGameData };
     }
   }
+}
+
+function teleportCrowGlitch(crow, wrapper, speed = 1) {
+  if (crow.parentNode !== document.body) {
+    document.body.appendChild(crow);
+  }
+  crow.style.position = 'fixed';
+
+  requestAnimationFrame(() => {
+    function jump() {
+      const crowWidth = crow.offsetWidth || 40;
+      const crowHeight = crow.offsetHeight || 40;
+      const margin = 10;
+      const minX = margin;
+      const minY = margin;
+      const maxX = window.innerWidth - crowWidth - margin;
+      const maxY = window.innerHeight - crowHeight - margin;
+
+      const x = minX + Math.random() * (maxX - minX);
+      const y = minY + Math.random() * (maxY - minY);
+
+      crow.style.left = x + 'px';
+      crow.style.top = y + 'px';
+      crow.style.transition = 'none';
+      crow.style.transform = `scale(1.2) rotate(${Math.random() * 360}deg)`;
+      setTimeout(() => {
+        crow.style.transform = `scale(1) rotate(${Math.random() * 360}deg)`;
+      }, speed >= 10 ? 0 : 80);
+      if (speed >= 10) {
+        requestAnimationFrame(jump)
+      }
+      else {
+        setTimeout(jump, (120 + Math.random() * 120) / speed);
+      }
+    }
+    if (speed > 10) {
+      requestAnimationFrame(jump);
+    }
+    else {
+      jump();
+    }
+  });
 }
 
 function getPrestigeCount() {
@@ -1177,6 +1227,7 @@ function applyTrackerSkin(skin) {
 
 function generateAchievementHtmlContent(allIds, unlocked, newlyViewed, lockedGroups) {
   return allIds.map(id => {
+    var gameData = getGameData();
     const data = achievementData[id];
     const isUnlocked = !!unlocked[id];
 
@@ -1189,6 +1240,20 @@ function generateAchievementHtmlContent(allIds, unlocked, newlyViewed, lockedGro
     if (id == 'edgy' && !unlocked['berserk']) {
       data.title = '???';
       data.text = `<div class='glitch-text'>${data.text}</div>`;
+    }
+
+    if (id == '???' ) {
+      if (document.getElementsByClassName('freed').length > 0) {
+        return '';
+      }
+      if (gameData.capturedGlitch >= 1) {
+        data.title = 'Hyperactive Crow';
+        data.text = `You freed the poor crow, only to capture it again (A total of ${gameData.capturedGlitch} times). <div class='flex glitch-text'>The crow will remember this.</div>`;
+      }
+      else {
+        data.title = '???';
+        data.text = `<div class='glitch-text'>${data.text}</div>`;
+      }
     }
 
     if (
@@ -1773,14 +1838,20 @@ function capitalizeFirstLetter(str) {
 }
 
 function showCrowDialogueOnPerch(alternative = false) {
-  const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon');
+  const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon:not(.ultra-instinct)');
   if (capturedCrowIcons.length === 0) return;
 
   const crowIcon = capturedCrowIcons[Math.floor(Math.random() * capturedCrowIcons.length)];
-  const phrase = getNextDialogue(alternative);
+  var phrase = getNextDialogue(alternative);
 
   const bubble = document.createElement('div');
   bubble.className = 'crow-dialogue-bubble';
+
+  if (crowIcon.classList.contains("???")) {
+    bubble.classList.add('glitch-text');
+    phrase = "???";
+  }
+
   bubble.textContent = phrase;
 
   const rect = crowIcon.getBoundingClientRect();
@@ -1848,13 +1919,28 @@ function updateCrowIcons() {
     const skinClass = rarity;
 
     for (let i = 0; i < count; i++) {
+      const divCrow = document.createElement('div');
       const icon = document.createElement('i');
       icon.className = `fas fa-crow crow-icon ${skinClass}`;
       icon.title = `${capitalizeFirstLetter(rarity)} crow with a value of ${value} crow${value !== 1 ? 's' : ''}. Total captured: ${totalCaptured}`;      
       icon.addEventListener('click', () => {
-        playCrowHowl();
+        if (skinClass == "???") {
+          divCrow.classList.add("glitch-text")
+          achievementUnlocked('???');
+          for (let i = 0; i < MAGIC_NUMBER; i++) {
+            setTimeout(() => {
+              playCrowHowl(2 + Math.random() * 10);
+            }, Math.random() * 100);
+          }
+        } else {
+          playCrowHowl();
+        }
       });
-      perch.appendChild(icon);
+      if (skinClass == "???") {
+        divCrow.classList.add("glitch-text")
+      }
+      divCrow.append(icon)
+      perch.appendChild(divCrow);
     }
   }
   if (unlocked['crow'])  {
@@ -1983,7 +2069,21 @@ function achievementUnlocked(id) {
 
 }
 
+function startBossOrSong(mode) {
+  const unlocked = getUnlockedAchievements();
+  if (unlocked[mode]) {
+    Swal.close();
+    if (isZoomed) {
+      startBossMusic(mode);
+    }
+    else {
+      startBoss(mode);
+    }
+  }
+}
+
 function changeLevelSovereign() {
+  unZoom();
   const data = getGameData();
   const currentLevel = data.sovereign?.level ?? 1;
 
@@ -2440,6 +2540,23 @@ jQuery(document).ready(function($) {
     }
   });
 
+  $(document).on('click', '[class*="AchievementIconWrapper"][class*="???Achievement"]', function () {
+    const unlocked = getUnlockedAchievements();
+    if (unlocked['???'] && !$(this).hasClass('freed')) {
+      $(this).addClass('freed');
+      var data = getGameData();
+      teleportCrowGlitch(this, $(this)[0], Math.max(data.capturedGlitch, 1));
+    }
+  });
+
+  $('body').on('click', '.freed', function() {
+    this._glitchActive = false;
+    $(this).remove();
+    var data = getGameData();
+    data.capturedGlitch = ((data.capturedGlitch ?? 0) + 1)
+    setGameData(data);
+  });
+
   $('body').on('click', '.ani_div', () => {
     openAchievementList();
   });
@@ -2756,27 +2873,15 @@ jQuery(document).ready(function($) {
   });
 
   $(document).on('click', '.achievement-good', () => {
-    const unlocked = getUnlockedAchievements();
-    if (unlocked['good']) {
-      Swal.close();
-      startBoss('good');
-    }
+    startBossOrSong('good');
   });
 
   $(document).on('click', '.achievement-crow', () => {
-    const unlocked = getUnlockedAchievements();
-    if (unlocked['crow']) {
-      Swal.close();
-      startBoss('crow');
-    }
+    startBossOrSong('crow');
   });
 
   $(document).on('click', '.achievement-evil', () => {
-    const unlocked = getUnlockedAchievements();
-    if (unlocked['evil']) {
-      Swal.close();
-      startBoss('evil');
-    }
+    startBossOrSong('evil');
   });
 
   $(document).on('click', '.achievement-rng', () => {
