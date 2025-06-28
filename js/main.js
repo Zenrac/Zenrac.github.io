@@ -1590,6 +1590,7 @@ function spawnCrow() {
       ultraInstinctCrow(crow);
       return;
     }
+    if (crow.classList.contains('captured')) return;
     const capturedCrowIcons = document.querySelectorAll('#crow-perch .crow-icon');
     const unlocked = getUnlockedAchievements();
     if (!unlocked['crow']) {
@@ -1600,6 +1601,7 @@ function spawnCrow() {
       }
     }
     crow.classList.add('captured');
+
     crow.removeEventListener('animationend', removeIfNotClicked);
 
     const perch = document.getElementById('crow-perch');
@@ -1726,6 +1728,8 @@ function absorbCrowsIntoCat() {
     increaseCapturedCrow(followerCrows.length);
     followerCrows.forEach(c => c.el.remove());
   }, 2300);
+
+  followerCrows.length = 0;
 }
 
 function prestige() {
@@ -1898,7 +1902,7 @@ function createConfetti(onCursor = false, nuke = false) {
 
   const unlocked = getUnlockedAchievements();
 
-  game.durability = Math.min(durability + (unlocked['arsha'] ? 2 : 1), 200);
+  game.durability = Math.min(durability + (unlocked['arsha'] ? 10 : 5), 200);
   game.sovereign.durability = Math.min(sovereignDurability + (unlocked['arsha'] ? 2 : 1), 200);
   setGameData(game);
 
@@ -2353,9 +2357,11 @@ jQuery(document).ready(function($) {
         if (Math.random() < 0.10) {
           achievementUnlocked('dead');
           var data = getGameData();
+          data.sovereign ??= {}
           data.cronStone = 0;
           data.magicalStone = 0;
           data.durability = 0;
+          data.sovereign.primordialStone = 0;
           setGameData(data);
         } else {
           achievementUnlocked('arsha'); 
