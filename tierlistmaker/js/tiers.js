@@ -282,6 +282,14 @@ window.addEventListener('load', () => {
 		}
 	});
 
+	document.getElementById("export-json-btn").addEventListener("click", function(event) {
+		if (event.shiftKey) {
+			exportTierlistDetails();
+		} else {
+			exportImages('JSON');
+		}
+	});
+
 	document.getElementById("export-btn").addEventListener("click", function(event) {
 		event.stopPropagation();
 		const menu = document.getElementById("export-menu");
@@ -525,6 +533,49 @@ function save_tierlist_json() {
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = title?.innerText ?? 'tierlist';
+    a.click();
+}
+
+function exportTierlistDetails() {
+    var dropdown = document.getElementById("dropdown");
+    var dropdownType = document.getElementById("dropdowntype");
+    var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
+
+    let details = [];
+    let rank = 1;
+
+    function findAnimeObj(imgId) {
+        for (const season in window.animeSeasons) {
+            const found = window.animeSeasons[season].find(a => a.img && a.img.includes(imgId));
+            if (found) return found;
+        }
+        return null;
+    }
+
+    for (const row of animes.rows) {
+        for (const imgId of row.imgs) {
+            const animeObj = findAnimeObj(imgId);
+            let url = animeObj && animeObj.url ? animeObj.url : "";
+            let id = "";
+            let title = animeObj && animeObj.title ? animeObj.title : "";
+            if (url) {
+                const match = url.match(/anime\/(\d+)/);
+                if (match) id = match[1];
+            }
+            details.push({
+                imgId: imgId,
+                id: id,
+                url: url,
+                rank: rank++,
+                title: title
+            });
+        }
+    }
+
+    var blob = new Blob([JSON.stringify(details, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = (dropdown.value + "_" + dropdownType.value + "_details.json");
     a.click();
 }
 
@@ -1072,6 +1123,15 @@ function attachNavListeners() {
 }
 
 picker.$el.addEventListener('click', () => {
+    let val = picker.$el.value;
+    if (val === "Selecting..." || !val || !val.includes(' ')) {
+        val = previousValue;
+    }
+    const [seasonName, yearStr] = val.split(' ');
+    const year = parseInt(yearStr, 10);
+    const seasonToMonth = { Winter: 0, Spring: 3, Summer: 6, Fall: 9 };
+    const month = seasonToMonth[seasonName] ?? 0;
+	picker.setViewDate(new Date(year, month, 1));
 	setTimeout(() => {
 	updateSeasons();
 	attachNavListeners();
