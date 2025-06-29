@@ -158,36 +158,22 @@ function soft_reset_list(resetRows = false) {
 	unsaved_changes = true;
 }
 
-// Function to save in a cookie
-function saveToCookie(key, value) {
-	document.cookie = key + "=" + JSON.stringify(value) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-}
-
-// Function to save in localstorage
+// Encodage en base64 (UTF-8 safe, sans escape/unescape)
 function saveToLocalStorage(key, value) {
-	localStorage.setItem(key, JSON.stringify(value));
+    const json = JSON.stringify(value);
+    const encoded = btoa(encodeURIComponent(json));
+    localStorage.setItem(key, encoded);
 }
 
-// Function to load JavaScript objects from a cookie
-function loadFromCookie(key) {
-	var cookies = document.cookie.split(';');
-	try {
-	for (var i = 0; i < cookies.length; i++) {
-		var cookie = cookies[i].trim();
-		if (cookie.startsWith(key + "=")) {
-			return JSON.parse(cookie.substring(key.length + 1)) ?? {};
-		}
-	}
-	} catch {}
-	return {}
-}
-
-// Function to load JavaScript objects from localstorage
+// Décodage depuis base64 (UTF-8 safe, sans escape/unescape)
 function loadFromLocalStorage(key) {
-	try {
-		return JSON.parse(localStorage.getItem(key)) ?? {};
-	} catch {}
-	return {}
+    try {
+        const encoded = localStorage.getItem(key);
+        if (!encoded) return {};
+        const json = decodeURIComponent(atob(encoded));
+        return JSON.parse(json) ?? {};
+    } catch {}
+    return {};
 }
 
 // Called when page is loaded
