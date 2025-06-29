@@ -221,11 +221,6 @@ window.animeSeasons['Summer 2024'] = [
     "url": "https://myanimelist.net/anime/57325/Ramen_Akaneko"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1973/144062.webp",
-    "title": "0-saiji Start Dash Monogatari",
-    "url": "https://myanimelist.net/anime/58985/0-saiji_Start_Dash_Monogatari"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1380/143464.webp",
     "title": "Grendizer U",
     "url": "https://myanimelist.net/anime/56189/Grendizer_U"
@@ -264,11 +259,6 @@ window.animeSeasons['Summer 2024'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1254/141155.webp",
     "title": "The Fable",
     "url": "https://myanimelist.net/anime/55911/The_Fable"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1084/142685.webp",
-    "title": "Karasu wa Aruji wo Erabanai",
-    "url": "https://myanimelist.net/anime/56980/Karasu_wa_Aruji_wo_Erabanai"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1852/140786.webp",
