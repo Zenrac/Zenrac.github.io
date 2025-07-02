@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.69
+// @version      1.70
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1747,10 +1747,6 @@
                                     }
                                     else {
                                         if (agenda.item(u).classList.contains("vu") && !alreadyViewed.checked) {
-                                            agenda.item(u).style.display = "none";
-                                        }
-                                        var animeElement = currentAnimes.find(anime => anime["anime"] == animeId)
-                                        if (animeElement && animeElement["genre"] == 3 && agenda.item(u).dataset.info.split(',')[2] > animeElement["saison"]) {
                                             agenda.item(u).style.display = "none";
                                         }
                                     }

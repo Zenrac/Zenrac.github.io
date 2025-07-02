@@ -246,7 +246,7 @@ window.animeSeasons['Spring 2023'] = [
     "url": "https://myanimelist.net/anime/48417/Maou_Gakuin_no_Futekigousha__Shijou_Saikyou_no_Maou_no_Shiso_Tensei_shite_Shison-tachi_no_Gakkou_e_Kayou_II"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1399/128318.webp",
+    "img": "https://cdn.myanimelist.net/images/anime/1669/150616.jpg",
     "title": "NieR:Automata Ver1.1a",
     "url": "https://myanimelist.net/anime/51105/NieR_Automata_Ver11a"
   },
