@@ -274,6 +274,10 @@ window.addEventListener('load', () => {
 		}
 	});
 
+	document.getElementById("export-png-btn").addEventListener("click", function(event) {
+		exportImages('PNG');
+	});
+
 	document.getElementById("export-btn").addEventListener("click", function(event) {
 		event.stopPropagation();
 		const menu = document.getElementById("export-menu");
