@@ -266,11 +266,6 @@ window.animeSeasons['Spring 2024'] = [
       "url": "https://myanimelist.net/anime/49889/Tsuki_ga_Michibiku_Isekai_Douchuu_2nd_Season"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1142/141351.webp",
-      "title": "Ninja Kamui",
-      "url": "https://myanimelist.net/anime/56285/Ninja_Kamui"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1517/140830.webp",
       "title": "Urusei Yatsura (2022) 2nd Season",
       "url": "https://myanimelist.net/anime/54829/Urusei_Yatsura_2022_2nd_Season"

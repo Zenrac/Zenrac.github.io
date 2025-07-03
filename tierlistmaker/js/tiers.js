@@ -158,14 +158,12 @@ function soft_reset_list(resetRows = false) {
 	unsaved_changes = true;
 }
 
-// Encodage en base64 (UTF-8 safe, sans escape/unescape)
 function saveToLocalStorage(key, value) {
     const json = JSON.stringify(value);
     const encoded = btoa(encodeURIComponent(json));
     localStorage.setItem(key, encoded);
 }
 
-// Décodage depuis base64 (UTF-8 safe, sans escape/unescape)
 function loadFromLocalStorage(key) {
     try {
         const encoded = localStorage.getItem(key);
@@ -312,10 +310,6 @@ window.addEventListener('load', () => {
 	var dropdown = document.getElementById("dropdown");
 	var dropdownType = document.getElementById("dropdowntype");
 
-	dropdown.selectedIndex = 0;
-	dropdownType.selectedIndex = 0;
-	picker.selectDate(new Date());
-
 	const urlParams = new URLSearchParams(window.location.search);
     const merged = urlParams.get('merged');
 
@@ -404,10 +398,6 @@ function initialize_dropdown_tierlists() {
 	var dropdown = document.getElementById("dropdown");
 	var dropdownPicker = document.getElementById("seasonPicker");
 
-	dropdown.selectedIndex = 0;
-	dropdownType.selectedIndex = 0;
-	picker.selectDate(new Date());
-
 	for (var season in window.animeSeasons) {
 		var option = document.createElement("option");
 		option.text = season;
@@ -422,7 +412,13 @@ function initialize_dropdown_tierlists() {
 	});
 
 	dropdownPicker.addEventListener("change", function() {
-		dropdown.value = dropdownPicker.value;
+		const desiredValue = dropdownPicker.value;
+		if (Array.from(dropdown.options).some(opt => opt.value === desiredValue)) {
+			dropdown.value = desiredValue;
+		} else {
+			// season not yet added
+			dropdownPicker.value = dropdown.value;
+		}
 		dropdown.dispatchEvent(new Event('change', { bubbles: true }));
 	});
 }
