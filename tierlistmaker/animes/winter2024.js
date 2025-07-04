@@ -216,11 +216,6 @@ window.animeSeasons['Winter 2024'] = [
       "url": "https://myanimelist.net/anime/56731/Synduality__Noir_Part_2"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1538/140687.webp",
-      "title": "Meiji Gekken: 1874",
-      "url": "https://myanimelist.net/anime/57502/Meiji_Gekken__1874"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1361/140742.webp",
       "title": "Hikari no Ou 2nd Season",
       "url": "https://myanimelist.net/anime/54754/Hikari_no_Ou_2nd_Season"
