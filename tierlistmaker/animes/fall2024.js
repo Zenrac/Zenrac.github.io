@@ -251,11 +251,6 @@ window.animeSeasons['Fall 2024'] = [
       "url": "https://myanimelist.net/anime/57945/Tasuuketsu"
     },
     {
-      "img": "https://cdn.myanimelist.net/images/anime/1948/143550.webp",
-      "title": "Sengoku Youko: Senma Konton-hen",
-      "url": "https://myanimelist.net/anime/58488/Sengoku_Youko__Senma_Konton-hen"
-    },
-    {
       "img": "https://cdn.myanimelist.net/images/anime/1683/145446.webp",
       "title": "Saikyou no Shienshoku \"Wajutsushi\" de Aru Ore wa Sekai Saikyou Clan wo Shitagaeru",
       "url": "https://myanimelist.net/anime/58714/Saikyou_no_Shienshoku_Wajutsushi_de_Aru_Ore_wa_Sekai_Saikyou_Clan_wo_Shitagaeru"
