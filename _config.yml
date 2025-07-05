@@ -37,30 +37,30 @@ author:
     - label: "Website"
       icon: "fas fa-fw fa-link"
       url: "/"
-    - label: "Paypal"
-      icon: "fab fa-fw fa-paypal"
-      url: "https://www.paypal.com/paypalme/ZenracZenrac"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/zenrac"
     - label: "Discord"
       icon: "fab fa-fw fa-discord"
       url: "https://zenrac.github.io/images/discord.png"
+    - label: "YouTube"
+      icon: "fab fa-fw fa-youtube"
+      url: "https://www.youtube.com/channel/UCVaY1N8D71HKQ_2Iga-6G6g"
 
 footer:
   links:
     - label: "Home"
       icon: "fa fa-fw fa-house"
       url: "/"
-    - label: "Paypal"
-      icon: "fab fa-fw fa-paypal"
-      url: "https://www.paypal.com/paypalme/ZenracZenrac"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/zenrac"
     - label: "Discord"
       icon: "fab fa-fw fa-discord"
       url: "https://zenrac.github.io/images/discord.png"
+    - label: "YouTube"
+      icon: "fab fa-fw fa-youtube"
+      url: "https://www.youtube.com/channel/UCVaY1N8D71HKQ_2Iga-6G6g"
 
 defaults:
   # _posts

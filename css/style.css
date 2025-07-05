@@ -390,8 +390,12 @@ a {
  background-color: #171a21;
 }
 
-.discordIcon a i:hover {
+.discord a i:hover {
 	background-color: #7289da;
+}
+
+.youtube a i:hover {
+	background-color: #FF0000;
 }
 
 .links {
@@ -527,7 +531,7 @@ a {
  color: grey;
 }
 
-.discordIcon {
+.discord {
   transform: scaleX(0.913);
 }
 

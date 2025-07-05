@@ -2408,9 +2408,18 @@ function openDiscordPopup() {
 }
 
 jQuery(document).ready(function($) {
-  $('a').each(function() {
-    $(this).attr('onclick', 'window.location.href="' + $(this).attr('href') + '"');
-    $(this).removeAttr('href');
+
+  $('a').each(function () {
+    const href = $(this).attr('href');
+    const target = $(this).attr('target');
+
+    if (href) {
+      $(this).attr('onclick', target === '_blank'
+        ? 'window.open("' + href + '", "_blank", "noopener,noreferrer")'
+        : 'window.location.href="' + href + '"'
+      );
+      $(this).removeAttr('href');
+    }
   });
 
   function footerAlwayInBottom(footerSelector) {
