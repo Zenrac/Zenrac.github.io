@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.70
+// @version      1.71
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -484,41 +484,80 @@
             }
         }
 
-        function checkIfAllSeasonStartWithOne() {
-            let check = true;
-            let seasonsList = document.getElementsByClassName("ul-episodes");
-            if (seasonsList && seasonsList.length > 0) {
-                let seasons = seasonsList[0].getElementsByClassName("saison-container");
-                if (seasons && seasons.length > 0) {
-                    for (let season of seasons) {
-                        let episodes = season.getElementsByTagName("ul");
-                        let realEpisodes = season.getElementsByTagName("a");
-                        if (realEpisodes && realEpisodes.length > 0) {
-                            for (let i = 0; i < realEpisodes.length - 1; i++) {
-                                let ep = realEpisodes[i];
-                                if (ep.innerText.includes("Episode")) {
-                                    let episodeNameMatch = ep.innerText.toLowerCase().match(/episode (\d+)/);
-                                    let episodeNumber = episodeNameMatch ? parseInt(episodeNameMatch[1]) : 99;
-                                    if (episodeNumber < 2) {
-                                        if (realEpisodes.length > 1) {
-                                            let nextEpisode = realEpisodes[i + 1];
-                                            if (nextEpisode.innerText.includes("Episode")) {
-                                                let nextEpisodeNameMatch = nextEpisode.innerText.toLowerCase().match(/episode (\d+)/);
-                                                let nextEpisodeNumber = episodeNameMatch ? parseInt(nextEpisodeNameMatch[1]) : 99;
-                                                check = check && nextEpisodeNumber < 3;
-                                            }
-                                        }
-                                    }
-                                    check = check && episodeNumber < 2;
-                                    break;
-                                }
-                            }
-                        }
+        function checkIfSeasonsRestartEpisodeNumbering() {
+            const seasonsList = document.getElementsByClassName("ul-episodes");
+            if (!seasonsList || seasonsList.length === 0) {
+                return true;
+            }
+
+            const seasons = seasonsList[0].getElementsByClassName("saison-container");
+            if (!seasons || seasons.length === 0) {
+                return true;
+            }
+
+            function getEpisodeNumber(text) {
+                const match = text.toLowerCase().match(/episode (\d+)/);
+                return match ? parseInt(match[1]) : null;
+            }
+
+            function hasValidEpisodes(season) {
+                const eps = season.getElementsByTagName("a");
+                for (let ep of eps) {
+                    if (getEpisodeNumber(ep.innerText) !== null) return true;
+                }
+                return false;
+            }
+
+            for (let i = 0; i < seasons.length - 1; i++) {
+                if (!hasValidEpisodes(seasons[i])) {
+                    continue;
+                }
+
+                let nextIndex = i + 1;
+                while (nextIndex < seasons.length && !hasValidEpisodes(seasons[nextIndex])) {
+                    nextIndex++;
+                }
+
+                if (nextIndex >= seasons.length) {
+                    break;
+                }
+
+                const currentSeason = seasons[i];
+                const nextSeason = seasons[nextIndex];
+
+                const currentEpisodes = currentSeason.getElementsByTagName("a");
+                const nextEpisodes = nextSeason.getElementsByTagName("a");
+
+                let lastEpNum = null;
+                for (let j = currentEpisodes.length - 1; j >= 0; j--) {
+                    let epNum = getEpisodeNumber(currentEpisodes[j].innerText);
+                    if (epNum !== null) {
+                        lastEpNum = epNum;
+                        break;
                     }
                 }
+                if (lastEpNum === null) {
+                    continue;
+                }
+
+                let firstEpNum = null;
+                for (let ep of nextEpisodes) {
+                    let epNum = getEpisodeNumber(ep.innerText);
+                    if (epNum === null) continue;
+                    if (epNum === 0) continue;
+                    firstEpNum = epNum;
+                    break;
+                }
+                if (firstEpNum === null) continue;
+
+                if (firstEpNum >= lastEpNum + 1) return false;
+
+                if (firstEpNum === 1) continue;
+
             }
-            return check;
+            return true;
         }
+
 
         function calculateEpisodeNumberFromActived(activedElement, multiLanguages) {
             var ulListElement = activedElement.parentNode;
@@ -1044,7 +1083,7 @@
                     currentSeason = saison[1];
                 }
 
-                var allSeasonStartWithOne = checkIfAllSeasonStartWithOne();
+                var seasonsRestartEpisodeNumbering = checkIfSeasonsRestartEpisodeNumbering();
 
                 var seasonElementNumber = document.getElementById("watchlist-saison");
                 if (seasonElementNumber) {
@@ -1412,7 +1451,6 @@
                                     }
                                 }
                             }
-
                             if (adklistSeasonInput && adklistSeasonInput.type != "hidden" && valueToSet != 0) {
                                 var seasonToSet = Math.min(document.getElementById("watchlist-saison").dataset.max, currentSeason);
                                 if (adklistSeasonInput.value > currentSeason) {
@@ -1426,11 +1464,12 @@
 
                             let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
                             if (valueToSet == maxEpisodes) {
-                                if (watchlistEpisodeElement.value > valueToSet && !toSave && allSeasonStartWithOne) {
+                                if (watchlistEpisodeElement.value > valueToSet && !toSave && seasonsRestartEpisodeNumbering) {
                                     return;
                                 }
                             }
-                            if (seasonToSet > 1 && !allSeasonStartWithOne) {
+
+                            if (seasonToSet > 1 && !seasonsRestartEpisodeNumbering) {
                                 let activedElement = document.getElementsByClassName("actived")[0];
                                 let episodesSameSeason = document.getElementsByClassName("actived")[0].parentNode.getElementsByTagName("li");
                                 episodesSameSeason = Array.from(episodesSameSeason).filter(episode => {
@@ -1477,7 +1516,7 @@
                                 let currentEpSet = parseInt(document.getElementById("malEpisodes").value);
                                 let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
                                 if (currentEpSet == maxEpisodes) {
-                                    if (document.getElementById("watchlist-episode").value > currentEpSet && allSeasonStartWithOne) {
+                                    if (document.getElementById("watchlist-episode").value > currentEpSet && seasonsRestartEpisodeNumbering) {
                                         return;
                                     }
                                 }
@@ -1509,7 +1548,7 @@
                                 let currentEpSet = parseInt(document.getElementById("malEpisodes").value);
                                 let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
                                 if (currentEpSet == maxEpisodes) {
-                                    if (document.getElementById("watchlist-episode").value > currentEpSet && allSeasonStartWithOne) {
+                                    if (document.getElementById("watchlist-episode").value > currentEpSet && seasonsRestartEpisodeNumbering) {
                                         return;
                                     }
                                 }
