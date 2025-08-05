@@ -543,17 +543,22 @@ function exportTierlistDetails() {
             let url = animeObj && animeObj.url ? animeObj.url : "";
             let id = "";
             let title = animeObj && animeObj.title ? animeObj.title : "";
+            let op = animeObj && animeObj.op !== undefined ? animeObj.op : 1;
+            let ed = animeObj && animeObj.ed !== undefined ? animeObj.ed : 1;
             if (url) {
                 const match = url.match(/anime\/(\d+)/);
                 if (match) id = match[1];
             }
-            details.push({
-                imgId: imgId,
-                id: id,
-                url: url,
-                rank: rank++,
-                title: title
-            });
+			let detail = {
+				imgId: imgId,
+				id: id,
+				url: url,
+				rank: rank++,
+				title: title
+			};
+			if (op !== 1) detail.op = op;
+			if (ed !== 1) detail.ed = ed;
+			details.push(detail);
         }
     }
 

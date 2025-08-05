@@ -449,12 +449,14 @@ function exportWithDetails() {
         const animeObj = detectAnime(result.imgId);
         let url = animeObj && animeObj.url ? animeObj.url : '';
         let id = '';
+        let op = animeObj && animeObj.op !== undefined ? animeObj.op : 1;
+        let ed = animeObj && animeObj.ed !== undefined ? animeObj.ed : 1;
         if (url) {
             const match = url.match(/anime\/(\d+)/);
             if (match) id = match[1];
         }
 
-        return {
+        let detail = {
             imgId: result.imgId,
             id: id,
             url: url,
@@ -463,6 +465,9 @@ function exportWithDetails() {
             positions: positionsByFile,
             title: animeObj ? animeObj.title : ''
         };
+        if (op !== 1) detail.op = op;
+        if (ed !== 1) detail.ed = ed;
+        return detail;
     });
 
     const blob = new Blob([JSON.stringify(details, null, 2)], { type: 'application/json' });

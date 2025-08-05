@@ -348,7 +348,9 @@ window.animeSeasons['Summer 2025'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1988/148017.jpg",
     "title": "Witch Watch (Uron Mirage)",
-    "url": "https://myanimelist.net/anime/59597/Witch_Watch"
+    "url": "https://myanimelist.net/anime/59597/Witch_Watch",
+    "op": 2,
+    "ed": 2
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1722/148906.jpg",
