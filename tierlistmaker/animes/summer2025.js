@@ -291,11 +291,6 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/60505/Necronomico_no_Cosmic_Horror_Show"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1464/150712.jpg",
-    "title": "Ginga Tokkyuu Milky☆Subway",
-    "url": "https://myanimelist.net/anime/61274/Ginga_Tokkyuu_Milky☆Subway"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1866/150935.jpg",
     "title": "Utagoe wa Mille-Feuille",
     "url": "https://myanimelist.net/anime/55689/Utagoe_wa_Mille-Feuille"
@@ -349,8 +344,8 @@ window.animeSeasons['Summer 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1988/148017.jpg",
     "title": "Witch Watch (Uron Mirage)",
     "url": "https://myanimelist.net/anime/59597/Witch_Watch",
-    "op": 2,
-    "ed": 2
+    "op": "EP14",
+    "ed": "EP14"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1722/148906.jpg",
