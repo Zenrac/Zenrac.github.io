@@ -346,6 +346,11 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/59597/Witch_Watch"
   },
   {
+    "img": "https://static.wikia.nocookie.net/witch-watch/images/0/0e/Uron_Mirage_KV.png",
+    "title": "Witch Watch (Uron Mirage)",
+    "url": "https://myanimelist.net/anime/59597/Witch_Watch"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1722/148906.jpg",
     "title": "Kijin Gentoushou",
     "url": "https://myanimelist.net/anime/49778/Kijin_Gentoushou"
