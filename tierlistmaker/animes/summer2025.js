@@ -346,7 +346,7 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/59597/Witch_Watch"
   },
   {
-    "img": "https://static.wikia.nocookie.net/witch-watch/images/0/0e/Uron_Mirage_KV.png",
+    "img": "https://cdn.myanimelist.net/images/anime/1988/148017.jpg",
     "title": "Witch Watch (Uron Mirage)",
     "url": "https://myanimelist.net/anime/59597/Witch_Watch"
   },

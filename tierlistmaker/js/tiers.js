@@ -534,8 +534,7 @@ function exportTierlistDetails() {
         for (const season in window.animeSeasons) {
             const found = window.animeSeasons[season].find(a => a.img && a.img.includes(imgId));
             if (found) return found;
-        }
-        return null;
+        }        return null;
     }
 
     for (const row of animes.rows) {
