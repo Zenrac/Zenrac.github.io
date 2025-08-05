@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Copy Season Anime from MAL
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Extracts anime data from MyAnimeList and copies it to clipboard in JSON format.
+// @version      1.1
+// @description  Extract anime data from MyAnimeList and copies it to clipboard in JSON format, supports season and single anime pages.
 // @author       Zenrac
 // @license      MIT
 // @match        https://myanimelist.net/anime/*
@@ -10,81 +10,103 @@
 // @grant        GM_setClipboard
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
     function showToast(message, duration = 2500) {
         const toast = document.createElement("div");
         toast.textContent = message;
-        toast.style.position = "fixed";
-        toast.style.top = "50px";
-        toast.style.right = "10px";
-        toast.style.backgroundColor = "rgba(0,0,0,0.8)";
-        toast.style.color = "white";
-        toast.style.padding = "10px 20px";
-        toast.style.borderRadius = "4px";
-        toast.style.fontSize = "14px";
-        toast.style.zIndex = 100000;
-        toast.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
-        toast.style.opacity = "0";
-        toast.style.transition = "opacity 0.3s ease";
-
-        document.body.appendChild(toast);
-
-        requestAnimationFrame(() => {
-            toast.style.opacity = "1";
+        Object.assign(toast.style, {
+            position: "fixed",
+            top: "50px",
+            right: "10px",
+            backgroundColor: "rgba(0,0,0,0.8)",
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "4px",
+            fontSize: "14px",
+            zIndex: 100000,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+            opacity: "0",
+            transition: "opacity 0.3s ease"
         });
-
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => toast.style.opacity = "1");
         setTimeout(() => {
             toast.style.opacity = "0";
-            toast.addEventListener("transitionend", () => {
-                toast.remove();
-            });
+            toast.addEventListener("transitionend", () => toast.remove());
         }, duration);
     }
 
-    window.getElementsFromMal = function(exceptions = []) {
+    function isSingleAnimePage() {
+        return !!document.querySelector("h1.title-name");
+    }
+
+    function extractSingleAnime() {
+        const titleElement = document.querySelector("h1.title-name strong");
+        const imgElement = document.querySelector('a[href*="/pics"] img');
+        if (!titleElement || !imgElement) {
+            showToast("Anime title or image not found on this page!", 3000);
+            return;
+        }
+
+        const title = titleElement.textContent.trim();
+        const img = imgElement.src;
+        const url = window.location.href;
+
+        const data = [{
+            img: img,
+            title: title,
+            url: url
+        }];
+
+        const jsonOutput = JSON.stringify(data, null, 2);
+        console.log(jsonOutput);
+        GM_setClipboard(jsonOutput, "text");
+        showToast("Single anime data copied to clipboard!", 3000);
+    }
+
+    window.getElementsFromMal = function (exceptions = []) {
         if (!Array.isArray(exceptions)) {
             exceptions = exceptions.split(',').map(e => e.trim());
         }
-        var videos = document.getElementsByClassName("js-anime-type-1");
-        var videoList = [];
+
+        if (isSingleAnimePage()) {
+            extractSingleAnime();
+            return;
+        }
+
+        const videos = document.getElementsByClassName("js-anime-type-1");
+        const videoList = [];
 
         for (const video of videos) {
             const member = video.querySelectorAll("div.scormem-item.member");
-            const memberCount = member[0].innerText.trim();
+            const memberCount = member[0]?.innerText?.trim() ?? "0";
+            const title = video.querySelector(".link-title")?.innerText ?? "";
             let count = 0;
-            const title = video.querySelectorAll(".link-title")[0].innerText;
 
             if (memberCount.includes('K')) {
                 count = parseFloat(memberCount.replace("K", "")) * 1000;
             } else if (memberCount.includes('M')) {
                 count = parseFloat(memberCount.replace("M", "")) * 1000000;
             } else {
-                count = parseInt(memberCount);
+                count = parseInt(memberCount) || 0;
             }
 
             const isException = exceptions.some(exception => title.toLowerCase().includes(exception.toLowerCase()));
-
             if (isException || count > 3000) {
-                const date = video.getElementsByClassName('prodsrc')[0]
-                                .getElementsByClassName('info')[0]
-                                .getElementsByClassName('item')[0].innerHTML;
-                const animeDate = new Date(date);
-                const lastYearDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+                const dateDiv = video.querySelector('.prodsrc .info .item');
+                const date = dateDiv?.innerHTML;
+                const animeDate = date ? new Date(date) : null;
+                const lastYearDate = new Date();
+                lastYearDate.setFullYear(lastYearDate.getFullYear() - 1);
 
-                if (isException || animeDate > lastYearDate) {
-                    const imgDiv = video.querySelectorAll("img")[0];
-                    const img = imgDiv.src;
-                    const url = imgDiv.parentNode.href;
+                if (isException || (animeDate && animeDate > lastYearDate)) {
+                    const img = video.querySelector("img")?.src ?? "";
+                    const url = video.querySelector("a")?.href ?? "";
 
                     if (img && img.trim().length !== 0) {
-                        videoList.push({
-                            img: img,
-                            title: title,
-                            url: url,
-                            count: count
-                        });
+                        videoList.push({ img, title, url, count });
                     }
                 }
             }
@@ -99,41 +121,44 @@
         }));
 
         const jsonOutput = JSON.stringify(finalList, null, 2);
-
         console.log(jsonOutput);
-        showToast("MAL data copied to clipboard and logged in console!", 3000);
         GM_setClipboard(jsonOutput, "text");
+        showToast("MAL season data copied to clipboard and logged in console!", 3000);
 
         return finalList;
     };
 
     const btn = document.createElement("button");
     btn.textContent = "Extract MAL Data";
-    btn.style.position = "fixed";
-    btn.style.top = "10px";
-    btn.style.right = "10px";
-    btn.style.zIndex = 10000;
-    btn.style.padding = "8px 12px";
-    btn.style.backgroundColor = "#0078D7";
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "4px";
-    btn.style.cursor = "pointer";
-    btn.style.fontSize = "14px";
-    btn.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+    Object.assign(btn.style, {
+        position: "fixed",
+        top: "10px",
+        right: "10px",
+        zIndex: 10000,
+        padding: "8px 12px",
+        backgroundColor: "#0078D7",
+        color: "white",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+        fontSize: "14px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+    });
 
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Exceptions, splited by commas";
-    input.style.position = "fixed";
-    input.style.top = "10px";
-    input.style.right = "150px";
-    input.style.zIndex = 10000;
-    input.style.width = "250px";
-    input.style.padding = "6px";
-    input.style.fontSize = "14px";
     input.title = "Ex: One, Love";
     input.id = "mal-exceptions-input";
+    Object.assign(input.style, {
+        position: "fixed",
+        top: "10px",
+        right: "150px",
+        zIndex: 10000,
+        width: "250px",
+        padding: "6px",
+        fontSize: "14px"
+    });
 
     input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -141,8 +166,6 @@
             btn.click();
         }
     });
-
-    document.body.appendChild(input);
 
     btn.addEventListener("click", () => {
         let exceptions = [];
@@ -152,5 +175,6 @@
         getElementsFromMal(exceptions);
     });
 
+    document.body.appendChild(input);
     document.body.appendChild(btn);
 })();
