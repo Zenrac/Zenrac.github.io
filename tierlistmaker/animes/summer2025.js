@@ -6,6 +6,11 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/24833/Ansatsu_Kyoushitsu"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1577/147273.jpg",
+    "title": "Long Zu II: Daowangzhe Zhi Tong - Dragon Raja II",
+    "url": "https://myanimelist.net/anime/59662/Long_Zu_II__Daowangzhe_Zhi_Tong"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1721/149001.jpg",
     "title": "Dandadan 2nd Season",
     "url": "https://myanimelist.net/anime/60543/Dandadan_2nd_Season"

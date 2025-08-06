@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Copy Season Anime from MAL
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Extract anime data from MyAnimeList and copies it to clipboard in JSON format, supports season and single anime pages.
 // @author       Zenrac
 // @license      MIT
@@ -54,13 +54,13 @@
         const img = imgElement.src;
         const url = window.location.href;
 
-        const data = [{
+        const data = {
             img: img,
             title: title,
             url: url
-        }];
+        };
 
-        const jsonOutput = JSON.stringify(data, null, 2);
+        const jsonOutput = JSON.stringify(data, null, 2) + ",";
         console.log(jsonOutput);
         GM_setClipboard(jsonOutput, "text");
         showToast("Single anime data copied to clipboard!", 3000);
