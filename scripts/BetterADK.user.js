@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.72
+// @version      1.73
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -27,6 +27,7 @@
 // @require      https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/gm_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_xmlhttpRequest
 // @license      MIT
 // ==/UserScript==
 (function() {
@@ -99,6 +100,100 @@
         }
 
         return base;
+    }
+
+    function triggerMagnetDownloadFromNyaa(urlNyaa) {
+        const urlParams = new URLSearchParams(urlNyaa.split('?')[1]);
+        const configNyaaShortcut = urlParams.get('nyaashortcut') || "magnet";
+        const configMagnet = urlParams.get('magnetpriority');
+        const configMagnetMaxAge = parseInt(urlParams.get('magnetprioritymaxage')) || null;
+
+        const searchClass = configNyaaShortcut === "download" ? "fa-download" : "fa-magnet";
+
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: urlNyaa,
+            onload: function(response) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(response.responseText, "text/html");
+
+                const allIcons = doc.querySelectorAll(`i.${searchClass}`);
+                if (allIcons.length === 0) {
+                    alert("Aucun résultat trouvé sur Nyaa !");
+                    return;
+                }
+
+                let bestLink = null;
+
+                if (configMagnet) {
+                    for (const wordGroup of configMagnet.split(',')) {
+                        for (const icon of allIcons) {
+                            const row = icon.closest('tr');
+                            if (!row) continue;
+
+                            const rowText = row.innerHTML.toLowerCase();
+                            let allWordsPresent = true;
+
+                            for (const word of wordGroup.trim().split(' ')) {
+                                if (!rowText.includes(word.toLowerCase())) {
+                                    allWordsPresent = false;
+                                    break;
+                                }
+                            }
+
+                            if (allWordsPresent && configMagnetMaxAge) {
+                                try {
+                                    const timestampCell = row.querySelector('td[data-timestamp]');
+                                    if (timestampCell) {
+                                        const timestamp = parseInt(timestampCell.getAttribute('data-timestamp')) * 1000;
+                                        const cutoffDate = Date.now() - configMagnetMaxAge * 24 * 60 * 60 * 1000;
+                                        if (timestamp < cutoffDate) {
+                                            allWordsPresent = false;
+                                        }
+                                    }
+                                } catch (_) {}
+                            }
+
+                            if (allWordsPresent) {
+                                bestLink = configNyaaShortcut === "download"
+                                    ? row.querySelector("a[href$='.torrent']")
+                                    : row.querySelector("a[href^='magnet:']");
+                                if (bestLink) break;
+                            }
+                        }
+                        if (bestLink) break;
+                    }
+                }
+
+                if (!bestLink) {
+                    const firstIcon = allIcons[0];
+                    const row = firstIcon.closest('tr');
+                    bestLink = configNyaaShortcut === "download"
+                        ? row.querySelector("a[href$='.torrent']")
+                        : row.querySelector("a[href^='magnet:']");
+                }
+
+                if (bestLink) {
+                    const a = document.createElement("a");
+                    let href = bestLink.getAttribute('href');
+                    if (href.startsWith('/')) {
+                        href = 'https://nyaa.si' + href;
+                    }
+                    a.href = href;
+
+                    if (configNyaaShortcut === "download") {
+                        a.download = "";
+                    }
+
+                    a.style.display = "none";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                } else {
+                    alert("Aucun lien compatible trouvé.");
+                }
+            }
+        });
     }
 
     function getMostCompatibleMagnet() {
@@ -362,7 +457,7 @@
                 "default" : "100"
             }
         },
-        `
+                       `
         body {
            background-color: #99aab5 !important;
         }
@@ -390,7 +485,7 @@
             font-size: 14px;
         }
         `,
-        {
+                       {
             save: function() { location.reload() },
         });
 
@@ -935,57 +1030,39 @@
                         let clickableNyaaMagnet = document.createElement("img");
                         clickableNyaaMagnet.addEventListener('click', (event) => {
                             event.preventDefault();
-                            var alreadyIframe = clickableNyaaMagnet.getElementsByClassName("nyaaMagnet")[0];
-                            var urlNyaa = "";
+
+                            let urlNyaa = "";
                             if (ep) {
                                 let epBeforeStr = parseInt(ep[1]).toString().padStart(2, '0');
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                 let epStr = ep[1].toString().padStart(2, '0');
+
                                 if (saison) {
-                                    var url = elems[i].getElementsByClassName("img")[0].href;
+                                    let url = elems[i].getElementsByClassName("img")[0].href;
                                     $.get(url, null, function(text) {
-                                        var actived = $(text).find('.actived')[0];
+                                        let actived = $(text).find('.actived')[0];
                                         if (actived) {
-                                            var newEp = calculateEpisodeNumberFromActived(actived, true);
+                                            let newEp = calculateEpisodeNumberFromActived(actived, true);
                                             let newEpStr = newEp.toString().padStart(2, '0');
-                                            let epStr = parseInt(ep[1]).toString().padStart(2, '0');
                                             urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, newEpStr, true);
                                         } else {
                                             urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, true);
                                         }
-                                        let frameMagnet = document.createElement("iframe");
-                                        frameMagnet.src = urlNyaa;
-                                        frameMagnet.classList.add("nyaaMagnet");
-                                        if (alreadyIframe) {
-                                            clickableNyaaMagnet.replaceChild(frameMagnet, alreadyIframe);
-                                        }
-                                        else {
-                                            clickableNyaaMagnet.appendChild(frameMagnet);
-                                        }
+                                        triggerMagnetDownloadFromNyaa(urlNyaa);
                                     });
                                     return;
+                                } else {
+                                    urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, epBeforeStr, true);
                                 }
-                                else {
-                                   urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, epBeforeStr, true);
-                                }
-                            }
-                            else if (oav) {
+                            } else if (oav) {
                                 let saisonStr = saison ? parseInt(saison[1]).toString().padStart(2, '0') : "01";
                                 let epStr = oav.toString().padStart(2, '0');
                                 urlNyaa = buildSearchUrlNyaa(title, epStr, saisonStr, newEpStr, true);
+                            } else {
+                                urlNyaa = buildSearchUrlNyaa(title, null, null, null, true);
                             }
-                            else {
-                                urlNyaa = clickableNyaa.href = buildSearchUrlNyaa(title, null, null, null, true);
-                            }
-                            let frameMagnet = document.createElement("iframe");
-                            frameMagnet.src = urlNyaa;
-                            frameMagnet.classList.add("nyaaMagnet");
-                            if (alreadyIframe) {
-                                clickableNyaaMagnet.replaceChild(frameMagnet, alreadyIframe);
-                            }
-                            else {
-                                clickableNyaaMagnet.appendChild(frameMagnet);
-                            }
+
+                            triggerMagnetDownloadFromNyaa(urlNyaa);
                         });
 
                         clickableNyaaMagnet.classList.add("lecteur-icon");
@@ -1839,5 +1916,4 @@
             }
         }
     }
-
 })();

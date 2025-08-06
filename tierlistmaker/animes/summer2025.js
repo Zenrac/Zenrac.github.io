@@ -7,7 +7,7 @@ window.animeSeasons['Summer 2025'] = [
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1577/147273.jpg",
-    "title": "Long Zu II: Daowangzhe Zhi Tong - Dragon Raja II",
+    "title": "Long Zu II - Dragon Raja II",
     "url": "https://myanimelist.net/anime/59662/Long_Zu_II__Daowangzhe_Zhi_Tong"
   },
   {
