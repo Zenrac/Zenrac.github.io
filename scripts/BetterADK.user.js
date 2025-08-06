@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.73
+// @version      1.74
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -17,8 +17,6 @@
 // @match        http://www.mavanimes.co/*
 // @match        https://franime.fr/*
 // @match        http://franime.fr/*
-// @match        https://nyaa.si/*
-// @match        http://nyaa.si/*
 // @downloadURL  https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @updateURL    https://raw.githubusercontent.com/Zenrac/Zenrac.github.io/main/scripts/BetterADK.user.js
 // @homepageURL  https://github.com/zenrac/Zenrac.github.io
@@ -48,7 +46,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
 
-    const NYAA_URL = "https://nyaa.si/?q=";
+    const NYAA_URL = "https://nyaa.si";
+    const SEARCH_NYAA_URL = `${NYAA_URL}?q=`;
     const EP_10_EXCLUSIONS = Array.from({ length: 15 }, (_, i) => `-${10 + i + 1}`).join(" ");
 
     /**
@@ -89,7 +88,7 @@
 
         const episodePart = parts.length ? `(${parts.join("|")})` : "";
 
-        let base = `${NYAA_URL}${title} ${episodePart} ${GM_config.get('customnyaasearch')}`.trim();
+        let base = `${SEARCH_NYAA_URL}${title} ${episodePart} ${GM_config.get('customnyaasearch')}`.trim();
 
         if (ep === "10" || newEp === "10") {
             base += " " + EP_10_EXCLUSIONS;
@@ -177,7 +176,7 @@
                     const a = document.createElement("a");
                     let href = bestLink.getAttribute('href');
                     if (href.startsWith('/')) {
-                        href = 'https://nyaa.si' + href;
+                        href = NYAA_URL + href;
                     }
                     a.href = href;
 
@@ -262,14 +261,6 @@
         let mavframes = document.getElementsByTagName("iframe");
         for (let i = 0; i < mavframes.length; i++) {
             mavframes[i].style.width = "100%";
-        }
-
-        return;
-    }
-    else if (window.location.href.includes("nyaa.si") && window.location.href.includes("adk=true")) {
-        let magnetElement = getMostCompatibleMagnet();
-        if (magnetElement) {
-            magnetElement.click();
         }
 
         return;
@@ -1270,7 +1261,7 @@
                         .catch(console.error);
                 }
 
-                // Add Nyaa.si Icon
+                // Add Nyaa Icon
                 if (["both", "anime"].includes(GM_config.get('nyaaicon'))) {
                     // Nyaa icon
                     let clickableNyaa = document.createElement("a");
