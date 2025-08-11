@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.75
+// @version      1.76
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1475,12 +1475,28 @@
 
                             });
                             if (window.location.href.includes("updatelist=true")) {
+
+                                let triedReload = false;
+
+                                function closeOrReload() {
+                                    if (!triedReload) {
+                                        triedReload = true;
+                                        location.reload();
+                                    } else {
+                                        window.close();
+                                    }
+                                }
+
+                                setTimeout(closeOrReload, 10000);
+
                                 let interval = setInterval(() => {
                                     if (elm.value != 0) {
                                         newElem.dispatchEvent(new Event('click'));
                                         clearInterval(interval);
+
                                         let intervalAgain = setInterval(() => {
-                                            if (document.getElementById("watchlist-loading").style.display == "none") {
+                                            let loader = document.getElementById("watchlist-loading");
+                                            if (!loader || loader.style.display == "none") {
                                                 window.close();
                                                 clearInterval(intervalAgain);
                                             }
