@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.77
+// @version      1.78
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -931,7 +931,6 @@
                 clickable.classList.add("lecteur-icon");
                 clickable.classList.add("crunchyroll");
 
-                clickable.style.display = "inline-block";
                 clickable.style.width = "40px";
                 clickable.style.height = "40px";
                 clickable.style.background = "transparent";
