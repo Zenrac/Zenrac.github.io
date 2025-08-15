@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.76
+// @version      1.77
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -921,6 +921,25 @@
                 }
             }
 
+            const allVideos = document.querySelectorAll('div.video-item-list');
+
+            const elemsWithoutIcon = Array.from(allVideos).filter(div => !div.querySelector('.lecteur-icon'));
+
+            for (let i = 0; i < elemsWithoutIcon.length; i++) {
+                let after = elemsWithoutIcon[i].getElementsByClassName(connected ? "right list-edition" : "look")[0];
+                let clickable = document.createElement("a");
+                clickable.classList.add("lecteur-icon");
+                clickable.classList.add("crunchyroll");
+
+                clickable.style.display = "inline-block";
+                clickable.style.width = "40px";
+                clickable.style.height = "40px";
+                clickable.style.background = "transparent";
+                clickable.style.cursor = "default";
+
+                elemsWithoutIcon[i].insertBefore(clickable, after.nextSibling);
+            }
+
             // add mal icons
             if (["both", "main"].includes(GM_config.get('malicon'))) {
                 let req = new Request(`https://${window.location.hostname}/api/main?objet=adk-mal-all`, {
@@ -1476,12 +1495,13 @@
                             });
                             if (window.location.href.includes("updatelist=true")) {
 
-                                let triedReload = false;
+                                const url = new URL(window.location.href);
+                                const alreadyReloaded = url.searchParams.has("alreadyReloaded");
 
                                 function closeOrReload() {
-                                    if (!triedReload) {
-                                        triedReload = true;
-                                        location.reload();
+                                    if (!alreadyReloaded) {
+                                        url.searchParams.set("alreadyReloaded", "1");
+                                        window.location.replace(url.toString());
                                     } else {
                                         window.close();
                                     }
