@@ -13,6 +13,8 @@ const tieColors = [
     'rgba(71,255,179,0.18)',
 ];
 
+const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)/i, '');
+
 document.addEventListener("DOMContentLoaded", () => {
     const iframe = document.getElementById("indexFrame");
     iframe.addEventListener("load", () => {
@@ -577,7 +579,7 @@ function toggleTierlistButton() {
 
 function detectAnimeTitle(img) {
     for (const [season, items] of Object.entries(animeSeasons)) {
-        const anime = items.find(item => item.img && item.img.includes(img));
+        const anime = items.find(item => item.img && removeExtension(item.img).includes(removeExtension(img)));
         if (anime) {
             return anime.title;
         }

@@ -8,7 +8,7 @@ var seasonType = {
 
 const seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
 
-const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)/i, '');
 
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
@@ -318,18 +318,27 @@ window.addEventListener('load', () => {
     const merged = urlParams.get('merged');
 
 	if (merged === 'true') {
-		var mergedData = loadFromLocalStorage('mergedData');
-		if (mergedData) {
-			load_tierlist(mergedData)
+		const dataStr = localStorage.getItem("mergedData");
+		let mergedData = null;
+
+		if (dataStr) {
+			try {
+				mergedData = JSON.parse(dataStr);
+			} catch (e) {
+				mergedData = null;
+			}
 		}
-		else {
-			alert("No data to load");
+
+		if (mergedData && Object.keys(mergedData).length > 0) {
+			load_tierlist(mergedData);
+		} else {
+			alert("No valid merged data to load");
 		}
-	}
-	else {
-		// Load from localstorage
+
+	} else {
 		dropdownType.dispatchEvent(new Event('change', { bubbles: true }));
 	}
+
 
 	window.addEventListener('beforeunload', (evt) => {
 		return null;
@@ -427,63 +436,86 @@ function initialize_dropdown_tierlists() {
 	});
 }
 
-function create_img_with_src(src, title = "", url = "") {
-	var dropdownType = document.getElementById("dropdowntype");
-	var dropdown = document.getElementById("dropdown");
+function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
+    var dropdownType = document.getElementById("dropdowntype");
+    var dropdown = document.getElementById("dropdown");
 
-	if (title.trim() == "" || url.trim() == "" && window.animeSeasons[dropdown.value]) {
-		let anime = window.animeSeasons[dropdown.value].filter(m => removeExtension(m.img).includes(removeExtension(src)))
-		if (anime && anime.length > 0) {
-			title = anime[0].title;
-			url = anime[0].url;
-		}
+	let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
+	if (parts) {
+		let base = parts[1];
+		let query = parts[2] || "";
+		let ext = parts[3];
+		src = `${base}${ext}${query}`;
 	}
-	let img = document.createElement('img');
+
+    if ((title.trim() == "" || url.trim() == "") && window.animeSeasons[dropdown.value]) {
+        let anime = window.animeSeasons[dropdown.value].filter(m => removeExtension(m.img).includes(removeExtension(src)));
+		if (anime && anime.length > 0) {
+            title = anime[0].title;
+            url = anime[0].url;
+            op = anime[0].op;
+            ed = anime[0].ed;
+        }
+    }
+
+    let img = document.createElement('img');
 	img.src = src;
-	img.style.userSelect = 'none';
-	img.classList.add('draggable');
-	img.title = title;
-	img.alt = title;
-	img.draggable = true;
-	img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
-	img.addEventListener('mousedown', (evt) => {
-		dragged_image = evt.target;
-		dragged_image.classList.add("dragged");
-	});
-	if (url.trim() != "") {
-		img.addEventListener("click", function(event) {
-			if (event.altKey && title) {
-				var dropdownType = document.getElementById("dropdowntype");
-				let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
-				if (event.ctrlKey || event.metaKey) {
-					let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
-					window.open(animeUrl, "_blank");
-				} else {
-					let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
-					window.open(youtubeUrl, "_blank");
-				}
-			}
-			else if (event.ctrlKey || event.metaKey) {
-				// Open the link in a new tab/window
-				window.open(url, "_blank");
-			}
-		});
-	}	
+    img.style.userSelect = 'none';
+    img.classList.add('draggable');
+    img.title = title;
+    img.alt = title;
+    img.draggable = true;
+    img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
+    img.addEventListener('mousedown', (evt) => {
+        dragged_image = evt.target;
+        dragged_image.classList.add("dragged");
+    });
 
-	let titleSpan = document.createElement('label');
-	titleSpan.classList.add('title-img');
-	titleSpan.textContent = title;
+    if (url.trim() != "") {
+        img.addEventListener("click", function(event) {
+            let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+            if (event.altKey && title) {
+                if (event.ctrlKey || event.metaKey) {
+                    let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
+                    window.open(animeUrl, "_blank");
+                } else {
+                    let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
+                    window.open(youtubeUrl, "_blank");
+                }
+            } else if (event.ctrlKey || event.metaKey) {
+                window.open(url, "_blank");
+            }
+        });
+    }
 
-	let container = document.createElement('div');
-	container.classList.add('image-container');
-	container.appendChild(img);
-	container.appendChild(titleSpan);
-	
-	let item = document.createElement('span');
-	item.classList.add('item');
-	item.appendChild(container);
+    let titleSpan = document.createElement('label');
+    titleSpan.classList.add('title-img');
+    titleSpan.textContent = title;
 
-	return item;
+    let container = document.createElement('div');
+    container.classList.add('image-container');
+    container.appendChild(img);
+    container.appendChild(titleSpan);
+
+    let mode = dropdownType.value;
+    let badgeText = "";
+    if (op) {
+        badgeText = op
+    } else if (ed) {
+        badgeText = ed
+    }
+    if (badgeText) {
+        let badge = document.createElement('span');
+        badge.classList.add('badge');
+        badge.textContent = badgeText;
+        container.appendChild(badge);
+    }
+
+    let item = document.createElement('span');
+    item.classList.add('item');
+    item.appendChild(container);
+
+    return item;
 }
 
 function save_tierlist_png() {
@@ -532,7 +564,7 @@ function exportTierlistDetails() {
 
     function findAnimeObj(imgId) {
         for (const season in window.animeSeasons) {
-            const found = window.animeSeasons[season].find(a => a.img && a.img.includes(imgId));
+            const found = window.animeSeasons[season].find(a => a.img && removeExtension(a.img).includes(removeExtension(imgId)));
             if (found) return found;
         }        return null;
     }
@@ -570,49 +602,49 @@ function exportTierlistDetails() {
 }
 
 function save_tierlist() {
-	let regex = /\/(\d+\/\d+)\.(webp|jpe?g)$/;
-	let serialized_tierlist = {
-		title: document.querySelector('.title-label').innerText,
-		rows: [],
-	};
-	tierlist_div.querySelectorAll('.row').forEach((row, i) => {
-		serialized_tierlist.rows.push({
-			name: row.querySelector('.header label').innerText.substr(0, MAX_NAME_LEN)
-		});
-		serialized_tierlist.rows[i].imgs = [];
-		row.querySelectorAll('img').forEach((img) => {
-			let match = img.src.match(regex);
-			if (match) {
-				serialized_tierlist.rows[i].imgs.push(match[1]);
-			}
-		});
-	});
-
-	let untiered_imgs = document.querySelectorAll('.images img');
-	if (untiered_imgs.length > 0) {
-		serialized_tierlist.untiered = [];
-		untiered_imgs.forEach((img) => {
-			let match = img.src.match(regex);
-			if (match) {
-				serialized_tierlist.untiered.push(match[1]);
-			}
-		});
-	}
-
-	var dropdown = document.getElementById("dropdown");
-	var dropdownType = document.getElementById("dropdowntype");
-	var filename = dropdown.value
-	if (!cookieData[filename])
-		cookieData[filename] = {};
-	cookieData[filename][dropdownType.value] = serialized_tierlist;
-	if (isDefaultTierlist(serialized_tierlist)) {
-		delete cookieData[filename][dropdownType.value];
-		if (Object.keys(cookieData[filename]).length === 0) {
-			delete cookieData[filename];
-		}
-	}
-	saveToLocalStorage(saveTierListsCookieName, cookieData);
+    let regex = /\/(\d+\/\d+)\.(webp|jpe?g)(\?.*)?$/;
+    let serialized_tierlist = {
+        title: document.querySelector('.title-label').innerText,
+        rows: [],
+    };
+    tierlist_div.querySelectorAll('.row').forEach((row, i) => {
+        let rowName = row.querySelector('.header label').innerText.substr(0, MAX_NAME_LEN);
+        serialized_tierlist.rows.push({
+            name: rowName,
+            imgs: []
+        });
+        row.querySelectorAll('img').forEach((img) => {
+            let match = img.src.match(regex);
+            if (match) {
+                serialized_tierlist.rows[i].imgs.push(match[1] + (match[3] || ""));
+            }
+        });
+    });
+    let untiered_imgs = document.querySelectorAll('.images img');
+    if (untiered_imgs.length > 0) {
+        serialized_tierlist.untiered = [];
+        untiered_imgs.forEach((img) => {
+            let match = img.src.match(regex);
+            if (match) {
+                serialized_tierlist.untiered.push(match[1] + (match[3] || ""));
+            }
+        });
+    }
+    var dropdown = document.getElementById("dropdown");
+    var dropdownType = document.getElementById("dropdowntype");
+    var filename = dropdown.value;
+    if (!cookieData[filename])
+        cookieData[filename] = {};
+    cookieData[filename][dropdownType.value] = serialized_tierlist;
+    if (isDefaultTierlist(serialized_tierlist)) {
+        delete cookieData[filename][dropdownType.value];
+        if (Object.keys(cookieData[filename]).length === 0) {
+            delete cookieData[filename];
+        }
+    }
+    saveToLocalStorage(saveTierListsCookieName, cookieData);
 }
+
 
 function load_tierlist(serialized_tierlist) {
 	hard_reset_list()
@@ -661,7 +693,48 @@ function shuffleArray(array) {
     }
 }
 
-function load_from_anime(animes, title, cookie = true, randomize = false) {
+function create_img_with_label(src, labelText) {
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.display = "block";
+    wrapper.appendChild(img);
+
+    if (labelText) {
+        const label = document.createElement("span");
+        label.innerText = labelText;
+        label.style.position = "absolute";
+        label.style.top = "5px";
+        label.style.left = "5px";
+        label.style.padding = "2px 5px";
+        label.style.backgroundColor = "rgba(0,0,0,0.6)";
+        label.style.color = "white";
+        label.style.fontSize = "0.75rem";
+        label.style.borderRadius = "3px";
+        wrapper.appendChild(label);
+    }
+
+    return wrapper;
+}
+
+function load_from_anime(animeList, title, cookie = true, randomize = false) {
+
+    const mode = document.getElementById("dropdowntype").value;
+
+    let animes = animeList.filter(item => {
+        if (mode === "Anime") return !item.ed && !item.op;
+        if (mode === "Opening") {
+            return !item.ed || item.op;
+        }
+        if (mode === "Ending") {
+            return !item.op || item.ed;
+        }
+        return true;
+    });
+
 	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;
 	if (randomize) {
@@ -670,14 +743,14 @@ function load_from_anime(animes, title, cookie = true, randomize = false) {
 			let rows = Array.from(tierlist_div.querySelectorAll('.row')); 
 			let randomIndex = Math.floor(Math.random() * rows.length);
 			let items = rows[randomIndex].querySelectorAll(".items")[0]
-			let img = create_img_with_src(anime.img, anime.title, anime.url);
+			let img = create_img_with_src(anime.img, anime.title, anime.url, anime.op, anime.ed);
 			items.appendChild(img);
 		}
 	}
 	else {
 		let images = document.querySelector('.images');
 		for (let anime of animes) {
-			let img = create_img_with_src(anime.img, anime.title, anime.url);
+			let img = create_img_with_src(anime.img, anime.title, anime.url, anime.op, anime.ed);
 			images.appendChild(img);
 		}
 	}	

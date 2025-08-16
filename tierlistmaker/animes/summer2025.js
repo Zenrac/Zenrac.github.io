@@ -266,6 +266,18 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/54028/Turkey"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1977/150952.jpg?ed=4",
+    "title": "Turkey! EP 4",
+    "ed": "EP4",
+    "url": "https://myanimelist.net/anime/54028/Turkey"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1977/150952.jpg?ed=6",
+    "title": "Turkey! EP 6",
+    "ed": "EP6",
+    "url": "https://myanimelist.net/anime/54028/Turkey"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1546/145782.jpg",
     "title": "Kizu darake Seijo yori Houfuku wo Komete",
     "url": "https://myanimelist.net/anime/59961/Kizu_darake_Seijo_yori_Houfuku_wo_Komete"
@@ -347,7 +359,7 @@ window.animeSeasons['Summer 2025'] = [
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1988/148017.jpg",
-    "title": "Witch Watch (Uron Mirage)",
+    "title": "Uron Mirage (Witch Watch)",
     "url": "https://myanimelist.net/anime/59597/Witch_Watch",
     "op": "EP14",
     "ed": "EP14"
