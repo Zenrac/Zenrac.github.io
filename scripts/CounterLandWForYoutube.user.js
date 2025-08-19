@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Live Chat W/L Counter
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.3
 // @description  Counts W and L in YTB chat with a reset button
 // @author       Zenrac
 // @match        https://www.youtube.com/live_chat?*
@@ -74,12 +74,10 @@
     offsetX = e.clientX - container.getBoundingClientRect().left;
     offsetY = e.clientY - container.getBoundingClientRect().top;
     container.style.cursor = 'grabbing';
-
     const rect = container.getBoundingClientRect();
     container.style.left = rect.left + 'px';
     container.style.top = rect.top + 'px';
     container.style.transform = 'none';
-
     e.preventDefault();
   });
 
@@ -94,17 +92,13 @@
     if (!isDragging) return;
     let newLeft = e.clientX - offsetX;
     let newTop = e.clientY - offsetY;
-
     const winW = window.innerWidth;
     const winH = window.innerHeight;
     const rect = container.getBoundingClientRect();
-
     if (newLeft < 0) newLeft = 0;
     else if (newLeft + rect.width > winW) newLeft = winW - rect.width;
-
     if (newTop < 0) newTop = 0;
     else if (newTop + rect.height > winH) newTop = winH - rect.height;
-
     container.style.left = newLeft + 'px';
     container.style.top = newTop + 'px';
     container.style.right = 'auto';
@@ -117,11 +111,18 @@
     const textEl = el.querySelector('#message');
     if (!textEl) return;
     const text = textEl.textContent.toLowerCase();
-    const wMatches = text.match(/(?:^|\s)[wW](?=\s|$)/g) || [];
-    const lMatches = text.match(/(?:^|\s)[lL](?=\s|$)/g) || [];
-    wCount += wMatches.length;
-    lCount += lMatches.length;
-    counterDisplay.textContent = `W: ${wCount} | L: ${lCount}`;
+    const words = text.split(/\s+/);
+    const hasW = words.some(word => /^[w]+$/i.test(word));
+    const hasL = words.some(word => /^[l]+$/i.test(word));
+    if (hasW) {
+      wCount += 1;
+      counterDisplay.textContent = `W: ${wCount} | L: ${lCount}`;
+      el.style.backgroundColor = 'rgba(0,255,0,0.2)';
+    } else if (hasL) {
+      lCount += 1;
+      counterDisplay.textContent = `W: ${wCount} | L: ${lCount}`;
+      el.style.backgroundColor = 'rgba(255,0,0,0.2)';
+    }
   };
 
   const mutationHandler = mutations => {
