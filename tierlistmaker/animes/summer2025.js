@@ -1,6 +1,11 @@
 window.animeSeasons = window.animeSeasons || {};
 window.animeSeasons['Summer 2025'] = [
   {
+    "title": "One Piece",
+    "img": "https://cdn.myanimelist.net/images/anime/1244/138851.jpg",
+    "url": "https://myanimelist.net/anime/21/One_Piece"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/5/75639.jpg",
     "title": "Ansatsu Kyoushitsu (Rebroadcast)",
     "url": "https://myanimelist.net/anime/24833/Ansatsu_Kyoushitsu"
@@ -393,5 +398,10 @@ window.animeSeasons['Summer 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1282/148596.jpg",
     "title": "Bullet/Bullet",
     "url": "https://myanimelist.net/anime/53722/Bullet_Bullet"
+  },
+  {
+    "title": "Neko no Kuro-chan: Ordinary Days",
+    "img": "https://cdn.myanimelist.net/images/anime/1008/113384.jpg",
+    "url": "https://myanimelist.net/anime/48442/Shikaru_Neko"
   }
 ];
