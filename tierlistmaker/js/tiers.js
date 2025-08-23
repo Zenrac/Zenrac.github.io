@@ -195,18 +195,41 @@ window.addEventListener('load', () => {
 	let search_input = document.getElementById('search-input');
 
 	document.addEventListener('keydown', function(event) {
+		const active = document.activeElement;
+		if (
+			active.tagName === "INPUT" ||
+			active.tagName === "TEXTAREA" ||
+			active.isContentEditable
+		) {
+			return;
+		}
+
 		if (event.shiftKey && event.key === 'R') {
 			event.preventDefault();
 			if (confirm('Randomize Tierlist? (this will shuffle all images in the tierlist)')) {
 				soft_reset_list(true);
 				var dropdown = document.getElementById("dropdown");
 				var dropdownType = document.getElementById("dropdowntype");
-				load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false, true);
+				load_from_anime(
+					window.animeSeasons[dropdown.value],
+					`${dropdown.value} ${dropdownType.value}`,
+					false,
+					true
+				);
 			}
 		}
 	});
 
 	document.addEventListener('keydown', function(event) {
+		const active = document.activeElement;
+		if (
+			active.tagName === "INPUT" ||
+			active.tagName === "TEXTAREA" ||
+			active.isContentEditable
+		) {
+			return;
+		}
+		
 		if (event.shiftKey && event.key === 'M') {
 			event.preventDefault();
 			window.location.href = "./merger.html";
@@ -1006,7 +1029,14 @@ function bind_trash_events() {
 	trash.addEventListener('click', (evt) => {
 		evt.preventDefault();
 		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
-			let animes = window.animeSeasons[dropdown.value];
+			let animeList = window.animeSeasons[dropdown.value];
+
+			let animes = animeList.filter(item => {
+				if (mode === "Anime") return !item.ed && !item.op;
+				if (mode === "Opening") return !item.ed || item.op;
+				if (mode === "Ending") return !item.op || item.ed;
+				return true;
+			});
 
 			let alreadyAdded = Array.from(document.getElementsByClassName('item'));
 			for (let anime of animes) {
