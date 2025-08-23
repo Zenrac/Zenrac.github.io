@@ -313,6 +313,11 @@ window.animeSeasons['Summer 2025'] = [
     "url": "https://myanimelist.net/anime/60505/Necronomico_no_Cosmic_Horror_Show"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1359/150668.jpg",
+    "title": "Muchuu sa, Kimi ni.",
+    "url": "https://myanimelist.net/anime/60130/Muchuu_sa_Kimi_ni"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1866/150935.jpg",
     "title": "Utagoe wa Mille-Feuille",
     "url": "https://myanimelist.net/anime/55689/Utagoe_wa_Mille-Feuille"
