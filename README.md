@@ -6,4 +6,4 @@ A collection of simple, experimental scripts I’ve built and want to share. Fee
 - 0x40 web integration from [Mon's 0x40-web](https://github.com/mon/0x40-web).
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
