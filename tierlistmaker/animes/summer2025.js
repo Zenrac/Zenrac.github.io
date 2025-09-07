@@ -408,5 +408,15 @@ window.animeSeasons['Summer 2025'] = [
     "title": "Neko no Kuro-chan: Ordinary Days",
     "img": "https://cdn.myanimelist.net/images/anime/1008/113384.jpg",
     "url": "https://myanimelist.net/anime/48442/Shikaru_Neko"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1464/150712.jpg",
+    "title": "Ginga Tokkyuu Milky☆Subway",
+    "url": "https://myanimelist.net/anime/61274/Ginga_Tokkyuu_Milky%E2%98%86Subway"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1874/151419.jpg",
+    "title": "Dungeons & Television",
+    "url": "https://myanimelist.net/anime/62238/Dungeons___Television"
   }
 ];
