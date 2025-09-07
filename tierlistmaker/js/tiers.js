@@ -1030,6 +1030,7 @@ function bind_trash_events() {
 		evt.preventDefault();
 		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
 			let animeList = window.animeSeasons[dropdown.value];
+			let mode = document.getElementById("dropdowntype").value;
 
 			let animes = animeList.filter(item => {
 				if (mode === "Anime") return !item.ed && !item.op;
