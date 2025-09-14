@@ -321,6 +321,7 @@ const magicalStoneUrl = "./images/magical_stone.png";
 const primordialStoneUrl = "./images/primordial_stone.png";
 const memoryFragmentUrl = "./images/memory_fragment.png";
 const healthPotionUrl = "./images/health_potion.png";
+const valkUrl = "./images/valk.png";
 
 const followerCrows = [];
 
@@ -2347,7 +2348,7 @@ function tryOpenBdoEnchant() {
       title: "Erm actually...",
       html: `
         You're not skilled enough to go here, come back later and I'll give you free <div style="color: orange">Advice of Valk +150</div><br><br>
-        <img src="https://bdocodex.com/items/new_icon/09_cash/00017800.webp" alt="Advice of Valk +150" style="width:80px; height:auto;">
+        <img src="${valkUrl}" alt="Advice of Valk +150" style="width:80px; height:auto;">
       `,
       confirmButtonText: 'Got it'
     });
