@@ -282,7 +282,7 @@ img.draggable.dragged, .button:active {
 	transition: 200ms linear;
 }
 
-.images.bank.droppable:empty {
+.images.bank.droppabled:empty {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -290,7 +290,7 @@ img.draggable.dragged, .button:active {
     text-align: center;
 }
 
-.images.bank.droppable:empty::before {
+.images.bank.droppabled:empty::before {
 	content: "\f093    Drag and drop images here";
 	font-family: 'Font Awesome 5 Free';
 	font-weight: 900;
@@ -727,4 +727,8 @@ line-height: 1;
     border-radius: 3px;
     pointer-events: none;
     font-size: 24px;
+}
+
+.color-btn.selected {
+    outline: 3px solid black;
 }

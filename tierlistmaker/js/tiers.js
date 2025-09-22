@@ -8,7 +8,18 @@ var seasonType = {
 
 const seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
 
-const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)/i, '');
+const removeExtension = (url) => {
+    return url.replace(/\.(jpg|jpeg|png|webp)/i, '');
+};
+
+const COLOR_LIST = [
+	'Blue',      // #0066CC
+	'Black',     // #000000
+    'Purple',    // #9933FF
+	'Orange',    // #FF9933
+    'Turquoise', // #40E0D0
+	'Magenta', // #FF00FF
+];
 
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
@@ -84,6 +95,145 @@ function importImage(file) {
 	reader.readAsDataURL(file);
 
 	refreshTierListStyle();
+}
+
+function countColorUsage(color) {
+    const badges = document.querySelectorAll('.color-badge');
+    let count = 0;
+    badges.forEach(badge => {
+        const colors = JSON.parse(badge.dataset.colors || '[]');
+        if (colors.includes(color)) count++;
+    });
+    return count;
+}
+
+function makeClickable(container) {
+    const img = container.querySelector('img');
+    let badge = container.querySelector('.color-badge');
+    let selectedColors = badge ? JSON.parse(badge.dataset.colors) : [];
+
+    const buttonsHtml = COLOR_LIST.map(c => `
+        <button 
+            class="color-btn ${selectedColors.includes(c) ? 'selected' : ''}" 
+            data-color="${c}"
+			title="${c}"
+            style="
+                background:${c};
+                width:40px;
+                height:40px;
+                border-radius:50%;
+                border:2px solid white;
+                margin:5px;
+                cursor:pointer;
+                box-shadow:0 0 3px rgba(0,0,0,0.5);
+            ">
+        </button>
+    `).join('');
+
+    Swal.fire({
+        title: 'Choose your colors',
+        html: `<div style="display:flex;flex-wrap:wrap;justify-content:center;">${buttonsHtml}</div>`,
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        didOpen: () => {
+            const btns = Swal.getPopup().querySelectorAll('.color-btn');
+            btns.forEach(btn => {
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+
+                newBtn.addEventListener('click', () => {
+                    const color = newBtn.dataset.color;
+					let max = 3 + (selectedColors.includes(color) ? 1 : 0);
+                    if (countColorUsage(color) >= max) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Limit reached',
+                            text: `You can only use ${color} 3 times in total`
+                        });
+                        return;
+                    }
+
+                    newBtn.classList.toggle('selected');
+                });
+            });
+        },
+        preConfirm: () => {
+            return Array.from(
+                Swal.getPopup().querySelectorAll('.color-btn.selected')
+            ).map(btn => btn.dataset.color);
+        }
+    }).then(result => {
+        if (result.isConfirmed) {
+            if (result.value.length === 0) {
+                if (badge) badge.remove();
+                return;
+            }
+
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'color-badge';
+                badge.style.position = 'absolute';
+                badge.style.top = '5px';
+                badge.style.right = '5px';
+                badge.style.width = '20px';
+                badge.style.height = '20px';
+                badge.style.borderRadius = '50%';
+                badge.style.border = '2px solid white';
+                container.appendChild(badge);
+            }
+
+            badge.dataset.colors = JSON.stringify(result.value);
+
+            if (result.value.length === 1) {
+                badge.style.background = result.value[0];
+            } else {
+                let step = 100 / result.value.length;
+                let gradient = result.value.map((c, i) =>
+                    `${c} ${i * step}% ${(i + 1) * step}%`
+                ).join(', ');
+                badge.style.background = `conic-gradient(${gradient})`;
+            }
+        }
+
+		refreshTierListStyle();
+    });
+}
+
+function addColorBadge(container, color) {
+    let badge = container.querySelector('.color-badge');
+    if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'color-badge';
+        badge.style.position = 'absolute';
+        badge.style.top = '5px';
+        badge.style.right = '5px';
+        badge.style.width = '20px';
+        badge.style.height = '20px';
+        badge.style.borderRadius = '50%';
+        badge.style.border = '2px solid white';
+        badge.dataset.colors = JSON.stringify([]);
+        container.appendChild(badge);
+    }
+
+    let colors = JSON.parse(badge.dataset.colors);
+
+    if (!colors.includes(color)) {
+        if (countColorUsage(color) >= 3) {
+            alert(`You can only use ${color} 3 times in total`);
+            return;
+        }
+        colors.push(color);
+    }
+
+    badge.dataset.colors = JSON.stringify(colors);
+
+    if (colors.length === 1) {
+        badge.style.background = colors[0];
+    } else {
+        let step = 100 / colors.length;
+        let gradient = colors.map((c, i) => `${c} ${i * step}% ${(i + 1) * step}%`).join(', ');
+        badge.style.background = `conic-gradient(${gradient})`;
+    }
 }
 
 function exportImages(format) {
@@ -258,7 +408,6 @@ window.addEventListener('load', () => {
 		changeImageColorBasedOnSearch();
 	});
 
-	// Allow copy-pasting image from clipboard
 	document.onpaste = (evt) => {
 		let clip_data = evt.clipboardData || evt.originalEvent.clipboardData;
 		let items = clip_data.items;
@@ -452,7 +601,6 @@ function initialize_dropdown_tierlists() {
 		if (Array.from(dropdown.options).some(opt => opt.value === desiredValue)) {
 			dropdown.value = desiredValue;
 		} else {
-			// season not yet added
 			dropdownPicker.value = dropdown.value;
 		}
 		dropdown.dispatchEvent(new Event('change', { bubbles: true }));
@@ -463,17 +611,17 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
 
-	let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
-	if (parts) {
-		let base = parts[1];
-		let query = parts[2] || "";
-		let ext = parts[3];
-		src = `${base}${ext}${query}`;
-	}
+    let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
+    if (parts) {
+        let base = parts[1];
+        let query = parts[2] || "";
+        let ext = parts[3];
+        src = `${base}${ext}${query}`;
+    }
 
     if ((title.trim() == "" || url.trim() == "") && window.animeSeasons[dropdown.value]) {
         let anime = window.animeSeasons[dropdown.value].filter(m => removeExtension(m.img).includes(removeExtension(src)));
-		if (anime && anime.length > 0) {
+        if (anime && anime.length > 0) {
             title = anime[0].title;
             url = anime[0].url;
             op = anime[0].op;
@@ -482,7 +630,7 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     }
 
     let img = document.createElement('img');
-	img.src = src;
+    img.src = src;
     img.style.userSelect = 'none';
     img.classList.add('draggable');
     img.title = title;
@@ -496,17 +644,21 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
 
     if (url.trim() != "") {
         img.addEventListener("click", function(event) {
-            let tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
-            if (event.altKey && title) {
-                if (event.ctrlKey || event.metaKey) {
+            if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+            const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+            if (event.ctrlKey && title) {
+                if (event.altKey || event.metaKey) {
                     let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
                     window.open(animeUrl, "_blank");
                 } else {
                     let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
                     window.open(youtubeUrl, "_blank");
                 }
-            } else if (event.ctrlKey || event.metaKey) {
+            } else if (event.altKey || event.metaKey) {
                 window.open(url, "_blank");
+            } else {
+                makeClickable(this.parentNode);
             }
         });
     }
@@ -520,13 +672,10 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     container.appendChild(img);
     container.appendChild(titleSpan);
 
-    let mode = dropdownType.value;
     let badgeText = "";
-    if (op) {
-        badgeText = op
-    } else if (ed) {
-        badgeText = ed
-    }
+    if (op) badgeText = op;
+    else if (ed) badgeText = ed;
+
     if (badgeText) {
         let badge = document.createElement('span');
         badge.classList.add('badge');
@@ -573,7 +722,7 @@ function save_tierlist_json() {
 	var blob = new Blob([json], { type: "application/json" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = title?.innerText ?? 'tierlist';
+    a.download = title?.innerText ?? (dropdown.value + "_" + dropdownType.value + ".json");
     a.click();
 }
 
@@ -593,7 +742,8 @@ function exportTierlistDetails() {
     }
 
     for (const row of animes.rows) {
-        for (const imgId of row.imgs) {
+        for (const anime of row.imgs) {
+			let imgId = anime.src;
             const animeObj = findAnimeObj(imgId);
             let url = animeObj && animeObj.url ? animeObj.url : "";
             let id = "";
@@ -604,12 +754,18 @@ function exportTierlistDetails() {
                 const match = url.match(/anime\/(\d+)/);
                 if (match) id = match[1];
             }
+
+			let img = document.querySelector(`img[src*="${imgId}"]`);
+			let badge = img ? img.parentNode.querySelector('.color-badge') : null;
+			let colors = badge ? JSON.parse(badge.dataset.colors) : [];
+
 			let detail = {
 				imgId: imgId,
 				id: id,
 				url: url,
 				rank: rank++,
-				title: title
+				title: title,
+				colors: colors
 			};
 			if (op !== 1) detail.op = op;
 			if (ed !== 1) detail.ed = ed;
@@ -620,7 +776,8 @@ function exportTierlistDetails() {
     var blob = new Blob([JSON.stringify(details, null, 2)], { type: "application/json" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = (dropdown.value + "_" + dropdownType.value + "_details.json");
+	let title = document.getElementById('title-label');
+	a.download = (title?.innerText ?? (dropdown.value + "_" + dropdownType.value)) + "_details.json";
     a.click();
 }
 
@@ -636,12 +793,19 @@ function save_tierlist() {
             name: rowName,
             imgs: []
         });
-        row.querySelectorAll('img').forEach((img) => {
-            let match = img.src.match(regex);
-            if (match) {
-                serialized_tierlist.rows[i].imgs.push(match[1] + (match[3] || ""));
-            }
-        });
+		row.querySelectorAll('img').forEach((img) => {
+			let match = img.src.match(regex);
+			if (!match) return;
+			let imgId = match[1] + (match[3] || "");
+
+			let badge = img.parentNode.querySelector('.color-badge');
+			let colors = badge ? JSON.parse(badge.dataset.colors) : [];
+
+			serialized_tierlist.rows[i].imgs.push({
+				src: imgId,
+				colors: colors
+			});
+		});
     });
     let untiered_imgs = document.querySelectorAll('.images img');
     if (untiered_imgs.length > 0) {
@@ -668,45 +832,87 @@ function save_tierlist() {
     saveToLocalStorage(saveTierListsCookieName, cookieData);
 }
 
-
 function load_tierlist(serialized_tierlist) {
-	hard_reset_list()
+
+	if (serialized_tierlist.rows === undefined) {
+		alert("Invalid tierlist data");
+		return;
+	}
+    hard_reset_list();
+
 	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
-	if (detected) {
-		var dropdownPicker = document.getElementById("seasonPicker");
-		dropdownPicker.value = detected;
-		var dropdown = document.getElementById("dropdown");
-		dropdown.value = detected;
-	}
-	document.querySelector('.title-label').innerText = serialized_tierlist.title;
-	for (let idx in serialized_tierlist.rows) {
-		let ser_row = serialized_tierlist.rows[idx];
-		let elem = add_row(idx, ser_row.name);
+	
+    if (detected) {
+        var dropdownPicker = document.getElementById("seasonPicker");
+        dropdownPicker.value = detected;
+        var dropdown = document.getElementById("dropdown");
+        dropdown.value = detected;
+    }
 
-		for (let img_src of ser_row.imgs ?? []) {
-			if (!img_src.includes('http')) {
-				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
-			}
-			let img = create_img_with_src(img_src);
-			let items_container = elem.querySelector('.items');
-			items_container.appendChild(img);
-		}
+    document.querySelector('.title-label').innerText = serialized_tierlist.title;
 
-		elem.querySelector('label').innerText = ser_row.name;
-	}
+    for (let idx in serialized_tierlist.rows) {
+        let ser_row = serialized_tierlist.rows[idx];
+        let elem = add_row(idx, ser_row.name);
 
-	if (serialized_tierlist.untiered) {
-		let images = document.querySelector('.images');
-		for (let img_src of serialized_tierlist.untiered) {
-			if (!img_src.includes('http')) {
-				img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
-			}
-			let img = create_img_with_src(img_src);
-			images.appendChild(img);
-		}
-	}
+        for (let img_obj of ser_row.imgs ?? []) {
+            let img_src, colors = [];
+            if (typeof img_obj === 'string') {
+                img_src = img_obj;
+            } else {
+                img_src = img_obj.src;
+                colors = img_obj.colors ?? [];
+            }
 
-	refreshTierListStyle();
+            if (!img_src.includes('http')) {
+                img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+            }
+
+            let img_item = create_img_with_src(img_src);
+            let items_container = elem.querySelector('.items');
+            items_container.appendChild(img_item);
+
+            if (colors.length > 0) {
+                let container = img_item.querySelector('.image-container');
+                addColorBadge(container, colors[0]);
+                for (let i = 1; i < colors.length; i++) {
+                    addColorBadge(container, colors[i]);
+                }
+            }
+        }
+
+        elem.querySelector('label').innerText = ser_row.name;
+    }
+
+    if (serialized_tierlist.untiered) {
+        let images = document.querySelector('.images');
+        for (let img_obj of serialized_tierlist.untiered) {
+            let img_src, colors = [];
+            if (typeof img_obj === 'string') {
+                img_src = img_obj;
+            } else {
+                img_src = img_obj.src;
+                colors = img_obj.colors ?? [];
+            }
+
+            if (!img_src.includes('http')) {
+                img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+            }
+
+            let img_item = create_img_with_src(img_src);
+            images.appendChild(img_item);
+
+            if (colors.length > 0) {
+                let container = img_item.querySelector('.image-container');
+                addColorBadge(container, colors[0]);
+                for (let i = 1; i < colors.length; i++) {
+                    addColorBadge(container, colors[i]);
+                }
+            }
+        }
+    }
+
+    refreshTierListStyle();
 }
 
 function shuffleArray(array) {
@@ -714,33 +920,6 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-}
-
-function create_img_with_label(src, labelText) {
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-
-    const img = document.createElement("img");
-    img.src = src;
-    img.style.display = "block";
-    wrapper.appendChild(img);
-
-    if (labelText) {
-        const label = document.createElement("span");
-        label.innerText = labelText;
-        label.style.position = "absolute";
-        label.style.top = "5px";
-        label.style.left = "5px";
-        label.style.padding = "2px 5px";
-        label.style.backgroundColor = "rgba(0,0,0,0.6)";
-        label.style.color = "white";
-        label.style.fontSize = "0.75rem";
-        label.style.borderRadius = "3px";
-        wrapper.appendChild(label);
-    }
-
-    return wrapper;
 }
 
 function load_from_anime(animeList, title, cookie = true, randomize = false) {
@@ -796,81 +975,48 @@ function end_drag(evt) {
 window.addEventListener('mouseup', end_drag);
 window.addEventListener('dragend', end_drag);
 
-function make_accept_drop(elem, hover = true) {
-	elem.classList.add('droppable');
+function make_accept_drop(elem) {
+    elem.addEventListener('dragover', (evt) => {
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'move';
+        evt.target.classList.add('drag-entered');
+    });
 
-	elem.addEventListener('dragenter', (evt) => {
-		if (hover) {
-			evt.target.classList.add('drag-entered');
-		}
-	});
-	elem.addEventListener('dragleave', (evt) => {
-		evt.target.classList.remove('drag-entered');
-	});
-	elem.addEventListener('dragover', (evt) => {
-		evt.preventDefault();
-	});
-	elem.addEventListener('drop', (evt) => {
-		evt.preventDefault();
-		evt.target.classList.remove('drag-entered');
+    elem.addEventListener('dragleave', (evt) => {
+        evt.target.classList.remove('drag-entered');
+    });
 
-		if (!dragged_image) {
-			return;
-		}
+    elem.addEventListener('drop', (evt) => {
+        evt.preventDefault();
+        evt.target.classList.remove('drag-entered');
 
-		const targetImage = evt.target.closest('span.item');
-		let dragged_image_parent_first = dragged_image.parentNode;
-		let dragged_image_parent = dragged_image.parentNode.parentNode;
+        if (!dragged_image) return;
 
-		if (targetImage === dragged_image_parent) {
-			return;
-		}
+        const targetItem = evt.target.closest('span.item');
+        const draggedItem = dragged_image.closest('span.item');
 
-		if (dragged_image_parent.tagName.toUpperCase() === 'SPAN' &&
-				dragged_image_parent.classList.contains('item')) {
-			// We were already in a tier
-			let containing_tr = dragged_image_parent.parentNode;
-			containing_tr.removeChild(dragged_image_parent);
-		} else {
-			dragged_image_parent.removeChild(dragged_image_parent_first)
-		}
-		let img = create_img_with_src(dragged_image.src)
-		let bank = document.querySelector('.bank');
-		let items_container = elem.querySelector('.items');
-		if (!items_container) {
-			// Quite lazy hack for <section class='images'>
-			items_container = elem;
-		}
-		if (targetImage) {
-			const rect = targetImage.getBoundingClientRect();
-			const mouseX = evt.clientX - rect.left; // Mouse position relative to the target image
-			if (mouseX < rect.width / 2) {
-				// If mouse is on the left half of the target image, insert before
-				items_container.insertBefore(img, targetImage);
-			} else {
-				// If mouse is on the right half of the target image, insert after
-				items_container.insertBefore(img, targetImage.nextSibling);
-			}
-		}
-		else {
-			if (evt.target == bank || evt.target.parentNode == bank) {
-				let firstChild = items_container.firstChild;
-				// Check if firstChild exists
-				if (firstChild) {
-					// If firstChild exists, prepend the new element before it
-					items_container.insertBefore(img, firstChild);
-				} else {
-					// If firstChild does not exist (empty list), simply append the new element to the container
-					items_container.appendChild(img);
-				}
-			}
-			else {
-				items_container.appendChild(img);
-			}
-		}
+        if (targetItem === draggedItem) return;
 
-		refreshTierListStyle();
-	});
+        if (draggedItem.parentNode) {
+            draggedItem.parentNode.removeChild(draggedItem);
+        }
+
+        const container = elem.querySelector('.items') || elem;
+
+        if (targetItem) {
+            const rect = targetItem.getBoundingClientRect();
+            const mouseX = evt.clientX - rect.left;
+            if (mouseX < rect.width / 2) {
+                container.insertBefore(draggedItem, targetItem);
+            } else {
+                container.insertBefore(draggedItem, targetItem.nextSibling);
+            }
+        } else {
+            container.appendChild(draggedItem);
+        }
+
+        refreshTierListStyle();
+    });
 }
 
 function enable_edit_on_click(container, input, label, row = false) {
@@ -1021,7 +1167,6 @@ function recompute_header_colors() {
 
 function bind_trash_events() {
 	let trash = document.getElementById('trash');
-	trash.classList.add('droppable');
 	trash.addEventListener('dragenter', (evt) => {
 		evt.preventDefault();
 		evt.target.src = 'img/trash_bin_open.png';
