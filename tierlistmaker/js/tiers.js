@@ -14,11 +14,10 @@ const removeExtension = (url) => {
 
 const COLOR_LIST = [
 	'Blue',      // #0066CC
-	'Black',     // #000000
-    'Purple',    // #9933FF
-	'Orange',    // #FF9933
-    'Turquoise', // #40E0D0
 	'Magenta', // #FF00FF
+	'Black',     // #000000
+    'Turquoise', // #40E0D0
+	'Orange',    // #FF9933
 ];
 
 const MAX_NAME_LEN = 200;
