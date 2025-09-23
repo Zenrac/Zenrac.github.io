@@ -2991,6 +2991,7 @@ jQuery(document).ready(function($) {
   }, 25);
 
   $('body').on('click', '.play', function(e) {
+    e.preventDefault();
 	  if ($('.fullscreen').length < 1) {
 		  var iframe = document.createElement('iframe');
       var firstSong = 'WRLD';

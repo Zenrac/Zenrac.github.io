@@ -323,6 +323,18 @@ function loadFromLocalStorage(key) {
     return {};
 }
 
+function randomize_tierlist() {
+	soft_reset_list(true);
+	var dropdown = document.getElementById("dropdown");
+	var dropdownType = document.getElementById("dropdowntype");
+	load_from_anime(
+		window.animeSeasons[dropdown.value],
+		`${dropdown.value} ${dropdownType.value}`,
+		false,
+		true
+	);
+}
+
 // Called when page is loaded
 window.addEventListener('load', () => {
 	cookieData = loadFromLocalStorage(saveTierListsCookieName);
@@ -356,15 +368,7 @@ window.addEventListener('load', () => {
 		if (event.shiftKey && event.key === 'R') {
 			event.preventDefault();
 			if (confirm('Randomize Tierlist? (this will shuffle all images in the tierlist)')) {
-				soft_reset_list(true);
-				var dropdown = document.getElementById("dropdown");
-				var dropdownType = document.getElementById("dropdowntype");
-				load_from_anime(
-					window.animeSeasons[dropdown.value],
-					`${dropdown.value} ${dropdownType.value}`,
-					false,
-					true
-				);
+				randomize_tierlist();
 			}
 		}
 	});
@@ -606,6 +610,32 @@ function initialize_dropdown_tierlists() {
 	});
 }
 
+function openVideoModal(searchUrl) {
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.8)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = "9999";
+
+    const iframe = document.createElement("iframe");
+    iframe.src = searchUrl.replace("results?search_query=", "embed/"); // tentative pour un embed direct si possible
+    iframe.style.width = "80%";
+    iframe.style.height = "80%";
+    iframe.allow = "autoplay; encrypted-media";
+    iframe.allowFullscreen = true;
+
+    modal.appendChild(iframe);
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", () => modal.remove());
+}
+
 function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
@@ -643,8 +673,7 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
 
     if (url.trim() != "") {
         img.addEventListener("click", function(event) {
-            if (event.altKey || event.ctrlKey || event.metaKey) return;
-
+			event.preventDefault();
             const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
             if (event.ctrlKey && title) {
                 if (event.altKey || event.metaKey) {
@@ -725,6 +754,13 @@ function save_tierlist_json() {
     a.click();
 }
 
+function findAnimeObj(imgId) {
+	for (const season in window.animeSeasons) {
+		const found = window.animeSeasons[season].find(a => a.img && removeExtension(a.img).includes(removeExtension(imgId)));
+		if (found) return found;
+	}        return null;
+}
+
 function exportTierlistDetails() {
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype");
@@ -732,13 +768,6 @@ function exportTierlistDetails() {
 
     let details = [];
     let rank = 1;
-
-    function findAnimeObj(imgId) {
-        for (const season in window.animeSeasons) {
-            const found = window.animeSeasons[season].find(a => a.img && removeExtension(a.img).includes(removeExtension(imgId)));
-            if (found) return found;
-        }        return null;
-    }
 
     for (const row of animes.rows) {
         for (const anime of row.imgs) {
@@ -1374,5 +1403,145 @@ picker.$el.addEventListener('click', () => {
 	updateSeasons();
 	attachNavListeners();
 	}, 10);
+});
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+function getPosition(img){
+    const tierlistDiv=document.querySelector('.tierlist');
+    const item=img.closest('span.item');
+    const rowElem=item?item.closest('.row'):null;
+    if(!rowElem) return null;
+    const rows=Array.from(tierlistDiv.querySelectorAll('.row'));
+    const rowIndex=rows.indexOf(rowElem);
+    const items=Array.from(rowElem.querySelectorAll('.items .item'));
+    const colIndex=items.indexOf(item);
+    return {rowIndex,colIndex,rowElem,items};
+}
+
+function isBetter(imgA,imgB){
+    const a=getPosition(imgA);
+    const b=getPosition(imgB);
+    if(!a||!b) return null;
+    if(a.rowIndex<b.rowIndex) return true;
+    if(a.rowIndex>b.rowIndex) return false;
+    return a.colIndex<b.colIndex;
+}
+
+function swapElements(el1,el2){
+    const p1=el1.parentNode;
+    const p2=el2.parentNode;
+    const n1=el1.nextSibling===el2?el1:el1.nextSibling;
+    p2.insertBefore(el1,el2);
+    p1.insertBefore(el2,n1);
+	refreshTierListStyle();
+}
+
+function showResult(chosen,other,correct){
+    const chosenTitle=chosen.title||chosen.alt||'Item';
+    const otherTitle=other.title||other.alt||'Item';
+    const msg=correct?
+        `${chosenTitle} is correctly above ${otherTitle}.`:
+        `You chose <b>${escapeHtml(chosenTitle)}</b>, but it is below <b>${escapeHtml(otherTitle)}</b> in your tierlist.`;
+    Swal.fire({
+        icon:correct?'success':'error',
+        title:correct?'Good choice':'Wrong choice',
+        html:msg,
+        showConfirmButton:true,
+        confirmButtonText:'Next',
+        showDenyButton:!correct,
+        denyButtonText:'Swap & Next',
+        customClass: {denyButton:'swal2-confirm'}
+    }).then(res=>{
+        if(res.isConfirmed){openDuelModal();}
+        else if(res.isDenied){swapElements(chosen.closest('.item'),other.closest('.item'));openDuelModal();}
+    });
+}
+
+function openDuelModal(){
+    const tierlistDiv=document.querySelector('.tierlist');
+    if (!tierlistDiv) return;
+    const imgs=Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
+	if (imgs.length < 2) {
+		Swal.fire({
+			icon: 'info',
+			title: 'Not enough items',
+			text: 'Need at least 2 items in the tierlist. Do you want to randomize it?',
+			showCancelButton: true,
+			confirmButtonText: 'Yes, randomize',
+			cancelButtonText: 'No'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				randomize_tierlist();
+			}
+		});
+		return;
+	}
+    let i=Math.floor(Math.random()*imgs.length);
+    let j;do{j=Math.floor(Math.random()*imgs.length);}while(j===i);
+    const imgA=imgs[i],imgB=imgs[j];
+    const titleA=imgA.title||imgA.alt||'',titleB=imgB.title||imgB.alt||'';
+    const html=`
+      <div style="display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:nowrap;">
+        <div class="duel-choice" style="text-align:center;max-width:260px;">
+          <img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:240px;height:auto;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+          <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleA)}</div>
+        </div>
+        <div style="font-weight:bold;align-self:center;">VS</div>
+        <div class="duel-choice" style="text-align:center;max-width:260px;">
+          <img src="${imgB.src}" alt="${escapeHtml(titleB)}" style="width:240px;height:auto;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+          <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleB)}</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:0.9em;margin-top:8px;color:#999;">Click the image you prefer</div>
+    `;
+    Swal.fire({
+        title:'Duel - Which do you prefer?',
+		width:'600px',
+        html:html,
+        showConfirmButton:false,
+        showCancelButton:true,
+        cancelButtonText:'Cancel',
+		didOpen: () => {
+			const popup = Swal.getPopup();
+			const imgsInPopup = popup.querySelectorAll('.duel-choice img');
+
+			// Define these variables
+			var dropdownType = document.getElementById("dropdowntype");
+			var titleA = imgA.title || "";
+			var titleB = imgB.title || "";
+
+			imgsInPopup.forEach(imgEl => {
+				imgEl.addEventListener('click', (event) => {
+					const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+					const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
+
+					if (event.ctrlKey && title) {
+						if (event.altKey || event.metaKey) {
+							let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
+							window.open(animeUrl, "_blank");
+						} else {
+							let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
+							window.open(youtubeUrl, "_blank");
+						}
+					} else if (event.altKey || event.metaKey) {
+						var url = findAnimeObj(imgEl.src).url;
+						window.open(url, "_blank");
+					} else {
+						const chosen = (imgEl.src === imgA.src) ? imgA : imgB;
+						const other = (chosen === imgA) ? imgB : imgA;
+						Swal.close();
+						const better = isBetter(chosen, other);
+						showResult(chosen, other, better);
+					}
+				});
+			});
+		}
+    });
+}
+document.addEventListener('keydown',e=>{
+    const active=document.activeElement;
+    if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA'||active.isContentEditable)) return;
+    if(e.shiftKey&&(e.key==='D'||e.key==='d')){e.preventDefault();openDuelModal();}
 });
 

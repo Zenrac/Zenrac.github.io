@@ -1322,6 +1322,11 @@ body.swal2-height-auto {
   71%  { transform: skewX(7deg) skewY(-7deg); }
 }
 
+.btn {
+  color: white;
+    display: inline-block;
+}
+
 #goodBtn {
   background-color: #28a745;
   color: white;
