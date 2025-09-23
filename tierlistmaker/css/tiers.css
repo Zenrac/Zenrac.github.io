@@ -732,3 +732,8 @@ line-height: 1;
 .color-btn.selected {
     outline: 3px solid black;
 }
+
+body.swal2-shown > [aria-hidden='true'] {
+  transition: 0.1s filter;
+  filter: blur(10px);
+}

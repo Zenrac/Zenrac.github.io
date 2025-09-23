@@ -1090,6 +1090,11 @@ function create_label_input(row, row_idx, row_name) {
 	label.htmlFor = input.id;
 	label.innerText = row_name;
 
+	label.addEventListener('mouseenter', () => {
+        const itemCount = row.querySelectorAll('.item').length;
+        label.title = `${itemCount} item${itemCount !== 1 ? 's' : ''} in this row`;
+    });
+
 	let header = row.querySelector('.header');
 	all_headers.splice(row_idx, 0, [header, input, label]);
 	header.appendChild(label);
@@ -1458,96 +1463,127 @@ function showResult(chosen,other,correct){
     });
 }
 
-function openDuelModal(){
-    const tierlistDiv=document.querySelector('.tierlist');
+function showResult(chosen, other, correct) {
+    const chosenTitle = chosen.title || chosen.alt || 'Item';
+    const otherTitle = other.title || other.alt || 'Item';
+    const msg = correct
+        ? `${chosenTitle} is correctly above ${otherTitle}.`
+        : `You chose <b>${escapeHtml(chosenTitle)}</b>, but it is below <b>${escapeHtml(otherTitle)}</b> in your tierlist.`;
+
+    Swal.fire({
+        icon: correct ? 'success' : 'error',
+        title: correct ? 'Good choice' : 'Wrong choice',
+        html: msg,
+        showConfirmButton: true,
+        confirmButtonText: 'Next',
+        showDenyButton: !correct,
+        denyButtonText: 'Swap & Next',
+        customClass: { denyButton: 'swal2-confirm' }
+    }).then(res => {
+        if (res.isConfirmed) openDuelModal();
+        else if (res.isDenied) {
+            swapElements(chosen.closest('.item'), other.closest('.item'));
+            openDuelModal();
+        }
+    });
+}
+
+function openDuelModal() {
+    const tierlistDiv = document.querySelector('.tierlist');
     if (!tierlistDiv) return;
-    const imgs=Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
-	if (imgs.length < 2) {
-		Swal.fire({
-			icon: 'info',
-			title: 'Not enough items',
-			text: 'Need at least 2 items in the tierlist. Do you want to randomize it?',
-			showCancelButton: true,
-			confirmButtonText: 'Yes, randomize',
-			cancelButtonText: 'No'
-		}).then((result) => {
-			if (result.isConfirmed) {
-				randomize_tierlist();
-			}
-		});
-		return;
-	}
-    let i=Math.floor(Math.random()*imgs.length);
-    let j;do{j=Math.floor(Math.random()*imgs.length);}while(j===i);
-    const imgA=imgs[i],imgB=imgs[j];
-    const titleA=imgA.title||imgA.alt||'',titleB=imgB.title||imgB.alt||'';
-    const html=`
+    const imgs = Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
+	imgs.forEach((img, index) => img.dataset.rank = index);
+    if (imgs.length < 2) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Not enough items',
+            text: 'Need at least 2 items in the tierlist. Do you want to randomize it?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, randomize',
+            cancelButtonText: 'No'
+        }).then(result => {
+            if (result.isConfirmed) randomize_tierlist();
+        });
+        return;
+    }
+
+    let imgA, imgB;
+    if (Math.random() < 0.5) {
+        imgA = imgs[Math.floor(Math.random() * imgs.length)];
+        const rankA = parseInt(imgA.dataset.rank ?? '0', 10);
+        const similarPool = imgs.filter(img => img !== imgA && Math.abs(parseInt(img.dataset.rank ?? '0', 10) - rankA) <= 1);
+        imgB = similarPool.length > 0
+            ? similarPool[Math.floor(Math.random() * similarPool.length)]
+            : (() => { let tmp; do { tmp = imgs[Math.floor(Math.random() * imgs.length)]; } while (tmp === imgA); return tmp; })();
+    } else {
+        let i = Math.floor(Math.random() * imgs.length);
+        let j; do { j = Math.floor(Math.random() * imgs.length); } while (j === i);
+        imgA = imgs[i]; imgB = imgs[j];
+    }
+
+    const titleA = imgA.title || imgA.alt || '';
+    const titleB = imgB.title || imgB.alt || '';
+    const rankDiff = Math.abs((parseInt(imgA.dataset.rank ?? 0, 10)) - (parseInt(imgB.dataset.rank ?? 0, 10)));
+
+    const html = `
       <div style="display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:nowrap;">
         <div class="duel-choice" style="text-align:center;max-width:260px;">
-          <img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:240px;height:auto;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+          <img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
           <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleA)}</div>
         </div>
         <div style="font-weight:bold;align-self:center;">VS</div>
         <div class="duel-choice" style="text-align:center;max-width:260px;">
-          <img src="${imgB.src}" alt="${escapeHtml(titleB)}" style="width:240px;height:auto;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+          <img src="${imgB.src}" alt="${escapeHtml(titleB)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
           <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleB)}</div>
         </div>
       </div>
-      <div style="text-align:center;font-size:0.9em;margin-top:8px;color:#999;">Click the image you prefer</div>
+      <div style="text-align:center;font-size:0.9em;margin-top:8px;color:#999;">
+        Click the image you prefer<br />
+		Rank difference: ${rankDiff}
+      </div>
     `;
+
     Swal.fire({
-        title:'Duel - Which do you prefer?',
-		width:'600px',
-        html:html,
-        showConfirmButton:false,
-        showCancelButton:true,
-        cancelButtonText:'Cancel',
-		didOpen: () => {
-			document.body.style.filter = 'blur(5px)';
-			document.body.style.pointerEvents = 'none';
+        title: 'Duel - Which do you prefer?',
+        width: '600px',
+        html: html,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        didOpen: () => {
+            const popup = Swal.getPopup();
+            const imgsInPopup = popup.querySelectorAll('.duel-choice img');
+            const dropdownType = document.getElementById("dropdowntype");
 
-			const popup = Swal.getPopup();
-			const imgsInPopup = popup.querySelectorAll('.duel-choice img');
+            imgsInPopup.forEach(imgEl => {
+                imgEl.addEventListener('click', event => {
+                    const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+                    const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
 
-			var dropdownType = document.getElementById("dropdowntype");
-			var titleA = imgA.title || "";
-			var titleB = imgB.title || "";
-
-			imgsInPopup.forEach(imgEl => {
-				imgEl.addEventListener('click', (event) => {
-					const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
-					const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
-
-					if (event.ctrlKey && title) {
-						if (event.altKey || event.metaKey) {
-							let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
-							window.open(animeUrl, "_blank");
-						} else {
-							let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
-							window.open(youtubeUrl, "_blank");
-						}
-					} else if (event.altKey || event.metaKey) {
-						var url = findAnimeObj(imgEl.src).url;
-						window.open(url, "_blank");
-					} else {
-						const chosen = (imgEl.src === imgA.src) ? imgA : imgB;
-						const other = (chosen === imgA) ? imgB : imgA;
-						Swal.close();
-						const better = isBetter(chosen, other);
-						showResult(chosen, other, better);
-					}
-				});
-			});
-		},
-		willClose: () => {
-			document.body.style.filter = '';
-			document.body.style.pointerEvents = '';
-		}
+                    if (event.ctrlKey && title) {
+                        if (event.altKey || event.metaKey) {
+                            window.open("https://animethemes.moe/search?q=" + encodeURIComponent(title), "_blank");
+                        } else {
+                            window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType), "_blank");
+                        }
+                    } else if (event.altKey || event.metaKey) {
+                        const url = findAnimeObj(imgEl.src).url;
+                        window.open(url, "_blank");
+                    } else {
+                        const chosen = (imgEl.src === imgA.src) ? imgA : imgB;
+                        const other = (chosen === imgA) ? imgB : imgA;
+                        Swal.close();
+                        const better = isBetter(chosen, other);
+                        showResult(chosen, other, better);
+                    }
+                });
+            });
+        },
     });
 }
-document.addEventListener('keydown',e=>{
-    const active=document.activeElement;
-    if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA'||active.isContentEditable)) return;
-    if(e.shiftKey&&(e.key==='D'||e.key==='d')){e.preventDefault();openDuelModal();}
-});
 
+document.addEventListener('keydown', e => {
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+    if (e.shiftKey && (e.key === 'D' || e.key === 'd')) { e.preventDefault(); openDuelModal(); }
+});
