@@ -1329,6 +1329,9 @@ function openAchievementList() {
       cancelButtonText: unlocked['skin'] ? 'Change skin' : 'Celebrate!',
       cancelButtonColor: '#B28E00',
       buttonsStyling: true,
+      didClose: () => {
+        unZoom();
+      }
     }).then((result) => {
       unZoom();
       let unlocked = getUnlockedAchievements();
@@ -2136,6 +2139,7 @@ function changeLevelSovereign() {
 }
 
 function openBdoEnchant() {
+  unZoom();
   const unlocked = getUnlockedAchievements();
   let blackstar = getGameData().blackstar ?? (unlocked['rng'] ? 1 : 0);
   let sovereignLevel = getGameData().sovereign?.level ?? 0;

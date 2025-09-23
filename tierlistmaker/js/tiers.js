@@ -1503,10 +1503,12 @@ function openDuelModal(){
         showCancelButton:true,
         cancelButtonText:'Cancel',
 		didOpen: () => {
+			document.body.style.filter = 'blur(5px)';
+			document.body.style.pointerEvents = 'none';
+
 			const popup = Swal.getPopup();
 			const imgsInPopup = popup.querySelectorAll('.duel-choice img');
 
-			// Define these variables
 			var dropdownType = document.getElementById("dropdowntype");
 			var titleA = imgA.title || "";
 			var titleB = imgB.title || "";
@@ -1536,6 +1538,10 @@ function openDuelModal(){
 					}
 				});
 			});
+		},
+		willClose: () => {
+			document.body.style.filter = '';
+			document.body.style.pointerEvents = '';
 		}
     });
 }
