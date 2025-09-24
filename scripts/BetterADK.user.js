@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.79
+// @version      1.80
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1631,12 +1631,12 @@
                             return;
                         }
                         elm.addEventListener('change', (event) => {
-                            adklistInput.value = Math.round(event.target.value > 10 ? event.target.value / 10 : event.target.value);
+                            adklistInput.value = Math.round(event.target.value >= 10 ? event.target.value / 10 : event.target.value);
                             document.getElementById("watchlist").click()
                         });
 
                         setInterval(() => {
-                            var valueToSet = Math.round(elm.value > 10 ? elm.value / 10 : elm.value);
+                            var valueToSet = Math.round(elm.value >= 10 ? elm.value / 10 : elm.value);
                             if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
                                 if (adklistSeasonInput.value > currentSeason) {
                                     return;
