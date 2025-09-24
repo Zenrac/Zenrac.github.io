@@ -1608,3 +1608,7 @@ body.swal2-height-auto {
   margin: auto;
   align-self: center;
 }
+
+.freed {
+  z-index: 999999;
+}
