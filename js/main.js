@@ -1724,7 +1724,7 @@ function spawnCrow() {
 function randomSpawnLoop(firstSkipped = false) {
   if (document.visibilityState === 'visible') {
     const bossSwall = document.querySelector('.boss-popup');
-    if (!bossSwall) {
+    if (!bossSwall && !$('#crow-perch').hasClass('hidden')) {
       if (firstSkipped) {
         const random = Math.random();
 
