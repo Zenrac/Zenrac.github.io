@@ -116,16 +116,7 @@ function makeClickable(container) {
             class="color-btn ${selectedColors.includes(c) ? 'selected' : ''}" 
             data-color="${c}"
 			title="${c}"
-            style="
-                background:${c};
-                width:40px;
-                height:40px;
-                border-radius:50%;
-                border:2px solid white;
-                margin:5px;
-                cursor:pointer;
-                box-shadow:0 0 3px rgba(0,0,0,0.5);
-            ">
+            style="background:${c};">
         </button>
     `).join('');
 

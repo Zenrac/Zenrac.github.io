@@ -730,7 +730,20 @@ line-height: 1;
 }
 
 .color-btn.selected {
-    outline: 3px solid black;
+  outline: 5px solid white;
+  border: none !important;
+  outline-offset: 3px;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+.color-btn {
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:3px solid black;
+    margin:5px;
+    cursor:pointer;
 }
 
 body.swal2-shown > [aria-hidden='true'] {
