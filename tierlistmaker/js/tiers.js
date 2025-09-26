@@ -39,8 +39,6 @@ let cookieData = {}
 
 let unique_id = 0;
 
-let unsaved_changes = false;
-
 // Contains [[header, input, label]]
 let all_headers = [];
 let headers_orig_min_width;
@@ -89,7 +87,6 @@ function importImage(file) {
 	reader.addEventListener('load', (load_evt) => {
 		let img = create_img_with_src(load_evt.target.result);
 		images.appendChild(img);
-		unsaved_changes = true;
 	});
 	reader.readAsDataURL(file);
 
@@ -295,7 +292,6 @@ function soft_reset_list(resetRows = false) {
 		}
 		recompute_header_colors();
 	}
-	unsaved_changes = true;
 }
 
 function saveToLocalStorage(key, value) {
@@ -413,7 +409,6 @@ window.addEventListener('load', () => {
 				reader.onload = (load_evt) => {
 					let img = create_img_with_src(load_evt.target.result);
 					images.appendChild(img);
-					unsaved_changes = true;
 				};
 				reader.readAsDataURL(blob);
 			}
@@ -504,15 +499,6 @@ window.addEventListener('load', () => {
 	} else {
 		dropdownType.dispatchEvent(new Event('change', { bubbles: true }));
 	}
-
-
-	window.addEventListener('beforeunload', (evt) => {
-		return null;
-		// if (!unsaved_changes) return null;
-		// var msg = "You have unsaved changes. Leave anyway?";
-		// (evt || window.event).returnValue = msg;
-		// return msg;
-	});
 });
 
 function refreshTierListStyle() {
@@ -520,9 +506,11 @@ function refreshTierListStyle() {
 	resize_headers();
 	changeImageColorBasedOnSearch();
 
-	save_tierlist();
-
-	unsaved_changes = true;
+	const urlParams = new URLSearchParams(window.location.search);
+	const merged = urlParams.get('merged');
+	if (merged !== 'true') {
+		save_tierlist();
+	}
 }
 
 function isDefaultTierlist(data) {
@@ -557,7 +545,7 @@ function initialize_dropdown_type() {
 
 	dropdown.selectedIndex = 0;
 	dropdownType.selectedIndex = 0;
-	picker.selectDate(new Date());
+	picker._setInputValue(new Date());
 
 	for (var season in seasonType) {
 		var option = document.createElement("option");
@@ -862,10 +850,10 @@ function load_tierlist(serialized_tierlist) {
 	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
 	
     if (detected) {
-        var dropdownPicker = document.getElementById("seasonPicker");
-        dropdownPicker.value = detected;
-        var dropdown = document.getElementById("dropdown");
-        dropdown.value = detected;
+		var dropdownPicker = document.getElementById("seasonPicker");
+		dropdownPicker.value = detected;
+		var dropdown = document.getElementById("dropdown");
+		dropdown.value = detected;
     }
 
     document.querySelector('.title-label').innerText = serialized_tierlist.title;
@@ -930,8 +918,8 @@ function load_tierlist(serialized_tierlist) {
             }
         }
     }
-
-    refreshTierListStyle();
+	
+	refreshTierListStyle();
 }
 
 function shuffleArray(array) {
@@ -1431,27 +1419,6 @@ function swapElements(el1,el2){
     p2.insertBefore(el1,el2);
     p1.insertBefore(el2,n1);
 	refreshTierListStyle();
-}
-
-function showResult(chosen,other,correct){
-    const chosenTitle=chosen.title||chosen.alt||'Item';
-    const otherTitle=other.title||other.alt||'Item';
-    const msg=correct?
-        `${chosenTitle} is correctly above ${otherTitle}.`:
-        `You chose <b>${escapeHtml(chosenTitle)}</b>, but it is below <b>${escapeHtml(otherTitle)}</b> in your tierlist.`;
-    Swal.fire({
-        icon:correct?'success':'error',
-        title:correct?'Good choice':'Wrong choice',
-        html:msg,
-        showConfirmButton:true,
-        confirmButtonText:'Next',
-        showDenyButton:!correct,
-        denyButtonText:'Swap & Next',
-        customClass: {denyButton:'swal2-confirm'}
-    }).then(res=>{
-        if(res.isConfirmed){openDuelModal();}
-        else if(res.isDenied){swapElements(chosen.closest('.item'),other.closest('.item'));openDuelModal();}
-    });
 }
 
 function showResult(chosen, other, correct) {
