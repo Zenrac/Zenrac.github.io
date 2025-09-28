@@ -750,3 +750,70 @@ body.swal2-shown > [aria-hidden='true'] {
   transition: 0.1s filter;
   filter: blur(10px);
 }
+
+.icon a i {
+	color: white;
+	font-size: 30px;
+	padding: 10px;
+	background-color: #232830;
+	transition: 0.3s;
+	border-radius: 5px;
+}
+
+.icon a i:hover {
+	cursor: pointer;
+}
+
+.mal a:hover {
+ background-color: #2E51A2;
+}
+.youtube a i:hover {
+	background-color: #FF0000;
+}
+
+.animetheme svg:hover {
+  transition: 0.3s;
+  background-color: #75ead4;
+}
+
+.icon.color-selector a:hover i {
+    background-color: #ffcc00;
+    cursor: pointer;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+}
+
+.icon a i {
+  color: white;
+  font-size: 30px;
+  padding: 10px;
+  background-color: #232830;
+  transition: 0.3s;
+  border-radius: 5px;
+}
+
+.si-a {
+  display: flex;
+	background-color: #232830;
+  width: 50px;
+  height: 50px;
+  transition: 0.3s;
+  border-radius: 5px;
+}
+
+.si-mal {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  background-color: white !important;
+  -webkit-mask: url("https://unpkg.com/simple-icons@latest/icons/myanimelist.svg") no-repeat center;
+  -webkit-mask-size: contain;
+  mask: url("https://unpkg.com/simple-icons@latest/icons/myanimelist.svg") no-repeat center;
+    mask-size: auto;
+  mask-size: contain;
+  margin: auto;
+  align-self: center;
+}

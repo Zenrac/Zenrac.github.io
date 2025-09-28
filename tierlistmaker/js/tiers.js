@@ -15,10 +15,16 @@ const removeExtension = (url) => {
 const COLOR_LIST = [
 	'Blue',      // #0066CC
 	'Magenta', // #FF00FF
-	'Black',     // #000000
     'Turquoise', // #40E0D0
 	'Orange',    // #FF9933
 ];
+
+const COLOR_NAME_MAP = {
+	'Blue': 'Zenrac',
+	'Magenta': 'Roka',
+	'Turquoise': 'Froslame',
+	'Orange': 'Atlas'
+};
 
 const MAX_NAME_LEN = 200;
 const DEFAULT_TIERS = ['S','A','B','C','D'];
@@ -103,7 +109,76 @@ function countColorUsage(color) {
     return count;
 }
 
-function makeClickable(container) {
+function openInfoModal(img) {
+    if (!img) return;
+    const title = img.title || img.alt || "";
+    const src = img.src;
+    const dropdownType = document.getElementById("dropdowntype");
+    const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+    
+    let animeUrl = "";
+    if (window.animeSeasons) {
+        const dropdown = document.getElementById("dropdown");
+        const anime = window.animeSeasons[dropdown.value]?.find(a => removeExtension(a.img) === removeExtension(src));
+        if (anime) animeUrl = anime.url || "";
+    }
+
+	const tierlistDiv = document.querySelector('.tierlist');
+	const imgs = Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
+	const index = imgs.indexOf(img);
+	const rank = index >= 0 ? index + 1 : "N/A";
+
+    const html = `
+      <div style="text-align:center;">
+        <img src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
+
+		<div style="margin-bottom:8px;font-weight:bold;">
+		Current Rank: ${rank}
+		</div>
+
+        <div style="display:flex;justify-content:center;gap:10px;">
+          <div class="icon mal">
+            <a class="si-a" href="${animeUrl}" target="_blank">
+              <i class="si-mal"></i>
+            </a>
+          </div>
+          <div class="icon animetheme">
+            <a class="si-a" href="https://animethemes.moe/search?q=${encodeURIComponent(title)}" target="_blank">
+              <svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
+                <polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
+                <polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
+              </svg>
+            </a>
+          </div>
+          <div class="icon youtube">
+            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + " " + tierListType)}" target="_blank">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+			<div class="icon color-selector">
+				<a href="javascript:void(0);" title="Choose colors">
+					<i class="fas fa-palette"></i>
+				</a>
+			</div>
+        </div>
+      </div>
+    `;
+
+    Swal.fire({
+        title: escapeHtml(title),
+        html: html,
+        showConfirmButton: false,
+        showCloseButton: true,
+        width: '600px',
+		didOpen: () => {
+			const popup = Swal.getPopup();
+			const colorBtn = popup.querySelector('.color-selector a');
+			colorBtn?.addEventListener('click', () => openColorSelector(img.parentNode));
+		}
+    });
+}
+
+function openColorSelector(container) {
     const img = container.querySelector('img');
     let badge = container.querySelector('.color-badge');
     let selectedColors = badge ? JSON.parse(badge.dataset.colors) : [];
@@ -112,7 +187,7 @@ function makeClickable(container) {
         <button 
             class="color-btn ${selectedColors.includes(c) ? 'selected' : ''}" 
             data-color="${c}"
-			title="${c}"
+			title="${c} - ${COLOR_NAME_MAP[c] || ''}")}"
             style="background:${c};">
         </button>
     `).join('');
@@ -664,9 +739,11 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
                 }
             } else if (event.altKey || event.metaKey) {
                 window.open(url, "_blank");
+            } else if (event.shiftKey){
+                openColorSelector(this.parentNode);
             } else {
-                makeClickable(this.parentNode);
-            }
+				openInfoModal(this);
+			}
         });
     }
 

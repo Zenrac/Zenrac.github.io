@@ -1340,8 +1340,9 @@ body.swal2-height-auto {
 }
 
 .btn {
+  font-weight: bold;
   color: white;
-    display: inline-block;
+  display: inline-block;
 }
 
 #goodBtn {
