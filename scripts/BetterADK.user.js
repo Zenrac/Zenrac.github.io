@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.80
+// @version      1.81
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -156,7 +156,7 @@
                             if (allWordsPresent) {
                                 bestLink = configNyaaShortcut === "download"
                                     ? row.querySelector("a[href$='.torrent']")
-                                    : row.querySelector("a[href^='magnet:']");
+                                : row.querySelector("a[href^='magnet:']");
                                 if (bestLink) break;
                             }
                         }
@@ -169,7 +169,7 @@
                     const row = firstIcon.closest('tr');
                     bestLink = configNyaaShortcut === "download"
                         ? row.querySelector("a[href$='.torrent']")
-                        : row.querySelector("a[href^='magnet:']");
+                    : row.querySelector("a[href^='magnet:']");
                 }
 
                 if (bestLink) {
@@ -1528,62 +1528,62 @@
                             // adklistInput.value = Math.min(document.getElementById("watchlist-episode").dataset.max, event.target.value)
                             document.getElementById("watchlist").click()
                         });
-                        setInterval(() => {
-                            var toSave = false;
-                            var watchlistEpisodeElement = document.getElementById("watchlist-episode");
-                            var valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
+                        setTimeout(() => {
+                            setInterval(() => {
+                                let toSave = false;
 
-                            if (!watchlistEpisodeElement) return;
-                            if (!malContent) return;
-                            if (mal_id != 0) {
-                                // more accurate calcul of episode if mal sync is in mal mod
-                                let seasonsTest = malContent.filter(a => Number(a.saison) == currentSeason && Number(a.anime_id) == adk_id).sort((a, b) => Number(a.mal_id) - Number(b.mal_id))
-                                if (seasonsTest.length > 1) {
-                                    for (let season of seasonsTest) {
-                                        let total = Number(season.total);
-                                        if (total == 0) break;
-                                        if (season.mal_id == mal_id) break;
-                                        valueToSet += total;
+                                const watchlistEpisodeElement = document.getElementById("watchlist-episode");
+                                if (!watchlistEpisodeElement) return;
+                                if (!malContent) return;
+
+                                let valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
+
+                                if (mal_id != 0) {
+                                    let animeSegments = malContent
+                                    .filter(a => Number(a.anime_id) == adk_id)
+                                    .reduce((acc, curr) => {
+                                        const saison = Number(curr.saison);
+                                        if (!acc[saison] || Number(curr.total) > Number(acc[saison].total)) {
+                                            acc[saison] = curr;
+                                        }
+                                        return acc;
+                                    }, {});
+
+                                    animeSegments = Object.values(animeSegments).sort((a, b) => Number(a.mal_id) - Number(b.mal_id));
+
+
+                                    let offset = 0;
+                                    for (let segment of animeSegments) {
+                                        if (segment.mal_id == mal_id) break;
+                                        offset += Number(segment.total);
+                                    }
+
+                                    valueToSet += offset;
+                                }
+
+                                if (adklistSeasonInput && adklistSeasonInput.type !== "hidden") {
+                                    if (adklistSeasonInput.value > currentSeason) {
+                                        return;
+                                    }
+                                    const maxSeasonSite = Number(document.getElementById("watchlist-saison").dataset.max);
+                                    let seasonToSet = Math.min(currentSeason, maxSeasonSite);
+                                    if (adklistSeasonInput.value != seasonToSet) {
+                                        adklistSeasonInput.value = seasonToSet;
+                                        toSave = true;
                                     }
                                 }
-                            }
-                            if (adklistSeasonInput && adklistSeasonInput.type != "hidden" && valueToSet != 0) {
-                                var seasonToSet = Math.min(document.getElementById("watchlist-saison").dataset.max, currentSeason);
-                                if (adklistSeasonInput.value > currentSeason) {
-                                    return;
-                                }
-                                if (adklistSeasonInput.value != seasonToSet && seasonToSet != 0) {
-                                    adklistSeasonInput.value = seasonToSet
+
+                                if (watchlistEpisodeElement.value != valueToSet && document.activeElement != elm) {
+                                    watchlistEpisodeElement.value = valueToSet;
                                     toSave = true;
                                 }
-                            }
 
-                            let maxEpisodes = (document.getElementById("malTotal").innerText != "?") ? parseInt(document.getElementById("malTotal").innerText) : Number.MAX_SAFE_INTEGER;
-                            if (valueToSet == maxEpisodes) {
-                                if (watchlistEpisodeElement.value > valueToSet && !toSave && seasonsRestartEpisodeNumbering) {
-                                    return;
+                                if (toSave) {
+                                    document.getElementById("watchlist").click();
                                 }
-                            }
 
-                            if (seasonToSet > 1 && !seasonsRestartEpisodeNumbering) {
-                                let activedElement = document.getElementsByClassName("actived")[0];
-                                let episodesSameSeason = document.getElementsByClassName("actived")[0].parentNode.getElementsByTagName("li");
-                                episodesSameSeason = Array.from(episodesSameSeason).filter(episode => {
-                                    let episodeName = episode.innerText.toLowerCase();
-                                    return !episodeName.match(/episode (\d+)/) || parseInt(episodeName.match(/episode (\d+)/)[1]) !== 0;
-                                });
-                                if (episodesSameSeason[valueToSet - 1]) {
-                                    valueToSet = episodesSameSeason[valueToSet - 1].dataset.epnumber;
-                                }
-                            }
-                            if (adklistInput.value != valueToSet && document.activeElement != elm && valueToSet != 0) {
-                                adklistInput.value = valueToSet
-                                toSave = true;
-                            }
-                            if (toSave) {
-                                document.getElementById("watchlist").click()
-                            }
-                        }, 100);
+                            }, 100);
+                        }, 1000);
                     });
 
                     waitForElm('#malStatus').then((elm) => {
