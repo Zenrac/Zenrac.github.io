@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.81
+// @version      1.82
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1531,43 +1531,61 @@
                         setTimeout(() => {
                             setInterval(() => {
                                 let toSave = false;
+                                let offset = 0;
 
                                 const watchlistEpisodeElement = document.getElementById("watchlist-episode");
                                 if (!watchlistEpisodeElement) return;
                                 if (!malContent) return;
 
-                                let valueToSet = Math.min(watchlistEpisodeElement.dataset.max, elm.value);
+                                let valueToSet = Number(elm.value);
+                                let animeSegments = [];
 
                                 if (mal_id != 0) {
-                                    let animeSegments = malContent
-                                    .filter(a => Number(a.anime_id) == adk_id)
-                                    .reduce((acc, curr) => {
-                                        const saison = Number(curr.saison);
-                                        if (!acc[saison] || Number(curr.total) > Number(acc[saison].total)) {
-                                            acc[saison] = curr;
+                                    animeSegments = malContent
+                                        .filter(a => Number(a.anime_id) == adk_id)
+                                        .reduce((acc, curr) => {
+                                        const season = Number(curr.saison);
+                                        if (!acc[season] || Number(curr.total) > Number(acc[season].total)) {
+                                            acc[season] = curr;
                                         }
                                         return acc;
                                     }, {});
 
                                     animeSegments = Object.values(animeSegments).sort((a, b) => Number(a.mal_id) - Number(b.mal_id));
 
+                                    const segmentOfMal = animeSegments.find(s => s.mal_id == mal_id);
+                                    const malSeason = segmentOfMal ? Number(segmentOfMal.saison) : currentSeason;
 
-                                    let offset = 0;
-                                    for (let segment of animeSegments) {
-                                        if (segment.mal_id == mal_id) break;
-                                        offset += Number(segment.total);
+                                    if (malSeason != currentSeason) {
+                                        for (let segment of animeSegments) {
+                                            if (segment.mal_id == mal_id) break;
+                                            offset += Number(segment.total);
+                                        }
+                                        valueToSet += offset;
                                     }
 
-                                    valueToSet += offset;
+                                    const seasonContainer = Array.from(document.querySelectorAll(".saison-container"))
+                                    .find(sc => {
+                                        const s = sc.querySelector(".saison")?.textContent.trim();
+                                        if (!s) return false;
+                                        const match = s.match(/\d+/);
+                                        return match && Number(match[0]) == currentSeason;
+                                    });
+
+                                    if (seasonContainer) {
+                                        let epList = Array.from(seasonContainer.querySelectorAll("li[data-epnumber]")).filter(li => Number(li.dataset.epnumber) > 0);
+                                        const index = (Number(elm.value) + offset) - 1;
+                                        if (index >= 0 && index < epList.length) {
+                                            valueToSet = Number(epList[index].dataset.epnumber);
+                                        }
+                                    }
                                 }
 
                                 if (adklistSeasonInput && adklistSeasonInput.type !== "hidden") {
-                                    if (adklistSeasonInput.value > currentSeason) {
-                                        return;
-                                    }
+                                    if (Number(adklistSeasonInput.value) > currentSeason) return;
                                     const maxSeasonSite = Number(document.getElementById("watchlist-saison").dataset.max);
                                     let seasonToSet = Math.min(currentSeason, maxSeasonSite);
-                                    if (adklistSeasonInput.value != seasonToSet) {
+                                    if (Number(adklistSeasonInput.value) !== seasonToSet) {
                                         adklistSeasonInput.value = seasonToSet;
                                         toSave = true;
                                     }
@@ -1584,6 +1602,7 @@
 
                             }, 100);
                         }, 1000);
+
                     });
 
                     waitForElm('#malStatus').then((elm) => {
