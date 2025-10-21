@@ -261,11 +261,6 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/62066/Monster_Strike__Deadverse_Reloaded"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1508/152511.jpg",
-    "title": "Sawaranaide Kotesashi-kun Mini Anime Gekijou",
-    "url": "https://myanimelist.net/anime/62682/Sawaranaide_Kotesashi-kun_Mini_Anime_Gekijou"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
     "title": "Gachiakuta",
     "url": "https://myanimelist.net/anime/59062/Gachiakuta"
@@ -314,21 +309,6 @@ window.animeSeasons['Fall 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1500/151301.jpg",
     "title": "Disney Twisted-Wonderland The Animation: Episode of Heartslabyul",
     "url": "https://myanimelist.net/anime/50139/Disney_Twisted-Wonderland_The_Animation__Episode_of_Heartslabyul"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1724/152393.jpg",
-    "title": "Kikaijikake no Marie Mini Anime Episode 0",
-    "url": "https://myanimelist.net/anime/62632/Kikaijikake_no_Marie_Mini_Anime_Episode_0"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1309/152473.jpg",
-    "title": "Kikaijikake no Marie Mini Anime",
-    "url": "https://myanimelist.net/anime/62674/Kikaijikake_no_Marie_Mini_Anime"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1747/152435.jpg",
-    "title": "One Punch Man 2nd Season: Ichigeki de Wakaru! Maji Furikaeri!",
-    "url": "https://myanimelist.net/anime/62653/One_Punch_Man_2nd_Season__Ichigeki_de_Wakaru_Maji_Furikaeri"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1347/151708.jpg",
