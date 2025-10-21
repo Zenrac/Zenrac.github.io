@@ -256,14 +256,14 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/61184/Nohara_Hiroshi__Hiru_Meshi_no_Ryuugi"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1336/152128.jpg",
-    "title": "Muzik Tiger In the Forest 2nd Season",
-    "url": "https://myanimelist.net/anime/61924/Muzik_Tiger_In_the_Forest_2nd_Season"
+    "img": "https://cdn.myanimelist.net/images/anime/1090/151875.jpg",
+    "title": "Monster Strike: Deadverse Reloaded",
+    "url": "https://myanimelist.net/anime/62066/Monster_Strike__Deadverse_Reloaded"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1153/152436.jpg",
-    "title": "Princess Catch! Tiniping",
-    "url": "https://myanimelist.net/anime/62654/Princess_Catch_Tiniping"
+    "img": "https://cdn.myanimelist.net/images/anime/1508/152511.jpg",
+    "title": "Sawaranaide Kotesashi-kun Mini Anime Gekijou",
+    "url": "https://myanimelist.net/anime/62682/Sawaranaide_Kotesashi-kun_Mini_Anime_Gekijou"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
@@ -286,9 +286,19 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1703/137216.jpg",
+    "title": "Pokemon (2023)",
+    "url": "https://myanimelist.net/anime/53876/Pokemon_2023"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1904/150649.jpg",
     "title": "Futari Solo Camp",
     "url": "https://myanimelist.net/anime/60665/Futari_Solo_Camp"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
+    "title": "Princession Orchestra",
+    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
@@ -301,9 +311,24 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1150/152188.jpg",
-    "title": "Oshi ga Buka ni Narimashita",
-    "url": "https://myanimelist.net/anime/62548/Oshi_ga_Buka_ni_Narimashita"
+    "img": "https://cdn.myanimelist.net/images/anime/1500/151301.jpg",
+    "title": "Disney Twisted-Wonderland The Animation: Episode of Heartslabyul",
+    "url": "https://myanimelist.net/anime/50139/Disney_Twisted-Wonderland_The_Animation__Episode_of_Heartslabyul"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1724/152393.jpg",
+    "title": "Kikaijikake no Marie Mini Anime Episode 0",
+    "url": "https://myanimelist.net/anime/62632/Kikaijikake_no_Marie_Mini_Anime_Episode_0"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1309/152473.jpg",
+    "title": "Kikaijikake no Marie Mini Anime",
+    "url": "https://myanimelist.net/anime/62674/Kikaijikake_no_Marie_Mini_Anime"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1747/152435.jpg",
+    "title": "One Punch Man 2nd Season: Ichigeki de Wakaru! Maji Furikaeri!",
+    "url": "https://myanimelist.net/anime/62653/One_Punch_Man_2nd_Season__Ichigeki_de_Wakaru_Maji_Furikaeri"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1347/151708.jpg",
@@ -314,5 +339,15 @@ window.animeSeasons['Fall 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
     "title": "Ansatsu Kyoushitsu 2nd Season",
     "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1635/140669.jpg",
+    "title": "Hasan Fugou: The Richest Man in Game",
+    "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1537/152271.jpg",
+    "title": "Aru Hi, Ohime-sama ni Natte shimatta Ken ni Tsuite",
+    "url": "https://myanimelist.net/anime/57353/Mofa_Gongzhu_de_Xiao_Fannao"
   }
 ];
