@@ -6,11 +6,6 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/52807/One_Punch_Man_3"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
-    "title": "Gachiakuta",
-    "url": "https://myanimelist.net/anime/59062/Gachiakuta"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1697/151793.jpg",
     "title": "Spy x Family Season 3",
     "url": "https://myanimelist.net/anime/59027/Spy_x_Family_Season_3"
@@ -24,11 +19,6 @@ window.animeSeasons['Fall 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1140/152364.jpg",
     "title": "Fumetsu no Anata e Season 3",
     "url": "https://myanimelist.net/anime/54703/Fumetsu_no_Anata_e_Season_3"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1474/150666.jpg",
-    "title": "Tougen Anki",
-    "url": "https://myanimelist.net/anime/58811/Tougen_Anki"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1190/151754.jpg",
@@ -47,18 +37,8 @@ window.animeSeasons['Fall 2025'] = [
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1276/151118.jpg",
-    "title": "Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga",
+    "title": "Sutetsuyo",
     "url": "https://myanimelist.net/anime/61026/Ansatsusha_de_Aru_Ore_no_Status_ga_Yuusha_yori_mo_Akiraka_ni_Tsuyoi_no_da_ga"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1502/150545.jpg",
-    "title": "Watari-kun no xx ga Houkai Sunzen",
-    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1011/152084.jpg",
-    "title": "Ranma ½ (2024) 2nd Season",
-    "url": "https://myanimelist.net/anime/60564/Ranma_%C2%BD_2024_2nd_Season"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1364/151767.jpg",
@@ -66,14 +46,14 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/59267/Sanda"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1011/152084.jpg",
+    "title": "Ranma ½ (2024) 2nd Season",
+    "url": "https://myanimelist.net/anime/60564/Ranma_½_2024_2nd_Season"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1191/152368.jpg",
     "title": "Watashi wo Tabetai, Hitodenashi",
     "url": "https://myanimelist.net/anime/60168/Watashi_wo_Tabetai_Hitodenashi"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1830/145051.jpg",
-    "title": "Yasei no Last Boss ga Arawareta!",
-    "url": "https://myanimelist.net/anime/59644/Yasei_no_Last_Boss_ga_Arawareta"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1294/151734.jpg",
@@ -81,19 +61,24 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/61917/Towa_no_Yuugure"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1830/145051.jpg",
+    "title": "Yasei no Last Boss ga Arawareta!",
+    "url": "https://myanimelist.net/anime/59644/Yasei_no_Last_Boss_ga_Arawareta"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1651/152063.jpg",
     "title": "Nageki no Bourei wa Intai shitai Part 2",
     "url": "https://myanimelist.net/anime/60619/Nageki_no_Bourei_wa_Intai_shitai_Part_2"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1163/151246.jpg",
+    "title": "My Gift Lvl 9999 Unlimited Gacha",
+    "url": "https://myanimelist.net/anime/60303/Shinjiteita_Nakama-tachi_ni_Dungeon_Okuchi_de_Korosarekaketa_ga_Gift_Mugen_Gacha_de_Level_9999_no_Nakama-tachi_wo_Te_ni_Irete_Moto_Party_Member_to_Sekai_ni_Fukushuu___Zamaa_Shimasu"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1257/152233.jpg",
     "title": "Bukiyou na Senpai.",
     "url": "https://myanimelist.net/anime/60531/Bukiyou_na_Senpai"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1163/151246.jpg",
-    "title": "Shinjiteita Nakama-tachi ni Dungeon Okuchi de Korosarekaketa ga Gift \"Mugen Gacha\" de Level 9999 no Nakama-tachi wo Te ni Irete Moto Party Member to Sekai ni Fukushuu & \"Zamaa!\" Shimasu!",
-    "url": "https://myanimelist.net/anime/60303/Shinjiteita_Nakama-tachi_ni_Dungeon_Okuchi_de_Korosarekaketa_ga_Gift_Mugen_Gacha_de_Level_9999_no_Nakama-tachi_wo_Te_ni_Irete_Moto_Party_Member_to_Sekai_ni_Fukushuu___Zamaa_Shimasu"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1721/151097.jpg",
@@ -116,6 +101,16 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/60162/Akujiki_Reijou_to_Kyouketsu_Koushaku"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1289/151136.jpg",
+    "title": "Sozai Saishuka no Isekai Ryokouki",
+    "url": "https://myanimelist.net/anime/61174/Sozai_Saishuka_no_Isekai_Ryokouki"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1362/151636.jpg",
+    "title": "The Banished Court Magician Aims to Become the Strongest",
+    "url": "https://myanimelist.net/anime/61276/Mikata_ga_Yowasugite_Hojo_Mahou_ni_Tesshiteita_Kyuutei_Mahoushi_Tsuihou_sarete_Saikyou_wo_Mezasu"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1388/152332.jpg",
     "title": "Yano-kun no Futsuu no Hibi",
     "url": "https://myanimelist.net/anime/60254/Yano-kun_no_Futsuu_no_Hibi"
@@ -124,16 +119,6 @@ window.animeSeasons['Fall 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1478/151722.jpg",
     "title": "Kekkon Yubiwa Monogatari II",
     "url": "https://myanimelist.net/anime/58515/Kekkon_Yubiwa_Monogatari_II"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1362/151636.jpg",
-    "title": "Mikata ga Yowasugite Hojo Mahou ni Tesshiteita Kyuutei Mahoushi, Tsuihou sarete Saikyou wo Mezasu",
-    "url": "https://myanimelist.net/anime/61276/Mikata_ga_Yowasugite_Hojo_Mahou_ni_Tesshiteita_Kyuutei_Mahoushi_Tsuihou_sarete_Saikyou_wo_Mezasu"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1289/151136.jpg",
-    "title": "Sozai Saishuka no Isekai Ryokouki",
-    "url": "https://myanimelist.net/anime/61174/Sozai_Saishuka_no_Isekai_Ryokouki"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1811/151799.jpg",
@@ -166,19 +151,14 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/59623/Wandance"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1971/149410.jpg",
-    "title": "Taiyou yori mo Mabushii Hoshi",
-    "url": "https://myanimelist.net/anime/60969/Taiyou_yori_mo_Mabushii_Hoshi"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1619/151364.jpg",
-    "title": "Kakuriyo no Yadomeshi Ni",
-    "url": "https://myanimelist.net/anime/58772/Kakuriyo_no_Yadomeshi_Ni"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1455/152139.jpg",
     "title": "Toujima Tanzaburou wa Kamen Rider ni Naritai",
     "url": "https://myanimelist.net/anime/61159/Toujima_Tanzaburou_wa_Kamen_Rider_ni_Naritai"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1971/149410.jpg",
+    "title": "Taiyou yori mo Mabushii Hoshi",
+    "url": "https://myanimelist.net/anime/60969/Taiyou_yori_mo_Mabushii_Hoshi"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1025/150482.jpg",
@@ -186,14 +166,14 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/61142/Sawaranaide_Kotesashi-kun"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1619/151364.jpg",
+    "title": "Kakuriyo no Yadomeshi Ni",
+    "url": "https://myanimelist.net/anime/58772/Kakuriyo_no_Yadomeshi_Ni"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1347/150603.jpg",
     "title": "Tensei Akujo no Kuro Rekishi",
     "url": "https://myanimelist.net/anime/58146/Tensei_Akujo_no_Kuro_Rekishi"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1282/151476.jpg",
-    "title": "Kingdom 6th Season",
-    "url": "https://myanimelist.net/anime/61517/Kingdom_6th_Season"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1888/151887.jpg",
@@ -201,9 +181,19 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/60933/Chanto_Suenai_Kyuuketsuki-chan"
   },
   {
+    "img": "https://cdn.myanimelist.net/images/anime/1282/151476.jpg",
+    "title": "Kingdom 6th Season",
+    "url": "https://myanimelist.net/anime/61517/Kingdom_6th_Season"
+  },
+  {
     "img": "https://cdn.myanimelist.net/images/anime/1257/152352.jpg",
     "title": "Gnosia",
     "url": "https://myanimelist.net/anime/60427/Gnosia"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1334/151773.jpg",
+    "title": "Kimi to Koete Koi ni Naru",
+    "url": "https://myanimelist.net/anime/60765/Kimi_to_Koete_Koi_ni_Naru"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1148/150376.jpg",
@@ -214,11 +204,6 @@ window.animeSeasons['Fall 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1776/151242.jpg",
     "title": "Digimon Beatbreak",
     "url": "https://myanimelist.net/anime/61269/Digimon_Beatbreak"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1334/151773.jpg",
-    "title": "Kimi to Koete Koi ni Naru",
-    "url": "https://myanimelist.net/anime/60765/Kimi_to_Koete_Koi_ni_Naru"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1681/151599.jpg",
@@ -261,38 +246,73 @@ window.animeSeasons['Fall 2025'] = [
     "url": "https://myanimelist.net/anime/62144/Potion_Wagami_wo_Tasukeru"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1889/151926.jpg",
-    "title": "Heika Watashi wo Wasurete Kudasai",
-    "url": "https://myanimelist.net/anime/62428/Heika_Watashi_wo_Wasurete_Kudasai"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
-    "title": "Princession Orchestra",
-    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1277/147358.jpg",
-    "title": "Kimi to Idol Precure♪",
-    "url": "https://myanimelist.net/anime/60407/Kimi_to_Idol_Precure%E2%99%AA"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1018/150416.jpg",
-    "title": "Osomatsu-san 4th Season",
-    "url": "https://myanimelist.net/anime/58996/Osomatsu-san_4th_Season"
-  },
-  {
     "img": "https://cdn.myanimelist.net/images/anime/1443/151178.jpg",
     "title": "SI-VIS: The Sound of Heroes",
     "url": "https://myanimelist.net/anime/62126/SI-VIS__The_Sound_of_Heroes"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1533/146981.jpg",
-    "title": "Koupen-chan",
-    "url": "https://myanimelist.net/anime/60534/Koupen-chan"
+    "img": "https://cdn.myanimelist.net/images/anime/1736/148429.jpg",
+    "title": "Nohara Hiroshi: Hiru Meshi no Ryuugi",
+    "url": "https://myanimelist.net/anime/61184/Nohara_Hiroshi__Hiru_Meshi_no_Ryuugi"
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1333/151768.jpg",
-    "title": "Ganglion",
-    "url": "https://myanimelist.net/anime/62378/Ganglion"
+    "img": "https://cdn.myanimelist.net/images/anime/1336/152128.jpg",
+    "title": "Muzik Tiger In the Forest 2nd Season",
+    "url": "https://myanimelist.net/anime/61924/Muzik_Tiger_In_the_Forest_2nd_Season"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1153/152436.jpg",
+    "title": "Princess Catch! Tiniping",
+    "url": "https://myanimelist.net/anime/62654/Princess_Catch_Tiniping"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
+    "title": "Gachiakuta",
+    "url": "https://myanimelist.net/anime/59062/Gachiakuta"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1474/150666.jpg",
+    "title": "Tougen Anki",
+    "url": "https://myanimelist.net/anime/58811/Tougen_Anki"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/10/59897.jpg",
+    "title": "Crayon Shin-chan",
+    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1502/150545.jpg",
+    "title": "Watari-kun no xx ga Houkai Sunzen",
+    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1904/150649.jpg",
+    "title": "Futari Solo Camp",
+    "url": "https://myanimelist.net/anime/60665/Futari_Solo_Camp"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
+    "title": "Beyblade X",
+    "url": "https://myanimelist.net/anime/56566/Beyblade_X"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1799/148164.jpg",
+    "title": "Himitsu no AiPri: Ring-hen",
+    "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1150/152188.jpg",
+    "title": "Oshi ga Buka ni Narimashita",
+    "url": "https://myanimelist.net/anime/62548/Oshi_ga_Buka_ni_Narimashita"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/1347/151708.jpg",
+    "title": "Cat's♥Eye",
+    "url": "https://myanimelist.net/anime/60347/Cats%E2%99%A5Eye"
+  },
+  {
+    "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
+    "title": "Ansatsu Kyoushitsu 2nd Season",
+    "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season"
   }
-]
+];
