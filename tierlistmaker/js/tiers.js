@@ -712,12 +712,27 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         }
     }
 
+	let prefix_number = "";
+    let badgeText = "";
+	if (op) {
+		if (isNaN(op)) 
+			badgeText = op;
+		else if (ed != 1)
+			prefix_number = ` Opening ${op}`;
+	}
+	else if (ed) {
+		if (isNaN(ed)) 
+			badgeText = ed;
+		else if (ed != 1)
+			prefix_number = ` Ending ${ed}`;
+	}
+
     let img = document.createElement('img');
     img.src = src;
     img.style.userSelect = 'none';
     img.classList.add('draggable');
-    img.title = title;
-    img.alt = title;
+    img.title = title + prefix_number;
+    img.alt = title + prefix_number;
     img.draggable = true;
     img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
     img.addEventListener('mousedown', (evt) => {
@@ -734,7 +749,8 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
                     let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
                     window.open(animeUrl, "_blank");
                 } else {
-                    let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType);
+					let search_type = prefix_number == "" ? " " + tierListType : prefix_number;
+                    let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + search_type);
                     window.open(youtubeUrl, "_blank");
                 }
             } else if (event.altKey || event.metaKey) {
@@ -755,10 +771,6 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     container.classList.add('image-container');
     container.appendChild(img);
     container.appendChild(titleSpan);
-
-    let badgeText = "";
-    if (op) badgeText = op;
-    else if (ed) badgeText = ed;
 
     if (badgeText) {
         let badge = document.createElement('span');
@@ -821,7 +833,7 @@ function exportTierlistDetails() {
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype");
     var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
-
+	console.log(animes);
     let details = [];
     let rank = 1;
 
@@ -851,8 +863,8 @@ function exportTierlistDetails() {
 				title: title,
 				colors: colors
 			};
-			if (op !== 1) detail.op = op;
-			if (ed !== 1) detail.ed = ed;
+			if (isNaN(op)) detail.op = op;
+			if (isNaN(ed)) detail.ed = ed;
 			details.push(detail);
         }
     }
