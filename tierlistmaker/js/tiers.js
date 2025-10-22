@@ -115,6 +115,10 @@ function openInfoModal(img) {
     const src = img.src;
     const dropdownType = document.getElementById("dropdowntype");
     const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+	let search_type = img.dataset.suffix_number ? img.dataset.suffix_number : " " + tierListType;
+	if (search_type != "" && title.endsWith(search_type)) {
+		search_type = "";
+	}
     
     let animeUrl = "";
     if (window.animeSeasons) {
@@ -151,7 +155,7 @@ function openInfoModal(img) {
             </a>
           </div>
           <div class="icon youtube">
-            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + " " + tierListType)}" target="_blank">
+            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + search_type)}" target="_blank">
               <i class="fab fa-youtube"></i>
             </a>
           </div>
@@ -712,27 +716,28 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         }
     }
 
-	let prefix_number = "";
+	let suffix_number = "";
     let badgeText = "";
 	if (op) {
 		if (isNaN(op)) 
 			badgeText = op;
 		else if (ed != 1)
-			prefix_number = ` Opening ${op}`;
+			suffix_number = ` Opening ${op}`;
 	}
 	else if (ed) {
 		if (isNaN(ed)) 
 			badgeText = ed;
 		else if (ed != 1)
-			prefix_number = ` Ending ${ed}`;
+			suffix_number = ` Ending ${ed}`;
 	}
 
     let img = document.createElement('img');
     img.src = src;
     img.style.userSelect = 'none';
     img.classList.add('draggable');
-    img.title = title + prefix_number;
-    img.alt = title + prefix_number;
+    img.title = title + suffix_number;
+    img.alt = title + suffix_number;
+	img.dataset.suffix_number = suffix_number;
     img.draggable = true;
     img.ondragstart = "event.dataTransfer.setData('text/plain', null)";
     img.addEventListener('mousedown', (evt) => {
@@ -749,7 +754,7 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
                     let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
                     window.open(animeUrl, "_blank");
                 } else {
-					let search_type = prefix_number == "" ? " " + tierListType : prefix_number;
+					let search_type = suffix_number ? suffix_number : " " + tierListType;
                     let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + search_type);
                     window.open(youtubeUrl, "_blank");
                 }
@@ -1570,6 +1575,8 @@ function openDuelModal() {
 
     const titleA = imgA.title || imgA.alt || '';
     const titleB = imgB.title || imgB.alt || '';
+    const suffixA = imgA.dataset.suffix_number;
+    const suffixB = imgB.dataset.suffix_number;
     const rankDiff = Math.abs((parseInt(imgA.dataset.rank ?? 0, 10)) - (parseInt(imgB.dataset.rank ?? 0, 10)));
 
     const html = `
@@ -1606,12 +1613,17 @@ function openDuelModal() {
                 imgEl.addEventListener('click', event => {
                     const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
                     const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
+					const suffix = (imgEl === imgsInPopup[0]) ? suffixA : suffixB;
+					let search_type = suffix ? suffix : " " + tierListType;
+					if (search_type != "" && title.endsWith(search_type)) {
+						search_type = "";
+					}
 
                     if (event.ctrlKey && title) {
                         if (event.altKey || event.metaKey) {
                             window.open("https://animethemes.moe/search?q=" + encodeURIComponent(title), "_blank");
                         } else {
-                            window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(title + " " + tierListType), "_blank");
+                            window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(title + search_type), "_blank");
                         }
                     } else if (event.altKey || event.metaKey) {
                         const url = findAnimeObj(imgEl.src).url;
