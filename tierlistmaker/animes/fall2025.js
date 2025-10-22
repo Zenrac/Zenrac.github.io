@@ -311,12 +311,16 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Gachiakuta",
     "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
-    "url": "https://myanimelist.net/anime/59062/Gachiakuta"
+    "url": "https://myanimelist.net/anime/59062/Gachiakuta",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Tougen Anki",
     "img": "https://cdn.myanimelist.net/images/anime/1474/150666.jpg",
-    "url": "https://myanimelist.net/anime/58811/Tougen_Anki"
+    "url": "https://myanimelist.net/anime/58811/Tougen_Anki",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Crayon Shin-chan",
@@ -327,7 +331,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Watari-kun no xx ga Houkai Sunzen",
     "img": "https://cdn.myanimelist.net/images/anime/1502/150545.jpg",
-    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen"
+    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen",
+    "op": 2,
+    "ed": 2
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1109/105645.jpg",
@@ -361,17 +367,23 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Princession Orchestra",
     "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
-    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra"
+    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Beyblade X",
     "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
-    "url": "https://myanimelist.net/anime/56566/Beyblade_X"
+    "url": "https://myanimelist.net/anime/56566/Beyblade_X",
+    "op": 4,
+    "ed": 4
   },
   {
     "title": "Himitsu no AiPri: Ring-hen",
     "img": "https://cdn.myanimelist.net/images/anime/1799/148164.jpg",
-    "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen"
+    "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Nmeneko",

@@ -698,6 +698,8 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
 
+	const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+
     let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
     if (parts) {
         let base = parts[1];
@@ -718,13 +720,13 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
 
 	let suffix_number = "";
     let badgeText = "";
-	if (op) {
+	if (op && tierListType == "Opening") {
 		if (isNaN(op)) 
 			badgeText = op;
 		else if (ed != 1)
 			suffix_number = ` Opening ${op}`;
 	}
-	else if (ed) {
+	else if (ed && tierListType == "Ending") {
 		if (isNaN(ed)) 
 			badgeText = ed;
 		else if (ed != 1)
