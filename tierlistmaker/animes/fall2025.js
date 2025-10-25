@@ -246,21 +246,9 @@ window.animeSeasons["Fall 2025"] = [
     "url": "https://myanimelist.net/anime/62144/Potion_Wagami_wo_Tasukeru"
   },
   {
-    "title": "Heika Watashi wo Wasurete Kudasai",
-    "img": "https://cdn.myanimelist.net/images/anime/1889/151926.jpg",
-    "url": "https://myanimelist.net/anime/62428/Heika_Watashi_wo_Wasurete_Kudasai",
-    "ed": 1
-  },
-  {
     "title": "SI-VIS: The Sound of Heroes",
     "img": "https://cdn.myanimelist.net/images/anime/1443/151178.jpg",
     "url": "https://myanimelist.net/anime/62126/SI-VIS__The_Sound_of_Heroes"
-  },
-  {
-    "title": "Ganglion",
-    "img": "https://cdn.myanimelist.net/images/anime/1333/151768.jpg",
-    "url": "https://myanimelist.net/anime/62378/Ganglion",
-    "ed": 1
   },
   {
     "title": "Nohara Hiroshi: Hiru Meshi no Ryuugi",
@@ -271,6 +259,107 @@ window.animeSeasons["Fall 2025"] = [
     "title": "Monster Strike: Deadverse Reloaded",
     "img": "https://cdn.myanimelist.net/images/anime/1090/151875.jpg",
     "url": "https://myanimelist.net/anime/62066/Monster_Strike__Deadverse_Reloaded"
+  },
+  {
+    "title": "Gachiakuta",
+    "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
+    "url": "https://myanimelist.net/anime/59062/Gachiakuta",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Tougen Anki",
+    "img": "https://cdn.myanimelist.net/images/anime/1474/150666.jpg",
+    "url": "https://myanimelist.net/anime/58811/Tougen_Anki",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Crayon Shin-chan",
+    "img": "https://cdn.myanimelist.net/images/anime/10/59897.jpg",
+    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan",
+    "op": 17
+  },
+  {
+    "title": "Watari-kun no xx ga Houkai Sunzen",
+    "img": "https://cdn.myanimelist.net/images/anime/1502/150545.jpg",
+    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Pokemon: Rising Again",
+    "img": "https://cdn.myanimelist.net/images/anime/1703/137216.jpg",
+    "url": "https://myanimelist.net/anime/53876/Pokemon_2023"
+  },
+  {
+    "title": "Futari Solo Camp",
+    "img": "https://cdn.myanimelist.net/images/anime/1904/150649.jpg",
+    "url": "https://myanimelist.net/anime/60665/Futari_Solo_Camp",
+    "op": 2
+  },
+  {
+    "title": "Princession Orchestra",
+    "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
+    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Beyblade X",
+    "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
+    "url": "https://myanimelist.net/anime/56566/Beyblade_X",
+    "op": 4,
+    "ed": 4
+  },
+  {
+    "title": "Himitsu no AiPri: Ring-hen",
+    "img": "https://cdn.myanimelist.net/images/anime/1799/148164.jpg",
+    "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Disney Twisted-Wonderland The Animation: Episode of Heartslabyul",
+    "img": "https://cdn.myanimelist.net/images/anime/1500/151301.jpg",
+    "url": "https://myanimelist.net/anime/50139/Disney_Twisted-Wonderland_The_Animation__Episode_of_Heartslabyul"
+  },
+  {
+    "title": "Shuumatsu no Walküre III",
+    "img": "https://cdn.myanimelist.net/images/anime/1169/148460.jpg",
+    "url": "https://myanimelist.net/anime/61200/Shuumatsu_no_Walküre_III"
+  },
+  {
+    "title": "Cat's♥Eye",
+    "img": "https://cdn.myanimelist.net/images/anime/1347/151708.jpg",
+    "url": "https://myanimelist.net/anime/60347/Cats%E2%99%A5Eye"
+  },
+  {
+    "title": "Ansatsu Kyoushitsu 2nd Season",
+    "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
+    "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season"
+  },
+  {
+    "title": "Hasan Fugou: The Richest Man in Game",
+    "img": "https://cdn.myanimelist.net/images/anime/1635/140669.jpg",
+    "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi"
+  },
+  {
+    "title": "Aru Hi, Ohime-sama ni Natte shimatta Ken ni Tsuite",
+    "img": "https://cdn.myanimelist.net/images/anime/1537/152271.jpg",
+    "url": "https://myanimelist.net/anime/57353/Mofa_Gongzhu_de_Xiao_Fannao"
+  },
+  {
+    "title": "Heika Watashi wo Wasurete Kudasai",
+    "img": "https://cdn.myanimelist.net/images/anime/1889/151926.jpg",
+    "url": "https://myanimelist.net/anime/62428/Heika_Watashi_wo_Wasurete_Kudasai",
+    "ed": 1
+  },
+  {
+    "title": "Ganglion",
+    "img": "https://cdn.myanimelist.net/images/anime/1333/151768.jpg",
+    "url": "https://myanimelist.net/anime/62378/Ganglion",
+    "ed": 1
   },
   {
     "title": "2200-nen Neko no Kuni Nippon",
@@ -309,42 +398,10 @@ window.animeSeasons["Fall 2025"] = [
     "ed": 1
   },
   {
-    "title": "Gachiakuta",
-    "img": "https://cdn.myanimelist.net/images/anime/1682/150432.jpg",
-    "url": "https://myanimelist.net/anime/59062/Gachiakuta",
-    "op": 2,
-    "ed": 2
-  },
-  {
-    "title": "Tougen Anki",
-    "img": "https://cdn.myanimelist.net/images/anime/1474/150666.jpg",
-    "url": "https://myanimelist.net/anime/58811/Tougen_Anki",
-    "op": 2,
-    "ed": 2
-  },
-  {
-    "title": "Crayon Shin-chan",
-    "img": "https://cdn.myanimelist.net/images/anime/10/59897.jpg",
-    "url": "https://myanimelist.net/anime/966/Crayon_Shin-chan",
-    "op": 17
-  },
-  {
-    "title": "Watari-kun no xx ga Houkai Sunzen",
-    "img": "https://cdn.myanimelist.net/images/anime/1502/150545.jpg",
-    "url": "https://myanimelist.net/anime/56693/Watari-kun_no_xx_ga_Houkai_Sunzen",
-    "op": 2,
-    "ed": 2
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1109/105645.jpg",
     "title": "Luo Xiao Hei Zhan Ji",
+    "img": "https://cdn.myanimelist.net/images/anime/1109/105645.jpg",
     "url": "https://myanimelist.net/anime/33443/Luo_Xiaohei_Zhanji",
     "ed": 1
-  },
-  {
-    "title": "Pokemon: Rising Again",
-    "img": "https://cdn.myanimelist.net/images/anime/1703/137216.jpg",
-    "url": "https://myanimelist.net/anime/53876/Pokemon_2023"
   },
   {
     "title": "Pokemon Horizons: Mega Evolution",
@@ -353,53 +410,16 @@ window.animeSeasons["Fall 2025"] = [
     "ed": 1
   },
   {
-    "title": "Futari Solo Camp",
-    "img": "https://cdn.myanimelist.net/images/anime/1904/150649.jpg",
-    "url": "https://myanimelist.net/anime/60665/Futari_Solo_Camp",
-    "op": 2
-  },
-  {
     "title": "Doraemon (2005)",
     "img": "https://cdn.myanimelist.net/images/anime/6/23935.jpg",
     "url": "https://myanimelist.net/anime/8687/Doraemon_2005",
     "ed": 22
   },
   {
-    "title": "Princession Orchestra",
-    "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
-    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra",
-    "op": 2,
-    "ed": 2
-  },
-  {
-    "title": "Beyblade X",
-    "img": "https://cdn.myanimelist.net/images/anime/1394/145458.jpg",
-    "url": "https://myanimelist.net/anime/56566/Beyblade_X",
-    "op": 4,
-    "ed": 4
-  },
-  {
-    "title": "Himitsu no AiPri: Ring-hen",
-    "img": "https://cdn.myanimelist.net/images/anime/1799/148164.jpg",
-    "url": "https://myanimelist.net/anime/61092/Himitsu_no_AiPri__Ring-hen",
-    "op": 2,
-    "ed": 2
-  },
-  {
     "title": "Nmeneko",
     "img": "https://cdn.myanimelist.net/images/anime/1989/149978.jpg",
     "url": "https://myanimelist.net/anime/60947/Nmeneko",
     "ed": 2
-  },
-  {
-    "title": "Disney Twisted-Wonderland The Animation: Episode of Heartslabyul",
-    "img": "https://cdn.myanimelist.net/images/anime/1500/151301.jpg",
-    "url": "https://myanimelist.net/anime/50139/Disney_Twisted-Wonderland_The_Animation__Episode_of_Heartslabyul"
-  },
-  {
-    "title": "Shuumatsu no Walküre III",
-    "img": "https://cdn.myanimelist.net/images/anime/1169/148460.jpg",
-    "url": "https://myanimelist.net/anime/61200/Shuumatsu_no_Walküre_III"
   },
   {
     "title": "Ganso! Bandori-chan",
@@ -426,35 +446,15 @@ window.animeSeasons["Fall 2025"] = [
     "ed": 1
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1616/151047.jpg",
     "title": "Neko no Kura-chan: Ordinary Days",
+    "img": "https://cdn.myanimelist.net/images/anime/1616/151047.jpg",
     "url": "https://myanimelist.net/anime/62055/Jiu_Cang_Miao_Wo_Season_25",
     "ed": 2
   },
   {
-    "img": "https://cdn.myanimelist.net/images/anime/1424/151473.jpg",
     "title": "Future Kid Takara",
+    "img": "https://cdn.myanimelist.net/images/anime/1424/151473.jpg",
     "url": "https://myanimelist.net/anime/54160/Future_Kid_Takara",
     "ed": 1
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1347/151708.jpg",
-    "title": "Cat's♥Eye",
-    "url": "https://myanimelist.net/anime/60347/Cats%E2%99%A5Eye"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
-    "title": "Ansatsu Kyoushitsu 2nd Season",
-    "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1635/140669.jpg",
-    "title": "Hasan Fugou: The Richest Man in Game",
-    "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi"
-  },
-  {
-    "img": "https://cdn.myanimelist.net/images/anime/1537/152271.jpg",
-    "title": "Aru Hi, Ohime-sama ni Natte shimatta Ken ni Tsuite",
-    "url": "https://myanimelist.net/anime/57353/Mofa_Gongzhu_de_Xiao_Fannao"
   }
 ];

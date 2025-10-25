@@ -1,12 +1,23 @@
 'use strict';
 
-var seasonType = {
-    "Opening": 1,
-	"Ending": 2,
-	"Anime" : 0,
-};
+const SHORT_OPENING = "op";
+const SHORT_ENDING = "ed";
+const OPENING = "Opening";
+const ENDING = "Ending";
+const ANIME = "Anime";
+const TRAILER = "Trailer";
 
-const seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
+const SEASONS = ['Winter', 'Spring', 'Summer', 'Fall'];
+
+const ANIMETHEMES_SEARCH_URL = "https://animethemes.moe/search?q=";
+const YOUTUBE_SEARCH_URL = "https://www.youtube.com/results?search_query=";
+const MYANIMELIST_IMG_URL = "https://cdn.myanimelist.net/images/anime";
+
+const TYPES = {
+  [OPENING]: 1,
+  [ENDING]: 2,
+  [ANIME]: 0,
+};
 
 const removeExtension = (url) => {
     return url.replace(/\.(jpg|jpeg|png|webp)/i, '');
@@ -39,7 +50,7 @@ const TIER_COLORS = [
 	'#f45bed'
 ];
 
-const saveTierListsCookieName = "saveTierlistsData";
+const TIERLIST_COOKIE = "saveTierlistsData";
 
 let cookieData = {}
 
@@ -65,8 +76,23 @@ const maxYear = Math.max(...years);
 const minDate = new Date(minYear, 0, 1);
 const maxDate = new Date(maxYear, 11, 31); 
 
+treatDuplicateFromSeason();
+
+function treatDuplicateFromSeason() {
+	for (var season in window.animeSeasons) {
+		let items = window.animeSeasons[season];
+		for (let item of items) {
+			if (multipleEntries(item.title, items) && (item.op || item.ed)) {
+				let paramName = item.op ? SHORT_OPENING : SHORT_ENDING;
+				let paramValue = item.op ? item.op : item.ed;
+				item.img = item.img + `?${paramName}=${paramValue}`;
+			}
+		}
+	}
+}
+
 function detectAnimeSeason(img) {
-	return Object.entries(window.animeSeasons )
+	return Object.entries(window.animeSeasons)
 	  .filter(([season, items]) => 
 		items.some(item => item.img && item.img.includes(img))
 	  )
@@ -114,7 +140,7 @@ function openInfoModal(img) {
     const title = img.title || img.alt || "";
     const src = img.src;
     const dropdownType = document.getElementById("dropdowntype");
-    const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+    const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
 	let search_type = img.dataset.suffix_number ? img.dataset.suffix_number : " " + tierListType;
 	if (search_type != "" && title.endsWith(search_type)) {
 		search_type = "";
@@ -147,7 +173,7 @@ function openInfoModal(img) {
             </a>
           </div>
           <div class="icon animetheme">
-            <a class="si-a" href="https://animethemes.moe/search?q=${encodeURIComponent(title)}" target="_blank">
+            <a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" target="_blank">
               <svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
                 <polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
                 <polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
@@ -155,7 +181,7 @@ function openInfoModal(img) {
             </a>
           </div>
           <div class="icon youtube">
-            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + search_type)}" target="_blank">
+            <a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" target="_blank">
               <i class="fab fa-youtube"></i>
             </a>
           </div>
@@ -403,7 +429,7 @@ function randomize_tierlist() {
 
 // Called when page is loaded
 window.addEventListener('load', () => {
-	cookieData = loadFromLocalStorage(saveTierListsCookieName);
+	cookieData = loadFromLocalStorage(TIERLIST_COOKIE);
 
 	untiered_images =  document.querySelector('.images');
 	tierlist_div =  document.querySelector('.tierlist');
@@ -626,7 +652,7 @@ function initialize_dropdown_type() {
 	dropdownType.selectedIndex = 0;
 	picker._setInputValue(new Date());
 
-	for (var season in seasonType) {
+	for (var season in TYPES) {
 		var option = document.createElement("option");
 		option.text = season;
 		option.value = season;
@@ -694,11 +720,20 @@ function openVideoModal(searchUrl) {
     modal.addEventListener("click", () => modal.remove());
 }
 
+function multipleEntries(title, list = null) {
+	if (!list) {
+		var dropdown = document.getElementById("dropdown");
+		list = window.animeSeasons[dropdown.value];
+	}
+	var matches = list.filter(m => m.title == title);
+	return matches.length > 1;
+}
+
 function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
 
-	const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+	const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
 
     let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
     if (parts) {
@@ -718,19 +753,16 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         }
     }
 
+	let badgeText = "";
 	let suffix_number = "";
-    let badgeText = "";
-	if (op && tierListType == "Opening") {
-		if (isNaN(op)) 
-			badgeText = op;
-		else if (ed != 1)
-			suffix_number = ` Opening ${op}`;
-	}
-	else if (ed && tierListType == "Ending") {
-		if (isNaN(ed)) 
-			badgeText = ed;
-		else if (ed != 1)
-			suffix_number = ` Ending ${ed}`;
+
+	const mode = tierListType;
+	const num = mode === OPENING ? op : mode === ENDING ? ed : null;
+
+	if (num) {
+		const isMulti = multipleEntries(title);
+		if (isNaN(num) || isMulti) badgeText = num;
+		if (!isNaN(num) && num != 1) suffix_number = ` ${mode} ${num}`;
 	}
 
     let img = document.createElement('img');
@@ -750,14 +782,14 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     if (url.trim() != "") {
         img.addEventListener("click", function(event) {
 			event.preventDefault();
-            const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+            const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
             if (event.ctrlKey && title) {
                 if (event.altKey || event.metaKey) {
-                    let animeUrl = "https://animethemes.moe/search?q=" + encodeURIComponent(title);
+                    let animeUrl = ANIMETHEMES_SEARCH_URL + encodeURIComponent(title);
                     window.open(animeUrl, "_blank");
                 } else {
 					let search_type = suffix_number ? suffix_number : " " + tierListType;
-                    let youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(title + search_type);
+                    let youtubeUrl = YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type);
                     window.open(youtubeUrl, "_blank");
                 }
             } else if (event.altKey || event.metaKey) {
@@ -820,7 +852,7 @@ function save_tierlist_json() {
 	let title = document.getElementById('title-label');
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype"); 
-	var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
+	var animes = loadFromLocalStorage(TIERLIST_COOKIE)[dropdown.value][dropdownType.value];
     var json = JSON.stringify(animes);
 	var blob = new Blob([json], { type: "application/json" });
     var a = document.createElement("a");
@@ -839,7 +871,7 @@ function findAnimeObj(imgId) {
 function exportTierlistDetails() {
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype");
-    var animes = loadFromLocalStorage(saveTierListsCookieName)[dropdown.value][dropdownType.value];
+    var animes = loadFromLocalStorage(TIERLIST_COOKIE)[dropdown.value][dropdownType.value];
 	console.log(animes);
     let details = [];
     let rank = 1;
@@ -932,7 +964,7 @@ function save_tierlist() {
             delete cookieData[filename];
         }
     }
-    saveToLocalStorage(saveTierListsCookieName, cookieData);
+    saveToLocalStorage(TIERLIST_COOKIE, cookieData);
 }
 
 function load_tierlist(serialized_tierlist) {
@@ -968,7 +1000,7 @@ function load_tierlist(serialized_tierlist) {
             }
 
             if (!img_src.includes('http')) {
-                img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+                img_src = `${MYANIMELIST_IMG_URL}/${img_src}.webp`
             }
 
             let img_item = create_img_with_src(img_src);
@@ -999,7 +1031,7 @@ function load_tierlist(serialized_tierlist) {
             }
 
             if (!img_src.includes('http')) {
-                img_src = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+                img_src = `${MYANIMELIST_IMG_URL}/${img_src}.webp`
             }
 
             let img_item = create_img_with_src(img_src);
@@ -1029,16 +1061,26 @@ function load_from_anime(animeList, title, cookie = true, randomize = false) {
 
     const mode = document.getElementById("dropdowntype").value;
 
+    // filtre initial : Opening/Ending gardent leur logique, ANIME garde tout pour l'instant
     let animes = animeList.filter(item => {
-        if (mode === "Anime") return !item.ed && !item.op;
-        if (mode === "Opening") {
+        if (mode === OPENING) {
             return !item.ed || item.op;
         }
-        if (mode === "Ending") {
+        if (mode === ENDING) {
             return !item.op || item.ed;
         }
         return true;
     });
+
+    if (mode === ANIME) {
+        const seen = new Set();
+        animes = animes.filter(item => {
+            const key = (item.title && item.title.trim()) || removeExtension(item.img || '');
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }
 
 	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;
@@ -1286,9 +1328,9 @@ function bind_trash_events() {
 			let mode = document.getElementById("dropdowntype").value;
 
 			let animes = animeList.filter(item => {
-				if (mode === "Anime") return !item.ed && !item.op;
-				if (mode === "Opening") return !item.ed || item.op;
-				if (mode === "Ending") return !item.op || item.ed;
+				if (mode === ANIME) return !item.ed && !item.op;
+				if (mode === OPENING) return !item.ed || item.op;
+				if (mode === ENDING) return !item.op || item.ed;
 				return true;
 			});
 
@@ -1302,7 +1344,7 @@ function bind_trash_events() {
 				if (!isAlreadyAdded) {
 					let images = document.querySelector('.images');
 					if (!anime.img.includes('http')) {
-						anime.img = `https://cdn.myanimelist.net/images/anime/${img_src}.webp`
+						anime.img = `${MYANIMELIST_IMG_URL}/${img_src}.webp`
 					}
 					let img = create_img_with_src(anime.img);
 					images.appendChild(img);
@@ -1368,7 +1410,7 @@ const picker = new AirDatepicker('#seasonPicker', {
 	minView: 'months',
 	dateFormat(date) {
 	const seasonIndex = Math.floor(date.getMonth() / 3);
-	return seasons[seasonIndex] + ' ' + date.getFullYear();
+	return SEASONS[seasonIndex] + ' ' + date.getFullYear();
 	},
 	minDate,
   	maxDate,
@@ -1428,7 +1470,7 @@ function updateSeasons() {
 
     const yearAvailable = seasonsAvailableInYear.size > 0;
 
-    seasons.forEach((season, i) => {
+    SEASONS.forEach((season, i) => {
         const div = document.createElement('div');
         div.className = 'custom-season-cell ' + season.toLowerCase();
         div.textContent = season;
@@ -1613,7 +1655,7 @@ function openDuelModal() {
 
             imgsInPopup.forEach(imgEl => {
                 imgEl.addEventListener('click', event => {
-                    const tierListType = (dropdownType?.value == "Anime" ? "Trailer" : dropdownType?.value) ?? "Opening";
+                    const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
                     const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
 					const suffix = (imgEl === imgsInPopup[0]) ? suffixA : suffixB;
 					let search_type = suffix ? suffix : " " + tierListType;
@@ -1623,9 +1665,9 @@ function openDuelModal() {
 
                     if (event.ctrlKey && title) {
                         if (event.altKey || event.metaKey) {
-                            window.open("https://animethemes.moe/search?q=" + encodeURIComponent(title), "_blank");
+                            window.open(ANIMETHEMES_SEARCH_URL + encodeURIComponent(title), "_blank");
                         } else {
-                            window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(title + search_type), "_blank");
+                            window.open(YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type), "_blank");
                         }
                     } else if (event.altKey || event.metaKey) {
                         const url = findAnimeObj(imgEl.src).url;
