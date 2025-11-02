@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.82
+// @version      1.83
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -1510,7 +1510,9 @@
 
                                 let interval = setInterval(() => {
                                     if (elm.value != 0) {
-                                        newElem.dispatchEvent(new Event('click'));
+                                        if (!alreadyReloaded) {
+                                            newElem.dispatchEvent(new Event('click'));
+                                        }
                                         clearInterval(interval);
 
                                         let intervalAgain = setInterval(() => {
