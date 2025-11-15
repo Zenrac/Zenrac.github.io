@@ -335,7 +335,7 @@ window.animeSeasons["Fall 2025"] = [
     "url": "https://myanimelist.net/anime/60347/Cats%E2%99%A5Eye"
   },
   {
-    "title": "Ansatsu Kyoushitsu 2nd Season",
+    "title": "Ansatsu Kyoushitsu 2nd Season (Rebroadcast)",
     "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
     "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season"
   },
