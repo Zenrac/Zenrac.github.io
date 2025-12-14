@@ -347,9 +347,22 @@ function changeImageColorBasedOnSearch() {
 
 	images.forEach(img => {
 		let title = img.title.toLowerCase();
+		let container = img.parentNode;
+		let badge = container.querySelector('.color-badge');
+		let colors = badge ? JSON.parse(badge.dataset.colors || '[]') : [];
+
+		let matches = title.includes(selectedText);
+		if (!matches) {
+			colors.forEach(c => {
+				if (c.toLowerCase().includes(selectedText) || (COLOR_NAME_MAP[c] && COLOR_NAME_MAP[c].toLowerCase().includes(selectedText))) {
+					matches = true;
+				}
+			});
+		}
+
 		if (selectedText.trim() == "") {
 			img.classList.remove("highlight", "grayed");
-		} else if (title.includes(selectedText)) {
+		} else if (matches) {
 			img.classList.remove("grayed");
 			img.classList.add("highlight");
 		} else {
