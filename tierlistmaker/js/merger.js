@@ -26,8 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const exportButton = document.querySelector("#exportBtn");
     if (exportButton) {
         exportButton.addEventListener("click", (e) => {
-            if (e.shiftKey) exportWithDetails();
-            else exportResults();
+            exportWithDetails();
         });
     }
 });
@@ -294,7 +293,20 @@ function displayResults(results, files) {
 }
 
 function exportWithDetails() {
-    const resultJson = { title: "Merged - " + uploadedFiles.map(f => f.name.replace('.json','')).join(", "), rows: [], untiered: [] };
+    const resultJson = { title: "Merged - " + uploadedFiles.map(f => f.name.replace('.json', '')).join(", "), rows: [], untiered: [] };
+    const details = prepare_export_details();
+    const blob = new Blob([JSON.stringify(details, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.setAttribute('href', URL.createObjectURL(blob));
+    link.setAttribute('download', resultJson.title + '_details.json');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function prepare_export_details() {
+    const imagesPerRank = 10;
+    const alphabet = 'SABCDEFGHIJKLMNOPQRTUVWXYZ';
     const details = globalImageList.map((result, index) => {
         const positionsByFile = {};
         const colorsByFile = {};
@@ -311,46 +323,30 @@ function exportWithDetails() {
             const match = url.match(/anime\/(\d+)/);
             if (match) id = match[1];
         }
-        const detail = { imgId: result.imgId, id, url, rank: index+1, average: result.averagePosition, positions: positionsByFile, colors: colorsByFile, title: animeObj?.title || '' };
+        const rankIndex = Math.floor(index / imagesPerRank);
+        const row = alphabet[rankIndex] || `Rank${rankIndex + 1}`;
+        const detail = { imgId: result.imgId, id, url, row, rank: index + 1, average: result.averagePosition, positions: positionsByFile, colors: colorsByFile, title: animeObj?.title || '' };
         if (op !== 1) detail.op = op;
         if (ed !== 1) detail.ed = ed;
         return detail;
     });
-
-    const blob = new Blob([JSON.stringify(details, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.setAttribute('href', URL.createObjectURL(blob));
-    link.setAttribute('download', resultJson.title + '_details.json');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    return details;
 }
 
-function exportResults(redirect = false) {
+function exportResultsToLocalStorage() {
     const resultJson = { title: "Merged - " + uploadedFiles.map(f => f.name.replace('.json','')).join(", "), rows: [], untiered: [] };
-    const imagesPerRank = 10;
-    const totalImages = globalImageList.length;
-    const numRanks = Math.ceil(totalImages / imagesPerRank);
-    const alphabet = 'SABCDEFGHIJKLMNOPQRTUVWXYZ';
-    const rankGroups = [];
-    for (let i = 0; i < numRanks; i++) rankGroups.push(alphabet[i] || `Rank${i+1}`);
-    resultJson.rows = rankGroups.map(rank => ({ name: rank, imgs: [] }));
-    globalImageList.sort((a, b) => a.averagePosition - b.averagePosition);
-    globalImageList.forEach((result, index) => { const rankIndex = Math.floor(index / imagesPerRank); resultJson.rows[rankIndex].imgs.push(result.imgId); });
-    globalImageList.forEach(result => { if (!resultJson.rows.some(row => row.imgs.includes(result.imgId))) resultJson.untiered.push(result.imgId); });
+    let details = prepare_export_details();
 
-    if (redirect) {
-        localStorage.setItem("mergedData", JSON.stringify(resultJson));
-        window.location.href = "index.html?merged=true";
-    } else {
-        const blob = new Blob([JSON.stringify(resultJson, null, 2)], { type: 'application/json' });
-        const link = document.createElement('a');
-        link.setAttribute('href', URL.createObjectURL(blob));
-        link.setAttribute('download', resultJson.title + '.json');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    let rowMap = {};
+    details.forEach(detail => {
+        if (!rowMap[detail.row]) rowMap[detail.row] = [];
+        rowMap[detail.row].push(detail.imgId);
+    });
+
+    resultJson.rows = Object.keys(rowMap).map(name => ({ name, imgs: rowMap[name] }));
+
+    localStorage.setItem("mergedData", JSON.stringify(resultJson));
+    window.location.href = "index.html?merged=true";
 }
 
 function resetTable() {

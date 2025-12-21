@@ -23,6 +23,12 @@ const removeExtension = (url) => {
     return url.replace(/\.(jpg|jpeg|png|webp)/i, '');
 };
 
+const extractImgId = (url) => {
+    const regex = /\/(\d+\/\d+)\.(webp|jpe?g)(\?.*)?$/;
+    const match = url.match(regex);
+    return match ? match[1] + (match[3] || "") : "";
+};
+
 const COLOR_LIST = [
 	'Blue',      // #0066CC
 	'Magenta', // #FF00FF
@@ -108,7 +114,7 @@ function importTierlist(file) {
 			alert("Failed to parse data");
 			return;
 		}
-		load_tierlist(parsed);
+		load_tierlist(parsed, file.name);
 	});
 	reader.readAsText(file);
 }
@@ -218,7 +224,7 @@ function openColorSelector(container) {
             class="color-btn ${selectedColors.includes(c) ? 'selected' : ''}" 
             data-color="${c}"
 			title="${c} - ${COLOR_NAME_MAP[c] || ''}")}"
-            style="background:${c};">
+            style="background-color:${c};">
         </button>
     `).join('');
 
@@ -470,27 +476,26 @@ window.addEventListener('load', () => {
 			return;
 		}
 
-		if (event.shiftKey && event.key === 'R') {
+		if (event.shiftKey && event.key.toUpperCase() === 'R') {
 			event.preventDefault();
 			if (confirm('Randomize Tierlist? (this will shuffle all images in the tierlist)')) {
 				randomize_tierlist();
 			}
 		}
-	});
 
-	document.addEventListener('keydown', function(event) {
-		const active = document.activeElement;
-		if (
-			active.tagName === "INPUT" ||
-			active.tagName === "TEXTAREA" ||
-			active.isContentEditable
-		) {
-			return;
-		}
-		
-		if (event.shiftKey && event.key === 'M') {
+		if (event.shiftKey && event.key.toUpperCase() === 'M') {
 			event.preventDefault();
 			window.location.href = "./merger.html";
+		}
+
+		if (event.shiftKey && event.shiftKey && event.key.toUpperCase() === 'S') {
+			event.preventDefault();
+			save_tierlist_json();
+		}
+
+		else if (event.altKey && event.key.toUpperCase() === 'S') {
+			event.preventDefault();
+			save_tierlist_png();
 		}
 	});
 
@@ -546,11 +551,7 @@ window.addEventListener('load', () => {
 	});
 
 	document.getElementById("export-json-btn").addEventListener("click", function(event) {
-		if (event.shiftKey) {
-			exportTierlistDetails();
-		} else {
-			exportImages('JSON');
-		}
+		exportTierlistDetails();
 	});
 
 	document.getElementById("export-png-btn").addEventListener("click", function(event) {
@@ -847,31 +848,30 @@ function save_tierlist_png() {
     elementsToExclude.forEach(element => {
         element.style.display = 'none';
     });
-    html2canvas(tierlist, { useCORS: true, onrendered: function(canvas) {
-        const img = canvas.toDataURL('image/png');
+    
+    const scale = 3;
+    domtoimage.toBlob(tierlist, {
+        width: tierlist.clientWidth * scale,
+        height: tierlist.clientHeight * scale,
+        style: {
+            transform: 'scale(' + scale + ')',
+            transformOrigin: 'top left'
+        },
+        quality: 1.0
+    }).then(function(blob) {
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = title?.innerText ?? 'tierlist';
-        link.href = img;
+        link.href = url;
         link.click();
-
-		elementsToExclude.forEach(element => {
-			element.style.display = 'flex';
-		});
-    }});
-
-}
-
-function save_tierlist_json() {
-	let title = document.getElementById('title-label');
-    var dropdown = document.getElementById("dropdown");
-    var dropdownType = document.getElementById("dropdowntype"); 
-	var animes = loadFromLocalStorage(TIERLIST_COOKIE)[dropdown.value][dropdownType.value];
-    var json = JSON.stringify(animes);
-	var blob = new Blob([json], { type: "application/json" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = title?.innerText ?? (dropdown.value + "_" + dropdownType.value + ".json");
-    a.click();
+        URL.revokeObjectURL(url);
+    }).catch(function() {
+        alert('Failed to export PNG. Please try again or check the console for errors.');
+    }).finally(function() {
+        elementsToExclude.forEach(element => {
+            element.style.display = 'flex';
+        });
+    });
 }
 
 function findAnimeObj(imgId) {
@@ -885,7 +885,6 @@ function exportTierlistDetails() {
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype");
     var animes = loadFromLocalStorage(TIERLIST_COOKIE)[dropdown.value][dropdownType.value];
-	console.log(animes);
     let details = [];
     let rank = 1;
 
@@ -911,6 +910,7 @@ function exportTierlistDetails() {
 				imgId: imgId,
 				id: id,
 				url: url,
+				row: row.name,
 				rank: rank++,
 				title: title,
 				colors: colors
@@ -925,7 +925,7 @@ function exportTierlistDetails() {
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
 	let title = document.getElementById('title-label');
-	a.download = (title?.innerText ?? (dropdown.value + "_" + dropdownType.value)) + "_details.json";
+	a.download = (title?.innerText ?? (dropdown.value + "_" + dropdownType.value)) + ".json";
     a.click();
 }
 
@@ -980,12 +980,44 @@ function save_tierlist() {
     saveToLocalStorage(TIERLIST_COOKIE, cookieData);
 }
 
-function load_tierlist(serialized_tierlist) {
+function load_tierlist(serialized_tierlist, fileName = null) {
 
 	if (serialized_tierlist.rows === undefined) {
-		alert("Invalid tierlist data");
-		return;
+		let currentSeason = detectAnimeSeason(serialized_tierlist[0].imgId);
+		if (currentSeason === undefined) {
+			alert("Cannot detect anime season for this tierlist.");
+			return;
+		}
+		let animeList = filter_anime_with_modes(window.animeSeasons[currentSeason[0]]);
+		let addedAnimes = new Set();
+
+		serialized_tierlist.title = fileName ? fileName.replace('.json', '') : detected;
+
+		let rowNames = [...new Set(serialized_tierlist.map(anime => anime.row))];
+		serialized_tierlist.rows = rowNames.map(name => ({
+			name: name,
+			imgs: []
+		}));
+		for (let anime of serialized_tierlist) {
+			let row = serialized_tierlist.rows.find(r => r.name === anime.row);
+			if (row) {
+				let imgObj = {
+					src: anime.imgId,
+					colors: anime.colors || []
+				};
+				row.imgs.push(imgObj);
+				addedAnimes.add(anime.imgId);
+			}
+		}
+		serialized_tierlist.untiered = [];
+		for (let anime of animeList) {
+			let imgId = extractImgId(anime.img);
+			if (!addedAnimes.has(imgId)) {
+				serialized_tierlist.untiered.push(anime.img);
+			}
+		}
 	}
+
     hard_reset_list();
 
 	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
@@ -1070,30 +1102,35 @@ function shuffleArray(array) {
     }
 }
 
+function filter_anime_with_modes(animeList) {
+	const mode = document.getElementById("dropdowntype").value;
+
+	// filtre initial : Opening/Ending gardent leur logique, ANIME garde tout pour l'instant
+	let animes = animeList.filter(item => {
+		if (mode === OPENING) {
+			return !item.ed || item.op;
+		}
+		if (mode === ENDING) {
+			return !item.op || item.ed;
+		}
+		return true;
+	});
+
+	if (mode === ANIME) {
+		const seen = new Set();
+		animes = animes.filter(item => {
+			const key = (item.title && item.title.trim()) || removeExtension(item.img || '');
+			if (seen.has(key)) return false;
+			seen.add(key);
+			return true;
+		});
+	}
+	return animes;
+}
+
 function load_from_anime(animeList, title, cookie = true, randomize = false) {
 
-    const mode = document.getElementById("dropdowntype").value;
-
-    // filtre initial : Opening/Ending gardent leur logique, ANIME garde tout pour l'instant
-    let animes = animeList.filter(item => {
-        if (mode === OPENING) {
-            return !item.ed || item.op;
-        }
-        if (mode === ENDING) {
-            return !item.op || item.ed;
-        }
-        return true;
-    });
-
-    if (mode === ANIME) {
-        const seen = new Set();
-        animes = animes.filter(item => {
-            const key = (item.title && item.title.trim()) || removeExtension(item.img || '');
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-    }
+    let animes = filter_anime_with_modes(animeList);
 
 	untiered_images.innerHTML = '';
 	document.getElementById('title-label').innerText = "Tierlist " + title;

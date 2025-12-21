@@ -341,7 +341,7 @@ window.animeSeasons["Fall 2025"] = [
   },
   {
     "title": "Hasan Fugou: The Richest Man in Game",
-    "img": "https://cdn.myanimelist.net/images/anime/1635/140669.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1222/154472.jpg",
     "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi"
   },
   {
