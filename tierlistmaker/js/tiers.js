@@ -290,23 +290,34 @@ function openInfoModal(img) {
 					updateVideoDisplay();
 				});
 			}
-			cinemaBtn?.addEventListener('click', () => {
-				cinemaMode = !cinemaMode;
-				const imgElem = popup.querySelector('#anime-detail-img');
-				if (cinemaMode) {
-					video.style.width = '100%';
-					video.style.height = 'auto';
-					videoWrapper.style.width = '100%';
-					popup.style.width = '80vw';
-					if (imgElem) imgElem.style.display = 'none';
-				} else {
-					video.style.width = '550px';
-					video.style.height = '360px';
-					videoWrapper.style.width = '550px';
-					popup.style.width = '600px';
-					if (imgElem && videoWrapper.style.display === 'none') imgElem.style.display = '';
-				}
-			});
+				cinemaBtn?.addEventListener('click', () => {
+					cinemaMode = !cinemaMode;
+					const imgElem = popup.querySelector('#anime-detail-img');
+					const cinemaIcon = cinemaBtn.querySelector('i');
+					if (cinemaMode) {
+						video.style.width = '100%';
+						video.style.height = 'auto';
+						videoWrapper.style.width = '100%';
+						popup.style.width = '80vw';
+						if (imgElem) imgElem.style.display = 'none';
+						if (cinemaIcon) {
+							cinemaIcon.classList.remove('fa-expand');
+							cinemaIcon.classList.add('fa-compress');
+							cinemaBtn.title = 'Exit Cinema Mode';
+						}
+					} else {
+						video.style.width = '550px';
+						video.style.height = '360px';
+						videoWrapper.style.width = '550px';
+						popup.style.width = '600px';
+						if (imgElem && videoWrapper.style.display === 'none') imgElem.style.display = '';
+						if (cinemaIcon) {
+							cinemaIcon.classList.remove('fa-compress');
+							cinemaIcon.classList.add('fa-expand');
+							cinemaBtn.title = 'Cinema Mode';
+						}
+					}
+				});
 		}
     });
 }
