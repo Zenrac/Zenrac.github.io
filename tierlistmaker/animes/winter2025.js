@@ -73,7 +73,9 @@ window.animeSeasons['Winter 2025'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1003/146841.jpg",
     "title": "Zenshuu.",
-    "url": "https://myanimelist.net/anime/58502/Zenshuu"
+    "url": "https://myanimelist.net/anime/58502/Zenshuu",
+    "opening_video": "https://files.catbox.moe/svhs0d.mp4",
+    "ending_video": "https://files.catbox.moe/63itsu.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1904/144608.jpg",

@@ -122,7 +122,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Mushoku no Eiyuu: Betsu ni Skill Nanka Iranakatta n da ga",
     "img": "https://cdn.myanimelist.net/images/anime/1721/151097.jpg",
-    "url": "https://myanimelist.net/anime/56854/Mushoku_no_Eiyuu__Betsu_ni_Skill_Nanka_Iranakatta_n_da_ga"
+    "url": "https://myanimelist.net/anime/56854/Mushoku_no_Eiyuu__Betsu_ni_Skill_Nanka_Iranakatta_n_da_ga",
+    "opening_video": "https://files.catbox.moe/1imys5.mp4",
+    "ending_video": "https://files.catbox.moe/laf77r.mp4"
   },
   {
     "title": "Chitose-kun wa Ramune Bin no Naka",
@@ -155,7 +157,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "The Banished Court Magician Aims to Become the Strongest",
     "img": "https://cdn.myanimelist.net/images/anime/1362/151636.jpg",
-    "url": "https://myanimelist.net/anime/61276/Mikata_ga_Yowasugite_Hojo_Mahou_ni_Tesshiteita_Kyuutei_Mahoushi_Tsuihou_sarete_Saikyou_wo_Mezasu"
+    "url": "https://myanimelist.net/anime/61276/Mikata_ga_Yowasugite_Hojo_Mahou_ni_Tesshiteita_Kyuutei_Mahoushi_Tsuihou_sarete_Saikyou_wo_Mezasu",
+    "opening_video": "https://files.catbox.moe/84uxfj.mp4",
+    "ending_video": "https://files.catbox.moe/3ncw1q.mp4"
   },
   {
     "title": "Yano-kun no Futsuu no Hibi",
@@ -487,7 +491,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Hasan Fugou: The Richest Man in Game",
     "img": "https://cdn.myanimelist.net/images/anime/1222/154472.jpg",
-    "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi"
+    "url": "https://myanimelist.net/anime/57663/Kui_Cheng_Shoufu_Cong_Youxi_Kaishi",
+    "opening_video": "https://files.catbox.moe/r43gnp.mp4",
+    "ending_video": "https://files.catbox.moe/8ykqpw.mp4"
   },
   {
     "title": "Aru Hi, Ohime-sama ni Natte shimatta Ken ni Tsuite",
@@ -535,7 +541,8 @@ window.animeSeasons["Fall 2025"] = [
     "title": "Anila to Cocora",
     "img": "https://cdn.myanimelist.net/images/anime/1065/152406.jpg",
     "url": "https://myanimelist.net/anime/62643/Anila_to_Cocora",
-    "ed": 1
+    "ed": 1,
+    "ending_video": "https://files.catbox.moe/cv8a40.mp4"
   },
   {
     "title": "Chikyuu no Latair",
@@ -555,12 +562,14 @@ window.animeSeasons["Fall 2025"] = [
     "title": "Luo Xiao Hei Zhan Ji",
     "img": "https://cdn.myanimelist.net/images/anime/1109/105645.jpg",
     "url": "https://myanimelist.net/anime/33443/Luo_Xiaohei_Zhanji",
+    "ending_video": "https://files.catbox.moe/n89xil.mp4",
     "ed": 1
   },
   {
     "title": "Pokemon Horizons: Mega Evolution",
     "img": "https://cdn.myanimelist.net/images/anime/1772/148477l.jpg",
     "url": "https://myanimelist.net/anime/53876/Pokemon_2023",
+    "ending_video": "https://files.catbox.moe/62rp2k.mp4",
     "ed": 1
   },
   {

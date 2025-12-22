@@ -1743,103 +1743,129 @@ function showResult(chosen, other, correct) {
 }
 
 function openDuelModal() {
-    const tierlistDiv = document.querySelector('.tierlist');
-    if (!tierlistDiv) return;
-    const imgs = Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
-	imgs.forEach((img, index) => img.dataset.rank = index);
-    if (imgs.length < 2) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Not enough items',
-            text: 'Need at least 2 items in the tierlist. Do you want to randomize it?',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, randomize',
-            cancelButtonText: 'No'
-        }).then(result => {
-            if (result.isConfirmed) randomize_tierlist();
-        });
-        return;
-    }
+		const tierlistDiv = document.querySelector('.tierlist');
+		if (!tierlistDiv) return;
+		const imgs = Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
+		imgs.forEach((img, index) => img.dataset.rank = index);
+		if (imgs.length < 2) {
+				Swal.fire({
+						icon: 'info',
+						title: 'Not enough items',
+						text: 'Need at least 2 items in the tierlist. Do you want to randomize it?',
+						showCancelButton: true,
+						confirmButtonText: 'Yes, randomize',
+						cancelButtonText: 'No'
+				}).then(result => {
+						if (result.isConfirmed) randomize_tierlist();
+				});
+				return;
+		}
 
-    let imgA, imgB;
-    if (Math.random() < 0.5) {
-        imgA = imgs[Math.floor(Math.random() * imgs.length)];
-        const rankA = parseInt(imgA.dataset.rank ?? '0', 10);
-        const similarPool = imgs.filter(img => img !== imgA && Math.abs(parseInt(img.dataset.rank ?? '0', 10) - rankA) <= 1);
-        imgB = similarPool.length > 0
-            ? similarPool[Math.floor(Math.random() * similarPool.length)]
-            : (() => { let tmp; do { tmp = imgs[Math.floor(Math.random() * imgs.length)]; } while (tmp === imgA); return tmp; })();
-    } else {
-        let i = Math.floor(Math.random() * imgs.length);
-        let j; do { j = Math.floor(Math.random() * imgs.length); } while (j === i);
-        imgA = imgs[i]; imgB = imgs[j];
-    }
+		let imgA, imgB;
+		if (Math.random() < 0.5) {
+				imgA = imgs[Math.floor(Math.random() * imgs.length)];
+				const rankA = parseInt(imgA.dataset.rank ?? '0', 10);
+				const similarPool = imgs.filter(img => img !== imgA && Math.abs(parseInt(img.dataset.rank ?? '0', 10) - rankA) <= 1);
+				imgB = similarPool.length > 0
+						? similarPool[Math.floor(Math.random() * similarPool.length)]
+						: (() => { let tmp; do { tmp = imgs[Math.floor(Math.random() * imgs.length)]; } while (tmp === imgA); return tmp; })();
+		} else {
+				let i = Math.floor(Math.random() * imgs.length);
+				let j; do { j = Math.floor(Math.random() * imgs.length); } while (j === i);
+				imgA = imgs[i]; imgB = imgs[j];
+		}
 
-    const titleA = imgA.title || imgA.alt || '';
-    const titleB = imgB.title || imgB.alt || '';
-    const suffixA = imgA.dataset.suffix_number;
-    const suffixB = imgB.dataset.suffix_number;
-    const rankDiff = Math.abs((parseInt(imgA.dataset.rank ?? 0, 10)) - (parseInt(imgB.dataset.rank ?? 0, 10)));
+		const animeA = findAnimeObj(imgA.src);
+		const animeB = findAnimeObj(imgB.src);
+		const videoA = animeA ? (animeA.opening_video || animeA.ending_video || "") : "";
+		const videoB = animeB ? (animeB.opening_video || animeB.ending_video || "") : "";
 
-    const html = `
-	<div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap;">
-        <div class="duel-choice" style="text-align:center;max-width:260px;">
-          <img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
-          <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleA)}</div>
-        </div>
-        <div style="font-weight:bold;align-self:center;">VS</div>
-        <div class="duel-choice" style="text-align:center;max-width:260px;">
-          <img src="${imgB.src}" alt="${escapeHtml(titleB)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
-          <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleB)}</div>
-        </div>
-      </div>
-      <div style="text-align:center;font-size:0.9em;margin-top:8px;color:#999;">
-        Click the image you prefer<br />
-		Rank difference: ${rankDiff}
-      </div>
-    `;
+		const titleA = imgA.title || imgA.alt || '';
+		const titleB = imgB.title || imgB.alt || '';
+		const suffixA = imgA.dataset.suffix_number;
+		const suffixB = imgB.dataset.suffix_number;
+		const rankDiff = Math.abs((parseInt(imgA.dataset.rank ?? 0, 10)) - (parseInt(imgB.dataset.rank ?? 0, 10)));
+
+		const html = `
+		<div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap;">
+				<div class="duel-choice" style="text-align:center;max-width:260px;">
+					<img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+					<div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleA)}</div>
+					${videoA ? `<button class='duel-play-btn' data-duel="A" style='margin-top:8px;padding:6px 18px;border-radius:6px;background:#222;color:#fff;border:none;cursor:pointer;'><i class='fas fa-play'></i> Play</button><div id='duel-videoA' style='display:none;margin-top:8px;'></div>` : ''}
+				</div>
+				<div style="font-weight:bold;align-self:center;">VS</div>
+				<div class="duel-choice" style="text-align:center;max-width:260px;">
+					<img src="${imgB.src}" alt="${escapeHtml(titleB)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
+					<div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleB)}</div>
+					${videoB ? `<button class='duel-play-btn' data-duel="B" style='margin-top:8px;padding:6px 18px;border-radius:6px;background:#222;color:#fff;border:none;cursor:pointer;'><i class='fas fa-play'></i> Play</button><div id='duel-videoB' style='display:none;margin-top:8px;'></div>` : ''}
+				</div>
+			</div>
+			<div style="text-align:center;font-size:0.9em;margin-top:8px;color:#999;">
+				Click the image you prefer<br />
+				Rank difference: ${rankDiff}
+			</div>
+		`;
 
     Swal.fire({
         title: 'Duel - Which do you prefer?',
         width: '600px',
         html: html,
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: 'Cancel',
-        didOpen: () => {
-            const popup = Swal.getPopup();
-            const imgsInPopup = popup.querySelectorAll('.duel-choice img');
-            const dropdownType = document.getElementById("dropdowntype");
+		showConfirmButton: false,
+		showCancelButton: true,
+		cancelButtonText: 'Cancel',
+		focusConfirm: false,
+		didOpen: () => {
+			const popup = Swal.getPopup();
+			const imgsInPopup = popup.querySelectorAll('.duel-choice img');
+			const dropdownType = document.getElementById("dropdowntype");
 
-            imgsInPopup.forEach(imgEl => {
-                imgEl.addEventListener('click', event => {
-                    const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
-                    const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
+			const playBtns = popup.querySelectorAll('.duel-play-btn');
+			playBtns.forEach(btn => {
+				btn.addEventListener('click', function() {
+					const duel = btn.getAttribute('data-duel');
+					const videoId = duel === 'A' ? 'duel-videoA' : 'duel-videoB';
+					const videoUrl = duel === 'A' ? videoA : videoB;
+					const videoDiv = popup.querySelector(`#${videoId}`);
+					if (videoDiv.innerHTML === '') {
+						videoDiv.innerHTML = `<video src='${videoUrl}' style='width:220px;max-width:100%;border-radius:6px;' controls autoplay></video>`;
+					}
+					videoDiv.style.display = 'block';
+					btn.style.display = 'none';
+				});
+			});
+			if (playBtns.length > 0) {
+				playBtns[0].blur();
+			}
+
+			imgsInPopup.forEach(imgEl => {
+				imgEl.addEventListener('click', event => {
+					const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
+					const title = (imgEl === imgsInPopup[0]) ? titleA : titleB;
 					const suffix = (imgEl === imgsInPopup[0]) ? suffixA : suffixB;
 					let search_type = suffix ? suffix : " " + tierListType;
 					if (search_type != "" && title.endsWith(search_type)) {
 						search_type = "";
 					}
 
-                    if (event.ctrlKey && title) {
-                        if (event.altKey || event.metaKey) {
-                            window.open(ANIMETHEMES_SEARCH_URL + encodeURIComponent(title), "_blank");
-                        } else {
-                            window.open(YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type), "_blank");
-                        }
-                    } else if (event.altKey || event.metaKey) {
-                        const url = findAnimeObj(imgEl.src).url;
-                        window.open(url, "_blank");
-                    } else {
-                        const chosen = (imgEl.src === imgA.src) ? imgA : imgB;
-                        const other = (chosen === imgA) ? imgB : imgA;
-                        Swal.close();
-                        const better = isBetter(chosen, other);
-                        showResult(chosen, other, better);
-                    }
-                });
-            });
-        },
+					if (event.ctrlKey && title) {
+						if (event.altKey || event.metaKey) {
+							window.open(ANIMETHEMES_SEARCH_URL + encodeURIComponent(title), "_blank");
+						} else {
+							window.open(YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type), "_blank");
+						}
+					} else if (event.altKey || event.metaKey) {
+						const url = findAnimeObj(imgEl.src).url;
+						window.open(url, "_blank");
+					} else {
+						const chosen = (imgEl.src === imgA.src) ? imgA : imgB;
+						const other = (chosen === imgA) ? imgB : imgA;
+						Swal.close();
+						const better = isBetter(chosen, other);
+						showResult(chosen, other, better);
+					}
+				});
+			});
+		},
     });
 }
 
