@@ -1,3 +1,8 @@
+.icon.play-toggle a:hover i,
+.icon.cinema-mode a:hover i {
+  background-color: #444b5a;
+  cursor: pointer;
+}
 html {
   height: 100%;
 }
@@ -817,4 +822,8 @@ body.swal2-shown > [aria-hidden='true'] {
   mask-size: contain;
   margin: auto;
   align-self: center;
+}
+
+.fa-no-width {
+  width: auto !important;
 }

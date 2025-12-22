@@ -178,20 +178,21 @@ function openInfoModal(img) {
 			<div style="text-align:center;">
 				<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
 
-		<div style="margin-bottom:8px;font-weight:bold;">
-		Current Rank: ${rank}
-		</div>
+				<div style="margin-bottom:8px;font-weight:bold;">
+					Current Rank: ${rank}
+				</div>
+
 
 				${animeVideo ? `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>` : ''}
 
 				<div style="display:flex;justify-content:center;gap:10px;">
 					<div class="icon mal">
-						<a class="si-a" href="${animeUrl}" target="_blank">
+						<a class="si-a" href="${animeUrl}" title="Open MyAnimeList" target="_blank">
 							<i class="si-mal"></i>
 						</a>
 					</div>
 					<div class="icon animetheme">
-						<a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" target="_blank">
+						<a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" title="Open AnimeTheme" target="_blank">
 							<svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
 								<polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
 								<polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
@@ -199,8 +200,8 @@ function openInfoModal(img) {
 						</a>
 					</div>
 					<div class="icon youtube">
-						<a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" target="_blank">
-							<i class="fab fa-youtube"></i>
+						<a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" title="Open YouTube" target="_blank">
+							<i class="fab fa-youtube fa-no-width"></i>
 						</a>
 					</div>
 					<div class="icon color-selector">
@@ -248,9 +249,9 @@ function openInfoModal(img) {
 						const icon = playBtn.querySelector('i');
 						if (icon) {
 							icon.classList.remove('fa-play');
-							icon.classList.add('fa-image');
+							icon.classList.add('fa-stop');
 						}
-						playBtn.title = 'Show image';
+						playBtn.title = 'Pause video';
 					} else {
 						videoWrapper.style.display = 'none';
 						video.style.display = 'none';
@@ -258,10 +259,10 @@ function openInfoModal(img) {
 						cinemaDiv.style.display = 'none';
 						const icon = playBtn.querySelector('i');
 						if (icon) {
-							icon.classList.remove('fa-image');
+							icon.classList.remove('fa-stop');
 							icon.classList.add('fa-play');
 						}
-						playBtn.title = 'Play Video';
+						playBtn.title = 'Play video';
 					}
 				}
 				updateVideoDisplay();
