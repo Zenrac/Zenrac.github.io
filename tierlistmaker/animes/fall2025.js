@@ -52,7 +52,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "Sutetsuyo",
     "img": "https://cdn.myanimelist.net/images/anime/1276/151118.jpg",
-    "url": "https://myanimelist.net/anime/61026/Ansatsusha_de_Aru_Ore_no_Status_ga_Yuusha_yori_mo_Akiraka_ni_Tsuyoi_no_da_ga"
+    "url": "https://myanimelist.net/anime/61026/Ansatsusha_de_Aru_Ore_no_Status_ga_Yuusha_yori_mo_Akiraka_ni_Tsuyoi_no_da_ga",
+    "opening_video": "https://files.catbox.moe/7zyo0r.mp4",
+    "ending_video": "https://files.catbox.moe/iwga31.mp4"
   },
   {
     "title": "Sanda",
@@ -106,7 +108,9 @@ window.animeSeasons["Fall 2025"] = [
   {
     "title": "My Gift Lvl 9999 Unlimited Gacha",
     "img": "https://cdn.myanimelist.net/images/anime/1163/151246.jpg",
-    "url": "https://myanimelist.net/anime/60303/Shinjiteita_Nakama-tachi_ni_Dungeon_Okuchi_de_Korosarekaketa_ga_Gift_Mugen_Gacha_de_Level_9999_no_Nakama-tachi_wo_Te_ni_Irete_Moto_Party_Member_to_Sekai_ni_Fukushuu___Zamaa_Shimasu"
+    "url": "https://myanimelist.net/anime/60303/Shinjiteita_Nakama-tachi_ni_Dungeon_Okuchi_de_Korosarekaketa_ga_Gift_Mugen_Gacha_de_Level_9999_no_Nakama-tachi_wo_Te_ni_Irete_Moto_Party_Member_to_Sekai_ni_Fukushuu___Zamaa_Shimasu",
+    "opening_video": "https://files.catbox.moe/h1tsyx.mp4",
+    "ending_video": "https://files.catbox.moe/zi2zqp.mp4"
   },
   {
     "title": "Bukiyou na Senpai.",
@@ -465,6 +469,13 @@ window.animeSeasons["Fall 2025"] = [
     "url": "https://myanimelist.net/anime/60347/Cats%E2%99%A5Eye",
     "opening_video": "https://files.catbox.moe/e2wo6m.mp4",
     "ending_video": "https://files.catbox.moe/in7fib.mp4"
+  },
+  {
+    "title": "Koupen-chan",
+    "img": "https://cdn.myanimelist.net/images/anime/1533/146981.jpg",
+    "url": "https://myanimelist.net/anime/60534/Koupen-chan",
+    "ending_video": "https://files.catbox.moe/yctunn.mp4",
+    "ed": 1
   },
   {
     "title": "Ansatsu Kyoushitsu 2nd Season (Rebroadcast)",
