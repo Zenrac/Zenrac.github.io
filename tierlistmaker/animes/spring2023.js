@@ -3,242 +3,337 @@ window.animeSeasons['Spring 2023'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1765/135099.webp",
     "title": "Kimetsu no Yaiba: Katanakaji no Sato-hen",
-    "url": "https://myanimelist.net/anime/51019/Kimetsu_no_Yaiba__Katanakaji_no_Sato-hen"
+    "url": "https://myanimelist.net/anime/51019/Kimetsu_no_Yaiba__Katanakaji_no_Sato-hen",
+    "opening_video": "https://files.catbox.moe/hebowj.mp4",
+    "ending_video": "https://files.catbox.moe/i9e0lj.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1812/134736.webp",
     "title": "\"Oshi no Ko\"",
-    "url": "https://myanimelist.net/anime/52034/Oshi_no_Ko"
+    "url": "https://myanimelist.net/anime/52034/Oshi_no_Ko",
+    "opening_video": "https://files.catbox.moe/naiyw6.mp4",
+    "ending_video": "https://files.catbox.moe/iuhphx.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1075/131925.webp",
     "title": "Jigokuraku",
-    "url": "https://myanimelist.net/anime/46569/Jigokuraku"
+    "url": "https://myanimelist.net/anime/46569/Jigokuraku",
+    "opening_video": "https://files.catbox.moe/0ziqrc.mp4",
+    "ending_video": "https://files.catbox.moe/enna8u.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1218/135107.webp",
     "title": "Mashle",
-    "url": "https://myanimelist.net/anime/52211/Mashle"
+    "url": "https://myanimelist.net/anime/52211/Mashle",
+    "opening_video": "https://files.catbox.moe/xjpygw.mp4",
+    "ending_video": "https://files.catbox.moe/1cm038.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1121/133132.webp",
     "title": "Tengoku Daimakyou",
-    "url": "https://myanimelist.net/anime/53393/Tengoku_Daimakyou"
+    "url": "https://myanimelist.net/anime/53393/Tengoku_Daimakyou",
+    "opening_video": "https://files.catbox.moe/cix6kz.mp4",
+    "ending_video": "https://files.catbox.moe/5se8gt.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1316/136268.webp",
     "title": "Dr. Stone: New World",
-    "url": "https://myanimelist.net/anime/48549/Dr_Stone__New_World"
+    "url": "https://myanimelist.net/anime/48549/Dr_Stone__New_World",
+    "opening_video": "https://files.catbox.moe/n1jybf.mp4",
+    "ending_video": "https://files.catbox.moe/vdk8o7.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1298/134178.webp",
     "title": "Yamada-kun to Lv999 no Koi wo Suru",
-    "url": "https://myanimelist.net/anime/53126/Yamada-kun_to_Lv999_no_Koi_wo_Suru"
+    "url": "https://myanimelist.net/anime/53126/Yamada-kun_to_Lv999_no_Koi_wo_Suru",
+    "opening_video": "https://files.catbox.moe/g2vowb.mp4",
+    "ending_video": "https://files.catbox.moe/92ikle.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1626/135844.webp",
     "title": "Kono Subarashii Sekai ni Bakuen wo!",
-    "url": "https://myanimelist.net/anime/51958/Kono_Subarashii_Sekai_ni_Bakuen_wo"
+    "url": "https://myanimelist.net/anime/51958/Kono_Subarashii_Sekai_ni_Bakuen_wo",
+    "opening_video": "https://files.catbox.moe/2crx7b.mp4",
+    "ending_video": "https://files.catbox.moe/frapk4.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1316/134327.webp",
     "title": "Isekai de Cheat Skill wo Te ni Shita Ore wa, Genjitsu Sekai wo mo Musou Suru: Level Up wa Jinsei wo Kaeta",
-    "url": "https://myanimelist.net/anime/52830/Isekai_de_Cheat_Skill_wo_Te_ni_Shita_Ore_wa_Genjitsu_Sekai_wo_mo_Musou_Suru__Level_Up_wa_Jinsei_wo_Kaeta"
+    "url": "https://myanimelist.net/anime/52830/Isekai_de_Cheat_Skill_wo_Te_ni_Shita_Ore_wa_Genjitsu_Sekai_wo_mo_Musou_Suru__Level_Up_wa_Jinsei_wo_Kaeta",
+    "opening_video": "https://files.catbox.moe/45wnmw.mp4",
+    "ending_video": "https://files.catbox.moe/g500cz.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1545/133887.webp",
     "title": "Boku no Kokoro no Yabai Yatsu",
-    "url": "https://myanimelist.net/anime/52578/Boku_no_Kokoro_no_Yabai_Yatsu"
+    "url": "https://myanimelist.net/anime/52578/Boku_no_Kokoro_no_Yabai_Yatsu",
+    "opening_video": "https://files.catbox.moe/u7iuya.mp4",
+    "ending_video": "https://files.catbox.moe/f02ybd.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1518/138730.webp",
     "title": "Skip to Loafer",
-    "url": "https://myanimelist.net/anime/50416/Skip_to_Loafer"
+    "url": "https://myanimelist.net/anime/50416/Skip_to_Loafer",
+    "opening_video": "https://files.catbox.moe/ltinrx.mp4",
+    "ending_video": "https://files.catbox.moe/029976.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1996/133361.webp",
     "title": "Tonikaku Kawaii 2nd Season",
-    "url": "https://myanimelist.net/anime/50307/Tonikaku_Kawaii_2nd_Season"
+    "url": "https://myanimelist.net/anime/50307/Tonikaku_Kawaii_2nd_Season",
+    "opening_video": "https://files.catbox.moe/onl1bj.mp4",
+    "ending_video": "https://files.catbox.moe/n4x8j2.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1930/133758.webp",
     "title": "Dead Mount Death Play",
-    "url": "https://myanimelist.net/anime/53613/Dead_Mount_Death_Play"
+    "url": "https://myanimelist.net/anime/53613/Dead_Mount_Death_Play",
+    "opening_video": "https://files.catbox.moe/9tvp30.mp4",
+    "ending_video": "https://files.catbox.moe/yqkpob.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1402/134007.webp",
     "title": "Kimi wa Houkago Insomnia",
-    "url": "https://myanimelist.net/anime/50796/Kimi_wa_Houkago_Insomnia"
+    "url": "https://myanimelist.net/anime/50796/Kimi_wa_Houkago_Insomnia",
+    "opening_video": "https://files.catbox.moe/jmhwyb.mp4",
+    "ending_video": "https://files.catbox.moe/466y83.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1532/135155.webp",
     "title": "Mahoutsukai no Yome Season 2",
-    "url": "https://myanimelist.net/anime/52955/Mahoutsukai_no_Yome_Season_2"
+    "url": "https://myanimelist.net/anime/52955/Mahoutsukai_no_Yome_Season_2",
+    "opening_video": "https://files.catbox.moe/kup7vu.mp4",
+    "ending_video": "https://files.catbox.moe/rb7bo3.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1794/135148.webp",
     "title": "Kaminaki Sekai no Kamisama Katsudou",
-    "url": "https://myanimelist.net/anime/51693/Kaminaki_Sekai_no_Kamisama_Katsudou"
+    "url": "https://myanimelist.net/anime/51693/Kaminaki_Sekai_no_Kamisama_Katsudou",
+    "opening_video": "https://files.catbox.moe/kym20v.mp4",
+    "ending_video": "https://files.catbox.moe/ghwhjo.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1071/135255.webp",
     "title": "Tensei Kizoku no Isekai Boukenroku: Jichou wo Shiranai Kamigami no Shito",
-    "url": "https://myanimelist.net/anime/52608/Tensei_Kizoku_no_Isekai_Boukenroku__Jichou_wo_Shiranai_Kamigami_no_Shito"
+    "url": "https://myanimelist.net/anime/52608/Tensei_Kizoku_no_Isekai_Boukenroku__Jichou_wo_Shiranai_Kamigami_no_Shito",
+    "opening_video": "https://files.catbox.moe/rcwchm.mp4",
+    "ending_video": "https://files.catbox.moe/y33f8o.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1387/134151.webp",
     "title": "Isekai Shoukan wa Nidome desu",
-    "url": "https://myanimelist.net/anime/50220/Isekai_Shoukan_wa_Nidome_desu"
+    "url": "https://myanimelist.net/anime/50220/Isekai_Shoukan_wa_Nidome_desu",
+    "opening_video": "https://files.catbox.moe/y3e8e1.mp4",
+    "ending_video": "https://files.catbox.moe/yf6s6t.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1109/130452.webp",
     "title": "Kanojo ga Koushaku-tei ni Itta Riyuu",
-    "url": "https://myanimelist.net/anime/52308/Kanojo_ga_Koushaku-tei_ni_Itta_Riyuu"
+    "url": "https://myanimelist.net/anime/52308/Kanojo_ga_Koushaku-tei_ni_Itta_Riyuu",
+    "opening_video": "https://files.catbox.moe/tnefj9.mp4",
+    "ending_video": "https://files.catbox.moe/qy4btn.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1091/135041.webp",
     "title": "Otonari ni Ginga",
-    "url": "https://myanimelist.net/anime/51705/Otonari_ni_Ginga"
+    "url": "https://myanimelist.net/anime/51705/Otonari_ni_Ginga",
+    "opening_video": "https://files.catbox.moe/axkkt7.mp4",
+    "ending_video": "https://files.catbox.moe/hx50y1.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1897/131615.webp",
     "title": "Ousama Ranking: Yuuki no Takarabako",
-    "url": "https://myanimelist.net/anime/52657/Ousama_Ranking__Yuuki_no_Takarabako"
+    "url": "https://myanimelist.net/anime/52657/Ousama_Ranking__Yuuki_no_Takarabako",
+    "opening_video": "https://files.catbox.moe/668ro3.mp4",
+    "ending_video": "https://files.catbox.moe/cp0xhs.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1932/131464.webp",
     "title": "Isekai wa Smartphone to Tomo ni. 2",
-    "url": "https://myanimelist.net/anime/51632/Isekai_wa_Smartphone_to_Tomo_ni_2"
+    "url": "https://myanimelist.net/anime/51632/Isekai_wa_Smartphone_to_Tomo_ni_2",
+    "opening_video": "https://files.catbox.moe/65uuny.mp4",
+    "ending_video": "https://files.catbox.moe/z67hrs.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1525/132959.webp",
     "title": "My Home Hero",
-    "url": "https://myanimelist.net/anime/52092/My_Home_Hero"
+    "url": "https://myanimelist.net/anime/52092/My_Home_Hero",
+    "opening_video": "https://files.catbox.moe/uy6x0r.mp4",
+    "ending_video": "https://files.catbox.moe/wmeqiz.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1868/133866.webp",
     "title": "Yuusha ga Shinda!",
-    "url": "https://myanimelist.net/anime/51706/Yuusha_ga_Shinda"
+    "url": "https://myanimelist.net/anime/51706/Yuusha_ga_Shinda",
+    "opening_video": "https://files.catbox.moe/vi7um1.mp4",
+    "ending_video": "https://files.catbox.moe/av9z0o.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1963/136050.webp",
     "title": "Megami no Café Terrace",
-    "url": "https://myanimelist.net/anime/52973/Megami_no_Caf%C3%A9_Terrace"
+    "url": "https://myanimelist.net/anime/52973/Megami_no_Caf%C3%A9_Terrace",
+    "opening_video": "https://files.catbox.moe/lsyi5o.mp4",
+    "ending_video": "https://files.catbox.moe/4ci7jf.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1250/135256.webp",
     "title": "Isekai One Turn Kill Neesan: Ane Douhan no Isekai Seikatsu Hajimemashita",
-    "url": "https://myanimelist.net/anime/51219/Isekai_One_Turn_Kill_Neesan__Ane_Douhan_no_Isekai_Seikatsu_Hajimemashita"
+    "url": "https://myanimelist.net/anime/51219/Isekai_One_Turn_Kill_Neesan__Ane_Douhan_no_Isekai_Seikatsu_Hajimemashita",
+    "opening_video": "https://files.catbox.moe/xoxpeu.mp4",
+    "ending_video": "https://files.catbox.moe/aub0ry.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1023/134768.webp",
     "title": "Kidou Senshi Gundam: Suisei no Majo Season 2",
-    "url": "https://myanimelist.net/anime/53199/Kidou_Senshi_Gundam__Suisei_no_Majo_Season_2"
+    "url": "https://myanimelist.net/anime/53199/Kidou_Senshi_Gundam__Suisei_no_Majo_Season_2",
+    "opening_video": "https://files.catbox.moe/6jhxvw.mp4",
+    "ending_video": "https://files.catbox.moe/goczis.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1132/134608.webp",
     "title": "Kuma Kuma Kuma Bear Punch!",
-    "url": "https://myanimelist.net/anime/45486/Kuma_Kuma_Kuma_Bear_Punch"
+    "url": "https://myanimelist.net/anime/45486/Kuma_Kuma_Kuma_Bear_Punch",
+    "opening_video": "https://files.catbox.moe/zt5gva.mp4",
+    "ending_video": "https://files.catbox.moe/m014w0.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1203/134079.webp",
     "title": "Mahou Shoujo Magical Destroyers",
-    "url": "https://myanimelist.net/anime/48981/Mahou_Shoujo_Magical_Destroyers"
+    "url": "https://myanimelist.net/anime/48981/Mahou_Shoujo_Magical_Destroyers",
+    "opening_video": "https://files.catbox.moe/cf99rq.mp4",
+    "ending_video": "https://files.catbox.moe/p0nij9.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1397/133339.webp",
     "title": "Niehime to Kemono no Ou",
-    "url": "https://myanimelist.net/anime/46422/Niehime_to_Kemono_no_Ou"
+    "url": "https://myanimelist.net/anime/46422/Niehime_to_Kemono_no_Ou",
+    "opening_video": "https://files.catbox.moe/jwxww2.mp4",
+    "ending_video": "https://files.catbox.moe/kmaiop.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1943/135100.webp",
     "title": "Edens Zero 2nd Season",
-    "url": "https://myanimelist.net/anime/50002/Edens_Zero_2nd_Season"
+    "url": "https://myanimelist.net/anime/50002/Edens_Zero_2nd_Season",
+    "opening_video": "https://files.catbox.moe/vwdlcy.mp4",
+    "ending_video": "https://files.catbox.moe/uja4b8.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1350/133642.webp",
     "title": "Jijou wo Shiranai Tenkousei ga Guigui Kuru.",
-    "url": "https://myanimelist.net/anime/53621/Jijou_wo_Shiranai_Tenkousei_ga_Guigui_Kuru"
+    "url": "https://myanimelist.net/anime/53621/Jijou_wo_Shiranai_Tenkousei_ga_Guigui_Kuru",
+    "opening_video": "https://files.catbox.moe/90jpvy.mp4",
+    "ending_video": "https://files.catbox.moe/sp17w1.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1171/133777.webp",
     "title": "Edomae Elf",
-    "url": "https://myanimelist.net/anime/52081/Edomae_Elf"
+    "url": "https://myanimelist.net/anime/52081/Edomae_Elf",
+    "opening_video": "https://files.catbox.moe/9xogck.mp4",
+    "ending_video": "https://files.catbox.moe/2pocnn.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1832/133754.webp",
     "title": "Ao no Orchestra",
-    "url": "https://myanimelist.net/anime/51614/Ao_no_Orchestra"
+    "url": "https://myanimelist.net/anime/51614/Ao_no_Orchestra",
+    "opening_video": "https://files.catbox.moe/vp02bt.mp4",
+    "ending_video": "https://files.catbox.moe/3nk92n.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1708/133360.webp",
     "title": "Watashi no Yuri wa Oshigoto desu!",
-    "url": "https://myanimelist.net/anime/51817/Watashi_no_Yuri_wa_Oshigoto_desu"
+    "url": "https://myanimelist.net/anime/51817/Watashi_no_Yuri_wa_Oshigoto_desu",
+    "opening_video": "https://files.catbox.moe/kyeu3t.mp4",
+    "ending_video": "https://files.catbox.moe/mtncny.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1933/134709.webp",
     "title": "Rokudou no Onna-tachi",
-    "url": "https://myanimelist.net/anime/54259/Rokudou_no_Onna-tachi"
+    "url": "https://myanimelist.net/anime/54259/Rokudou_no_Onna-tachi",
+    "opening_video": "https://files.catbox.moe/nv1hx0.mp4",
+    "ending_video": "https://files.catbox.moe/jsawli.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1332/134658.webp",
     "title": "Kawaisugi Crisis",
-    "url": "https://myanimelist.net/anime/53163/Kawaisugi_Crisis"
+    "url": "https://myanimelist.net/anime/53163/Kawaisugi_Crisis",
+    "opening_video": "https://files.catbox.moe/m1ntab.mp4",
+    "ending_video": "https://files.catbox.moe/hc3h2e.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1407/135263.webp",
     "title": "Birdie Wing: Golf Girls' Story Season 2",
-    "url": "https://myanimelist.net/anime/52229/Birdie_Wing__Golf_Girls_Story_Season_2"
+    "url": "https://myanimelist.net/anime/52229/Birdie_Wing__Golf_Girls_Story_Season_2",
+    "ending_video": "https://files.catbox.moe/92l9fk.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1576/133934.webp",
     "title": "The Marginal Service",
-    "url": "https://myanimelist.net/anime/53587/The_Marginal_Service"
+    "url": "https://myanimelist.net/anime/53587/The_Marginal_Service",
+    "opening_video": "https://files.catbox.moe/qp8zuf.mp4",
+    "ending_video": "https://files.catbox.moe/jptcty.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1632/133752.webp",
     "title": "Kizuna no Allele",
-    "url": "https://myanimelist.net/anime/51139/Kizuna_no_Allele"
+    "url": "https://myanimelist.net/anime/51139/Kizuna_no_Allele",
+    "opening_video": "https://files.catbox.moe/f8wglj.mp4",
+    "ending_video": "https://files.catbox.moe/apnj55.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1875/133377.webp",
     "title": "The iDOLM@STER Cinderella Girls: U149",
-    "url": "https://myanimelist.net/anime/51536/The_iDOLMSTER_Cinderella_Girls__U149"
+    "url": "https://myanimelist.net/anime/51536/The_iDOLMSTER_Cinderella_Girls__U149",
+    "opening_video": "https://files.catbox.moe/6uoi4g.mp4",
+    "ending_video": "https://files.catbox.moe/b12ko0.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1274/133807.webp",
     "title": "Tokyo Mew Mew New ♡ 2nd Season",
-    "url": "https://myanimelist.net/anime/53097/Tokyo_Mew_Mew_New_%E2%99%A1_2nd_Season"
+    "url": "https://myanimelist.net/anime/53097/Tokyo_Mew_Mew_New_%E2%99%A1_2nd_Season",
+    "opening_video": "https://files.catbox.moe/j94pwp.mp4",
+    "ending_video": "https://files.catbox.moe/6f6pmt.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1203/133808.webp",
     "title": "World Dai Star",
-    "url": "https://myanimelist.net/anime/53698/World_Dai_Star"
+    "url": "https://myanimelist.net/anime/53698/World_Dai_Star",
+    "opening_video": "https://files.catbox.moe/6ik63n.mp4",
+    "ending_video": "https://files.catbox.moe/dbph8g.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1873/137212.webp",
     "title": "Majutsushi Orphen Hagure Tabi: Seiiki-hen",
-    "url": "https://myanimelist.net/anime/54738/Majutsushi_Orphen_Hagure_Tabi__Seiiki-hen"
+    "url": "https://myanimelist.net/anime/54738/Majutsushi_Orphen_Hagure_Tabi__Seiiki-hen",
+    "opening_video": "https://files.catbox.moe/wq6yya.mp4",
+    "ending_video": "https://files.catbox.moe/j3i022.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1460/135257.webp",
     "title": "Alice Gear Aegis Expansion",
-    "url": "https://myanimelist.net/anime/50871/Alice_Gear_Aegis_Expansion"
+    "url": "https://myanimelist.net/anime/50871/Alice_Gear_Aegis_Expansion",
+    "opening_video": "https://files.catbox.moe/qogitq.mp4",
+    "ending_video": "https://files.catbox.moe/5recju.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1758/134733.webp",
     "title": "Opus.COLORs",
-    "url": "https://myanimelist.net/anime/51415/OpusCOLORs"
+    "url": "https://myanimelist.net/anime/51415/OpusCOLORs",
+    "opening_video": "https://files.catbox.moe/r17a2o.mp4",
+    "ending_video": "https://files.catbox.moe/z11c0r.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1727/137215.webp",
     "title": "Mix: Meisei Story 2nd Season - Nidome no Natsu, Sora no Mukou e",
-    "url": "https://myanimelist.net/anime/52614/Mix__Meisei_Story_2nd_Season_-_Nidome_no_Natsu_Sora_no_Mukou_e"
+    "url": "https://myanimelist.net/anime/52614/Mix__Meisei_Story_2nd_Season_-_Nidome_no_Natsu_Sora_no_Mukou_e",
+    "opening_video": "https://files.catbox.moe/5ie6jj.mp4",
+    "ending_video": "https://files.catbox.moe/xym70r.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1170/124312.webp",
     "title": "Vinland Saga Season 2",
-    "url": "https://myanimelist.net/anime/49387/Vinland_Saga_Season_2"
+    "url": "https://myanimelist.net/anime/49387/Vinland_Saga_Season_2",
+    "opening_video": "https://files.catbox.moe/eph46f.mp4",
+    "ending_video": "https://files.catbox.moe/ff95qe.mp4"
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1369/139553.webp",

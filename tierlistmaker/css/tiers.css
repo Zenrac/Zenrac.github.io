@@ -793,6 +793,7 @@ body.swal2-shown > [aria-hidden='true'] {
   background-color: #232830;
   transition: 0.3s;
   border-radius: 5px;
+  width: 30px;
 }
 
 .si-a {

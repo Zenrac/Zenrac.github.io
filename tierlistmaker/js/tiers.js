@@ -152,64 +152,160 @@ function openInfoModal(img) {
 		search_type = "";
 	}
     
-    let animeUrl = "";
-    if (window.animeSeasons) {
-        const dropdown = document.getElementById("dropdown");
-        const anime = window.animeSeasons[dropdown.value]?.find(a => removeExtension(a.img) === removeExtension(src));
-        if (anime) animeUrl = anime.url || "";
-    }
+	let animeUrl = "";
+	let animeVideo = "";
+	if (window.animeSeasons) {
+		const dropdown = document.getElementById("dropdown");
+		const anime = window.animeSeasons[dropdown.value]?.find(a => removeExtension(a.img) === removeExtension(src));
+		if (anime) {
+			animeUrl = anime.url || "";
+			if (tierListType === OPENING) {
+				animeVideo = anime.opening_video || "";
+			} else if (tierListType === ENDING) {
+				animeVideo = anime.ending_video || "";
+			} else {
+				animeVideo = "";
+			}
+		}
+	}
 
 	const tierlistDiv = document.querySelector('.tierlist');
 	const imgs = Array.from(tierlistDiv.querySelectorAll('.row .items .item img'));
 	const index = imgs.indexOf(img);
 	const rank = index >= 0 ? index + 1 : "N/A";
 
-    const html = `
-      <div style="text-align:center;">
-        <img src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
+		const html = `
+			<div style="text-align:center;">
+				<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
 
 		<div style="margin-bottom:8px;font-weight:bold;">
 		Current Rank: ${rank}
 		</div>
 
-        <div style="display:flex;justify-content:center;gap:10px;">
-          <div class="icon mal">
-            <a class="si-a" href="${animeUrl}" target="_blank">
-              <i class="si-mal"></i>
-            </a>
-          </div>
-          <div class="icon animetheme">
-            <a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" target="_blank">
-              <svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
-                <polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
-                <polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
-              </svg>
-            </a>
-          </div>
-          <div class="icon youtube">
-            <a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" target="_blank">
-              <i class="fab fa-youtube"></i>
-            </a>
-          </div>
-			<div class="icon color-selector">
-				<a href="javascript:void(0);" title="Choose colors">
-					<i class="fas fa-palette"></i>
-				</a>
+				${animeVideo ? `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>` : ''}
+
+				<div style="display:flex;justify-content:center;gap:10px;">
+					<div class="icon mal">
+						<a class="si-a" href="${animeUrl}" target="_blank">
+							<i class="si-mal"></i>
+						</a>
+					</div>
+					<div class="icon animetheme">
+						<a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" target="_blank">
+							<svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
+								<polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
+								<polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
+							</svg>
+						</a>
+					</div>
+					<div class="icon youtube">
+						<a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" target="_blank">
+							<i class="fab fa-youtube"></i>
+						</a>
+					</div>
+					<div class="icon color-selector">
+						<a href="javascript:void(0);" title="Choose colors">
+							<i class="fas fa-palette"></i>
+						</a>
+					</div>
+					${animeVideo ? `<div class="icon play-toggle"><a href="javascript:void(0);" title="Play Video"><i class="fas fa-play"></i></a></div>` : ''}
+					${animeVideo ? `<div class="icon cinema-mode"><a href="javascript:void(0);" title="Cinema Mode"><i class="fas fa-expand"></i></a></div>` : ''}
+				</div>
 			</div>
-        </div>
-      </div>
-    `;
+		`;
 
     Swal.fire({
         title: escapeHtml(title),
         html: html,
         showConfirmButton: false,
         showCloseButton: true,
-        width: '600px',
+		width: 600,
 		didOpen: () => {
 			const popup = Swal.getPopup();
 			const colorBtn = popup.querySelector('.color-selector a');
 			colorBtn?.addEventListener('click', () => openColorSelector(img.parentNode));
+			const video = popup.querySelector('video');
+			const videoWrapper = popup.querySelector('#video-wrapper');
+			const playBtn = popup.querySelector('.play-toggle a');
+			const cinemaDiv = popup.querySelector('.cinema-mode');
+			const cinemaBtn = popup.querySelector('.cinema-mode a');
+			let videoVisible = false;
+			const videoPrefKey = 'tierlist_video_preference';
+			try {
+				const pref = localStorage.getItem(videoPrefKey);
+				if (pref === 'video') videoVisible = true;
+			} catch {}
+			let cinemaMode = false;
+			if (playBtn && video && videoWrapper) {
+				const imgElem = popup.querySelector('#anime-detail-img');
+				function updateVideoDisplay() {
+					if (videoVisible) {
+						videoWrapper.style.display = '';
+						video.style.display = '';
+						video.style.height = '360px';
+						if (imgElem) imgElem.style.display = 'none';
+						cinemaDiv.style.display = '';
+						const icon = playBtn.querySelector('i');
+						if (icon) {
+							icon.classList.remove('fa-play');
+							icon.classList.add('fa-image');
+						}
+						playBtn.title = 'Show image';
+					} else {
+						videoWrapper.style.display = 'none';
+						video.style.display = 'none';
+						if (imgElem) imgElem.style.display = '';
+						cinemaDiv.style.display = 'none';
+						const icon = playBtn.querySelector('i');
+						if (icon) {
+							icon.classList.remove('fa-image');
+							icon.classList.add('fa-play');
+						}
+						playBtn.title = 'Play Video';
+					}
+				}
+				updateVideoDisplay();
+				if (videoVisible) {
+					setTimeout(() => { try { video.play(); } catch {} }, 0);
+				}
+				playBtn.addEventListener('click', () => {
+					videoVisible = !videoVisible;
+					try {
+						localStorage.setItem(videoPrefKey, videoVisible ? 'video' : 'image');
+					} catch {}
+					if (!videoVisible) {
+						video.pause();
+						video.currentTime = 0;
+						if (cinemaMode) {
+							cinemaMode = false;
+							popup.style.width = '600px';
+							video.style.width = '550px';
+							video.style.height = '360px';
+							videoWrapper.style.width = '550px';
+						}
+					} else {
+						video.play();
+					}
+					updateVideoDisplay();
+				});
+			}
+			cinemaBtn?.addEventListener('click', () => {
+				cinemaMode = !cinemaMode;
+				const imgElem = popup.querySelector('#anime-detail-img');
+				if (cinemaMode) {
+					video.style.width = '100%';
+					video.style.height = 'auto';
+					videoWrapper.style.width = '100%';
+					popup.style.width = '80vw';
+					if (imgElem) imgElem.style.display = 'none';
+				} else {
+					video.style.width = '550px';
+					video.style.height = '360px';
+					videoWrapper.style.width = '550px';
+					popup.style.width = '600px';
+					if (imgElem && videoWrapper.style.display === 'none') imgElem.style.display = '';
+				}
+			});
 		}
     });
 }
@@ -1674,7 +1770,7 @@ function openDuelModal() {
     const rankDiff = Math.abs((parseInt(imgA.dataset.rank ?? 0, 10)) - (parseInt(imgB.dataset.rank ?? 0, 10)));
 
     const html = `
-      <div style="display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:nowrap;">
+	<div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap;">
         <div class="duel-choice" style="text-align:center;max-width:260px;">
           <img src="${imgA.src}" alt="${escapeHtml(titleA)}" style="width:250px;height:360px;cursor:pointer;border-radius:8px;border:4px solid transparent;display:block;">
           <div style="margin-top:8px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(titleA)}</div>
