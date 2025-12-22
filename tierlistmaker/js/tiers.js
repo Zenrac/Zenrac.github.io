@@ -218,14 +218,19 @@ function openInfoModal(img) {
     Swal.fire({
         title: escapeHtml(title),
         html: html,
-        showConfirmButton: false,
-        showCloseButton: true,
+		showConfirmButton: false,
+		showCloseButton: true,
 		width: 600,
 		didOpen: () => {
 			const popup = Swal.getPopup();
+			setTimeout(() => {
+				const closeBtn = popup.querySelector('.swal2-close');
+				if (closeBtn) closeBtn.blur();
+			}, 0);
 			const colorBtn = popup.querySelector('.color-selector a');
 			colorBtn?.addEventListener('click', () => openColorSelector(img.parentNode));
 			const video = popup.querySelector('video');
+			if (video) video.volume = 0.5;
 			const videoWrapper = popup.querySelector('#video-wrapper');
 			const playBtn = popup.querySelector('.play-toggle a');
 			const cinemaDiv = popup.querySelector('.cinema-mode');
@@ -1213,7 +1218,6 @@ function shuffleArray(array) {
 function filter_anime_with_modes(animeList) {
 	const mode = document.getElementById("dropdowntype").value;
 
-	// filtre initial : Opening/Ending gardent leur logique, ANIME garde tout pour l'instant
 	let animes = animeList.filter(item => {
 		if (mode === OPENING) {
 			return !item.ed || item.op;
@@ -1828,6 +1832,8 @@ function openDuelModal() {
 					const videoDiv = popup.querySelector(`#${videoId}`);
 					if (videoDiv.innerHTML === '') {
 						videoDiv.innerHTML = `<video src='${videoUrl}' style='width:220px;max-width:100%;border-radius:6px;' controls autoplay></video>`;
+						const vid = videoDiv.querySelector('video');
+						if (vid) vid.volume = 0.5;
 					}
 					videoDiv.style.display = 'block';
 					btn.style.display = 'none';
