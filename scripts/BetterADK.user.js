@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BetterADK
 // @namespace    http://adkami.com/
-// @version      1.83
+// @version      1.84
 // @description  Removes VF from ADKami, also add MAL buttons, Mavanimes links, new fancy icons and cool stuff!
 // @author       Zenrac
 // @match        https://www.adkami.com/*
@@ -42,6 +42,7 @@
     const FRA_ICON = "https://i.imgur.com/f9PElxF.png";
     const VOA_ICON = "https://i.imgur.com/xqi8s1S.png";
     const MAL_ICON = "https://i.imgur.com/S9KpzW5.png";
+    const ANILIST_ICON  = "https://i.imgur.com/iiJRTbL.png";
     const NO_RESULT_PLAYER = `<div style="display:flex;justify-content: center;height: 500px;"><img src="${NO_RESULT_IMAGE}"/></div>`;
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -377,6 +378,17 @@
                 },
                 "section" : ["Lecteurs & Icones"]
             },
+            "aniicon": {
+                "label" : "Afficher l'icone Anilist",
+                "type" : "select",
+                "default" : "both",
+                "options" : {
+                    "both" : "Page principale & Page animé",
+                    "main" : "Seulement Page principale",
+                    "anime" : "Seulement Page animé",
+                    "never" : "Jamais"
+                }
+            },
             "nyaaicon" : {
                 "label" : "Afficher l'icone Nyaa",
                 "type" : "select",
@@ -482,7 +494,7 @@
 
         addGlobalStyle(`
             #GM_config {
-              height: 800px !important;
+              height: 875px !important;
               width: 50% !important;
               opacity: 0.90 !important;
 
@@ -981,6 +993,86 @@
                     }
                 })
                     .catch(console.error);
+            }
+
+            if (["both", "main"].includes(GM_config.get("aniicon"))) {
+                let req = new Request(`https://${window.location.hostname}/api/main?objet=adk-mal-all`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                fetch(req)
+                    .then(response => response.json())
+                    .then(data => {
+                    if (data.data === undefined) return;
+                    malContent = data.data;
+                    for (let i = 0; i < elems.length; i++) {
+                        let after = elems[i].getElementsByClassName(
+                            connected ? "right list-edition" : "look"
+                        )[0];
+                        let episode = elems[i].getElementsByClassName("episode")[0];
+                        let saison = episode.innerText.toLowerCase().match(/saison (\d+)/);
+                        let id = after.dataset["info"].split(",")[0];
+                        let malElement = malContent.filter(el => el["anime_id"] == id);
+                        if (saison) {
+                            let malElementSeason = malElement.filter(el => el["saison"] == saison[1]);
+                            if (malElementSeason && malElementSeason.length > 0) {
+                                malElement = malElementSeason;
+                            }
+                        }
+                        malElement = malElement[0];
+                        let malId = malElement.mal_id;
+                        if (!malId) continue;
+
+                        let clickable = document.createElement("a");
+                        clickable.classList.add("lecteur-icon", "crunchyroll");
+
+                        let img = document.createElement("img");
+                        img.style.width = "40px";
+                        img.src = ANILIST_ICON;
+
+                        clickable.appendChild(img);
+                        elems[i].insertBefore(clickable, after.nextSibling);
+
+                        clickable.addEventListener("click", e => {
+
+                            if (clickable.href) {
+                                return;
+                            }
+
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const query = `
+                                query ($id: Int) {
+                                    Media(idMal: $id, type: ANIME) {
+                                        siteUrl
+                                    }
+                                }
+                            `;
+
+                            GM_xmlhttpRequest({
+                                method: "POST",
+                                url: "https://graphql.anilist.co",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                data: JSON.stringify({
+                                    query,
+                                    variables: { id: parseInt(malId, 10) }
+                                }),
+                                onload: res => {
+                                    const json = JSON.parse(res.responseText);
+                                    const url = json?.data?.Media?.siteUrl;
+                                    if (url) {
+                                        clickable.href = url;
+                                        clickable.target = "_blank";
+                                        window.open(url, "_blank");
+                                    }
+                                }
+                            });
+                        });
+                    }
+                })
             }
 
             if (["both", "main"].includes(GM_config.get('nyaaicon'))) {
