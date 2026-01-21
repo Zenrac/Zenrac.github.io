@@ -209,6 +209,13 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/sqm3rn.mp4"
   },
   {
+    "title": "Kirei ni Shite Moraemasu ka.",
+    "img": "https://cdn.myanimelist.net/images/anime/1940/154234.jpg",
+    "url": "https://myanimelist.net/anime/61782/Kirei_ni_Shitemoraemasu_ka",
+    "opening_video": "https://files.catbox.moe/f4874k.mp4",
+    "ending_video": "https://files.catbox.moe/c51oge.mp4"
+  },
+  {
     "title": "Dead Account",
     "img": "https://cdn.myanimelist.net/images/anime/1622/154192.jpg",
     "url": "https://myanimelist.net/anime/61196/Dead_Account",
@@ -430,13 +437,6 @@ window.animeSeasons["Winter 2026"] = [
     "ed": 2
   },
   {
-    "title": "Princession Orchestra",
-    "img": "https://cdn.myanimelist.net/images/anime/1405/152146.jpg",
-    "url": "https://myanimelist.net/anime/59078/Princession_Orchestra",
-    "opening_video": "https://files.catbox.moe/tnpakj.mp4",
-    "ending_video": "https://files.catbox.moe/09nvf5.mp4"
-  },
-  {
     "title": "Beastars Final Season Part 2",
     "img": "https://cdn.myanimelist.net/images/anime/1710/150907.jpg",
     "url": "https://myanimelist.net/anime/61114/Beastars_Final_Season_Part_2"
@@ -445,6 +445,14 @@ window.animeSeasons["Winter 2026"] = [
     "title": "Duel Masters LOST: Boukyaku no Taiyou",
     "img": "https://cdn.myanimelist.net/images/anime/1547/154126.jpg",
     "url": "https://myanimelist.net/anime/61119/Duel_Masters_LOST__Boukyaku_no_Taiyou"
+  },
+  {
+    "title": "Ansatsu Kyoushitsu 2nd Season (Rebroadcast)",
+    "img": "https://cdn.myanimelist.net/images/anime/8/77966.jpg",
+    "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season",
+    "opening_video": "https://files.catbox.moe/kehu9k.mp4",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Yuusha-kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku",
@@ -513,6 +521,20 @@ window.animeSeasons["Winter 2026"] = [
     "img": "https://cdn.myanimelist.net/images/anime/1096/153343.jpg",
     "url": "https://myanimelist.net/anime/62897/Ichigo_Aika__Zatsu_de_Namaiki_na_Imouto_to_Warikirenai_Ani",
     "ending_video": "https://files.catbox.moe/3lkxd9.mp4",
+    "ed": 1
+  },
+  {
+    "title": "Koala Enikki",
+    "img": "https://cdn.myanimelist.net/images/anime/1987/152302.jpg",
+    "url": "https://myanimelist.net/anime/62005/Koala_Enikki",
+    "ending_video": "https://files.catbox.moe/0a6grg.mp4",
+    "ed": 1
+  },
+  {
+    "title": "Arisugawa Ren tte Honto wa Onna Nanda yo ne.",
+    "img": "https://cdn.myanimelist.net/images/anime/1822/154239.jpg",
+    "url": "https://myanimelist.net/anime/63096/Arisugawa_Ren_tte_Honto_wa_Onna_Nanda_yo_ne",
+    "ending_video": "https://files.catbox.moe/nlid78.mp4",
     "ed": 1
   },
   {
