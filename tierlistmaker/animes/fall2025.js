@@ -310,7 +310,7 @@ window.animeSeasons["Fall 2025"] = [
   },
   {
     "title": "Alma-chan wa Kazoku ni Naritai",
-    "img": "https://cdn.myanimelist.net/images/anime/1982/151278.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1065/153469l.jpg",
     "url": "https://myanimelist.net/anime/60781/Alma-chan_wa_Kazoku_ni_Naritai",
     "opening_video": "https://files.catbox.moe/q6vz5d.mp4",
     "ending_video": "https://files.catbox.moe/1ust1q.mp4"
