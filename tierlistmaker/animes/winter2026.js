@@ -638,13 +638,6 @@ window.animeSeasons["Winter 2026"] = [
     "title": "Tamon-kun Ima Docchi!?",
     "img": "https://myanimelist.net/images/anime/1474/153320.jpg",
     "url": "https://myanimelist.net/anime/59047/Tamon-kun_Ima_Docchi",
-    "opening_video": "https://files.catbox.moe/gc3ss8.mp4",
-    "op": "EP1"
-  },
-  {
-    "title": "Tamon-kun Ima Docchi!?",
-    "img": "https://myanimelist.net/images/anime/1474/153320.jpg",
-    "url": "https://myanimelist.net/anime/59047/Tamon-kun_Ima_Docchi",
     "ending_video": "https://files.catbox.moe/h4xd8l.mp4",
     "ed": "EP5"
   },
@@ -661,26 +654,5 @@ window.animeSeasons["Winter 2026"] = [
     "url": "https://myanimelist.net/anime/61983/Yuusha_Party_ni_Kawaii_Ko_ga_Ita_node_Kokuhaku_shitemita",
     "ending_video": "https://files.catbox.moe/e16iuk.mp4",
     "ed": "EP8"
-  },
-  {
-    "title": "Yuusha-kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku",
-    "img": "https://myanimelist.net/images/anime/1062/151911.jpg",
-    "url": "https://myanimelist.net/anime/56009/Yuusha-kei_ni_Shosu__Choubatsu_Yuusha_9004-tai_Keimu_Kiroku",
-    "opening_video": "https://files.catbox.moe/m2xk8t.mp4",
-    "op": "EP4"
-  },
-  {
-    "title": "Yuusha-kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku",
-    "img": "https://myanimelist.net/images/anime/1062/151911.jpg",
-    "url": "https://myanimelist.net/anime/56009/Yuusha-kei_ni_Shosu__Choubatsu_Yuusha_9004-tai_Keimu_Kiroku",
-    "opening_video": "https://files.catbox.moe/7mvtcd.mp4",
-    "op": "EP7"
-  },
-  {
-    "title": "Yuusha-kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku",
-    "img": "https://myanimelist.net/images/anime/1062/151911.jpg",
-    "url": "https://myanimelist.net/anime/56009/Yuusha-kei_ni_Shosu__Choubatsu_Yuusha_9004-tai_Keimu_Kiroku",
-    "opening_video": "https://files.catbox.moe/u00jm3.mp4",
-    "op": "EP8"
   }
 ];
