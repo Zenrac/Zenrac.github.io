@@ -162,13 +162,6 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/cvxbn1.mp4"
   },
   {
-    "title": "Okiraku Ryoushu no Tanoshii Ryouchi Bouei: Seisankei Majutsu de Na mo Naki Mura wo Saikyou no Jousai Toshi ni",
-    "img": "https://myanimelist.net/images/anime/1264/153908.jpg",
-    "url": "https://myanimelist.net/anime/61549/Okiraku_Ryoushu_no_Tanoshii_Ryouchi_Bouei__Seisankei_Majutsu_de_Na_mo_Naki_Mura_wo_Saikyou_no_Jousai_Toshi_ni",
-    "ending_video": "https://files.catbox.moe/3ul62l.mp4",
-    "ed": 2
-  },
-  {
     "title": "Hell Mode: Yarikomizuki no Gamer wa Hai Settei no Isekai de Musou suru",
     "img": "https://myanimelist.net/images/anime/1151/152479.jpg",
     "url": "https://myanimelist.net/anime/60460/Hell_Mode__Yarikomizuki_no_Gamer_wa_Hai_Settei_no_Isekai_de_Musou_suru",
@@ -225,18 +218,18 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/760r0c.mp4"
   },
   {
-    "title": "Medalist 2nd Season",
-    "img": "https://myanimelist.net/images/anime/1828/155038.jpg",
-    "url": "https://myanimelist.net/anime/61335/Medalist_2nd_Season",
-    "opening_video": "https://files.catbox.moe/4haewl.mp4",
-    "ending_video": "https://files.catbox.moe/tvipeo.mp4"
-  },
-  {
     "title": "Dead Account",
     "img": "https://myanimelist.net/images/anime/1622/154192.jpg",
     "url": "https://myanimelist.net/anime/61196/Dead_Account",
     "opening_video": "https://files.catbox.moe/9l8r0s.mp4",
     "ending_video": "https://files.catbox.moe/udh7hl.mp4"
+  },
+  {
+    "title": "Medalist 2nd Season",
+    "img": "https://myanimelist.net/images/anime/1828/155038.jpg",
+    "url": "https://myanimelist.net/anime/61335/Medalist_2nd_Season",
+    "opening_video": "https://files.catbox.moe/4haewl.mp4",
+    "ending_video": "https://files.catbox.moe/tvipeo.mp4"
   },
   {
     "title": "Osananajimi to wa Love Comedy ni Naranai",
@@ -403,6 +396,7 @@ window.animeSeasons["Winter 2026"] = [
     "title": "Cardfight!! Vanguard: Divinez Genma Seisen-hen",
     "img": "https://myanimelist.net/images/anime/1801/154108.jpg",
     "url": "https://myanimelist.net/anime/62649/Cardfight_Vanguard__Divinez_Genma_Seisen-hen",
+    "opening_video": "https://files.catbox.moe/ihe8o7.mp4",
     "op": 2
   },
   {
@@ -436,7 +430,9 @@ window.animeSeasons["Winter 2026"] = [
   {
     "title": "Beastars Final Season Part 2",
     "img": "https://myanimelist.net/images/anime/1864/155472.jpg",
-    "url": "https://myanimelist.net/anime/61114/Beastars_Final_Season_Part_2"
+    "url": "https://myanimelist.net/anime/61114/Beastars_Final_Season_Part_2",
+    "opening_video": "https://files.catbox.moe/kg6l1s.mp4",
+    "ending_video": "https://files.catbox.moe/6nx7mw.mp4"
   },
   {
     "title": "Baki-dou",
@@ -577,6 +573,13 @@ window.animeSeasons["Winter 2026"] = [
     "url": "https://myanimelist.net/anime/60602/MF_Ghost_3rd_Season",
     "ending_video": "https://files.catbox.moe/j9wqaf.mp4",
     "ed": "EP10"
+  },
+  {
+    "title": "Okiraku Ryoushu no Tanoshii Ryouchi Bouei: Seisankei Majutsu de Na mo Naki Mura wo Saikyou no Jousai Toshi ni",
+    "img": "https://myanimelist.net/images/anime/1264/153908.jpg",
+    "url": "https://myanimelist.net/anime/61549/Okiraku_Ryoushu_no_Tanoshii_Ryouchi_Bouei__Seisankei_Majutsu_de_Na_mo_Naki_Mura_wo_Saikyou_no_Jousai_Toshi_ni",
+    "ending_video": "https://files.catbox.moe/3ul62l.mp4",
+    "ed": "EP9"
   },
   {
     "title": "Princession Orchestra",
