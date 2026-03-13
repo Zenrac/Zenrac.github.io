@@ -57,6 +57,13 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/733qs8.mp4"
   },
   {
+    "title": "Yuusha Party wo Oidasareta Kiyoubinbou",
+    "img": "https://myanimelist.net/images/anime/1486/153135.jpg",
+    "url": "https://myanimelist.net/anime/61128/Yuusha_Party_wo_Oidasareta_Kiyoubinbou",
+    "opening_video": "https://files.catbox.moe/766ref.mp4",
+    "ending_video": "https://files.catbox.moe/w9xco2.mp4"
+  },
+  {
     "title": "Mato Seihei no Slave 2",
     "img": "https://myanimelist.net/images/anime/1668/148737.jpg",
     "url": "https://myanimelist.net/anime/58505/Mato_Seihei_no_Slave_2",
@@ -76,13 +83,6 @@ window.animeSeasons["Winter 2026"] = [
     "url": "https://myanimelist.net/anime/59711/Shibou_Yuugi_de_Meshi_wo_Kuu",
     "opening_video": "https://files.catbox.moe/ow9bfv.mp4",
     "ending_video": "https://files.catbox.moe/xb322r.mp4"
-  },
-  {
-    "title": "Yuusha Party wo Oidasareta Kiyoubinbou",
-    "img": "https://myanimelist.net/images/anime/1486/153135.jpg",
-    "url": "https://myanimelist.net/anime/61128/Yuusha_Party_wo_Oidasareta_Kiyoubinbou",
-    "opening_video": "https://files.catbox.moe/766ref.mp4",
-    "ending_video": "https://files.catbox.moe/w9xco2.mp4"
   },
   {
     "title": "Vigilante: Boku no Hero Academia Illegals 2nd Season",
@@ -176,18 +176,18 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/rpj8ox.mp4"
   },
   {
-    "title": "Isekai no Sata wa Shachiku Shidai",
-    "img": "https://myanimelist.net/images/anime/1510/153806.jpg",
-    "url": "https://myanimelist.net/anime/60226/Isekai_no_Sata_wa_Shachiku_Shidai",
-    "opening_video": "https://files.catbox.moe/g3rhfh.mp4",
-    "ending_video": "https://files.catbox.moe/0eqoz9.mp4"
-  },
-  {
     "title": "Toumei Otoko to Ningen Onna: Sonouchi Fuufu ni Naru Futari",
     "img": "https://myanimelist.net/images/anime/1033/152494.jpg",
     "url": "https://myanimelist.net/anime/60395/Toumei_Otoko_to_Ningen_Onna__Sonouchi_Fuufu_ni_Naru_Futari",
     "opening_video": "https://files.catbox.moe/k2aen9.mp4",
     "ending_video": "https://files.catbox.moe/q0co2z.mp4"
+  },
+  {
+    "title": "Isekai no Sata wa Shachiku Shidai",
+    "img": "https://myanimelist.net/images/anime/1510/153806.jpg",
+    "url": "https://myanimelist.net/anime/60226/Isekai_no_Sata_wa_Shachiku_Shidai",
+    "opening_video": "https://files.catbox.moe/g3rhfh.mp4",
+    "ending_video": "https://files.catbox.moe/0eqoz9.mp4"
   },
   {
     "title": "Darwin Jihen",
@@ -260,18 +260,18 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/82t6q6.mp4"
   },
   {
-    "title": "MF Ghost 3rd Season",
-    "img": "https://myanimelist.net/images/anime/1419/154458.jpg",
-    "url": "https://myanimelist.net/anime/60602/MF_Ghost_3rd_Season",
-    "opening_video": "https://files.catbox.moe/auptu5.mp4",
-    "ending_video": "https://files.catbox.moe/j61tx4.mp4"
-  },
-  {
     "title": "Tensei shitara Dragon no Tamago datta",
     "img": "https://myanimelist.net/images/anime/1031/154235.jpg",
     "url": "https://myanimelist.net/anime/61207/Tensei_shitara_Dragon_no_Tamago_datta",
     "opening_video": "https://files.catbox.moe/vb6lxb.mp4",
     "ending_video": "https://files.catbox.moe/r1oja3.mp4"
+  },
+  {
+    "title": "MF Ghost 3rd Season",
+    "img": "https://myanimelist.net/images/anime/1419/154458.jpg",
+    "url": "https://myanimelist.net/anime/60602/MF_Ghost_3rd_Season",
+    "opening_video": "https://files.catbox.moe/auptu5.mp4",
+    "ending_video": "https://files.catbox.moe/j61tx4.mp4"
   },
   {
     "title": "Dark Moon: Tsuki no Saidan",
@@ -365,18 +365,18 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/x6ib7j.mp4"
   },
   {
-    "title": "High School! Kimengumi (2026)",
-    "img": "https://myanimelist.net/images/anime/1501/154507.jpg",
-    "url": "https://myanimelist.net/anime/62804/High_School_Kimengumi_2026",
-    "opening_video": "https://files.catbox.moe/tkagss.mp4",
-    "ending_video": "https://files.catbox.moe/w2w4nu.mp4"
-  },
-  {
     "title": "Meitantei Precure!",
     "img": "https://myanimelist.net/images/anime/1706/154944.jpg",
     "url": "https://myanimelist.net/anime/63042/Meitantei_Precure",
     "opening_video": "https://files.catbox.moe/gxtwm7.mp4",
     "ending_video": "https://files.catbox.moe/exteik.mp4"
+  },
+  {
+    "title": "High School! Kimengumi (2026)",
+    "img": "https://myanimelist.net/images/anime/1501/154507.jpg",
+    "url": "https://myanimelist.net/anime/62804/High_School_Kimengumi_2026",
+    "opening_video": "https://files.catbox.moe/tkagss.mp4",
+    "ending_video": "https://files.catbox.moe/w2w4nu.mp4"
   },
   {
     "title": "Hokuto no Ken: Kenougun Zako-tachi no Banka",
@@ -419,6 +419,15 @@ window.animeSeasons["Winter 2026"] = [
     "url": "https://myanimelist.net/anime/235/Meitantei_Conan",
     "ending_video": "https://files.catbox.moe/8p7r5s.mp4",
     "ed": 74
+  },
+  {
+    "title": "SI-VIS: The Sound of Heroes",
+    "img": "https://myanimelist.net/images/anime/1421/154342.jpg",
+    "url": "https://myanimelist.net/anime/62126/SI-VIS__The_Sound_of_Heroes",
+    "opening_video": "https://files.catbox.moe/km926k.mp4",
+    "ending_video": "https://files.catbox.moe/acjyas.mp4",
+    "op": 2,
+    "ed": 2
   },
   {
     "title": "Chibi Maruko-chan (1995)",
@@ -526,6 +535,13 @@ window.animeSeasons["Winter 2026"] = [
     "ed": 1
   },
   {
+    "title": "Android wa Keiken Ninzuu ni Hairimasu ka?? Special",
+    "img": "https://myanimelist.net/images/anime/1655/155040.jpg",
+    "url": "https://myanimelist.net/anime/63330/Android_wa_Keiken_Ninzuu_ni_Hairimasu_ka_Special",
+    "ending_video": "https://files.catbox.moe/355zod.mp4",
+    "ed": 1
+  },
+  {
     "title": "[Oshi no Ko] 3rd Season",
     "img": "https://myanimelist.net/images/anime/1979/153329.jpg",
     "url": "https://myanimelist.net/anime/60058/Oshi_no_Ko_3rd_Season",
@@ -624,32 +640,11 @@ window.animeSeasons["Winter 2026"] = [
     "ed": "EP4"
   },
   {
-    "title": "Shibou Yuugi de Meshi wo Kuu.",
-    "img": "https://myanimelist.net/images/anime/1834/151169.jpg",
-    "url": "https://myanimelist.net/anime/59711/Shibou_Yuugi_de_Meshi_wo_Kuu",
-    "ending_video": "https://files.catbox.moe/6mp0zd.mp4",
-    "ed": "EP7"
-  },
-  {
-    "title": "SI-VIS: The Sound of Heroes",
-    "img": "https://myanimelist.net/images/anime/1421/154342.jpg",
-    "url": "https://myanimelist.net/anime/62126/SI-VIS__The_Sound_of_Heroes",
-    "ending_video": "https://files.catbox.moe/kq5k4n.mp4",
-    "ed": "EP14"
-  },
-  {
     "title": "Tamon-kun Ima Docchi!?",
     "img": "https://myanimelist.net/images/anime/1474/153320.jpg",
     "url": "https://myanimelist.net/anime/59047/Tamon-kun_Ima_Docchi",
     "ending_video": "https://files.catbox.moe/h4xd8l.mp4",
     "ed": "EP5"
-  },
-  {
-    "title": "Watashi ga Koibito ni Nareru Wake Nai jan, Muri Muri! (※Muri ja Nakatta!?) (TV Special)",
-    "img": "https://myanimelist.net/images/anime/1129/152182.jpg",
-    "url": "https://myanimelist.net/anime/62543/Watashi_ga_Koibito_ni_Nareru_Wake_Nai_jan_Muri_Muri_※Muri_ja_Nakatta_TV_Special",
-    "ending_video": "https://files.catbox.moe/7jowyv.mp4",
-    "ed": "EP17"
   },
   {
     "title": "Yuusha Party ni Kawaii Ko ga Ita node, Kokuhaku shitemita.",
