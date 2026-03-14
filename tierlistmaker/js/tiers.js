@@ -20,13 +20,21 @@ const TYPES = {
 };
 
 const removeExtension = (url) => {
-    return url.replace(/\.(jpg|jpeg|png|webp)/i, '');
+    const raw = String(url || '');
+    const [withoutQuery] = raw.split('?');
+    return withoutQuery.replace(/\.(jpg|jpeg|png|webp)$/i, '');
 };
 
 const extractImgId = (url) => {
     const regex = /\/(\d+\/\d+)\.(webp|jpe?g)(\?.*)?$/;
     const match = url.match(regex);
     return match ? match[1] + (match[3] || "") : "";
+};
+
+const extractImgBaseId = (url) => {
+    const regex = /\/(\d+\/\d+)\.(webp|jpe?g)(\?.*)?$/;
+    const match = String(url || '').match(regex);
+    return match ? match[1] : "";
 };
 
 const COLOR_LIST = [
@@ -857,6 +865,7 @@ function multipleEntries(title, list = null) {
 }
 
 function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
+	console.log("Creating image with src:", src, "title:", title, "url:", url, "op:", op, "ed:", ed);
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
 
@@ -871,12 +880,22 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     }
 
     if ((title.trim() == "" || url.trim() == "") && window.animeSeasons[dropdown.value]) {
-        let anime = window.animeSeasons[dropdown.value].filter(m => removeExtension(m.img).includes(removeExtension(src)));
-        if (anime && anime.length > 0) {
-            title = anime[0].title;
-            url = anime[0].url;
-            op = anime[0].op;
-            ed = anime[0].ed;
+        const srcId = extractImgId(src);
+        const srcBaseId = extractImgBaseId(src);
+        const anime = window.animeSeasons[dropdown.value].find((entry) => {
+            const entryId = extractImgId(entry.img);
+            if (srcId && entryId) return entryId === srcId;
+
+            const entryBaseId = extractImgBaseId(entry.img);
+            if (srcBaseId && entryBaseId) return entryBaseId === srcBaseId;
+
+            return removeExtension(entry.img) === removeExtension(src);
+        });
+        if (anime) {
+            title = anime.title || "";
+            url = anime.url || "";
+            op = anime.op;
+            ed = anime.ed;
         }
     }
 
@@ -1506,7 +1525,7 @@ function bind_trash_events() {
 				if (!isAlreadyAdded) {
 					let images = document.querySelector('.images');
 					if (!anime.img.includes('http')) {
-						anime.img = `${MYANIMELIST_IMG_URL}/${img_src}.webp`
+						anime.img = `${MYANIMELIST_IMG_URL}/${anime.img}.webp`
 					}
 					let img = create_img_with_src(anime.img);
 					images.appendChild(img);
