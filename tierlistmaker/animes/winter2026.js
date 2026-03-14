@@ -218,6 +218,20 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/760r0c.mp4"
   },
   {
+    "title": "Kirei ni Shitemoraemasu ka.",
+    "img": "https://myanimelist.net/images/anime/1940/154234.jpg",
+    "url": "https://myanimelist.net/anime/61782/Kirei_ni_Shitemoraemasu_ka",
+    "opening_video": "https://files.catbox.moe/f4874k.mp4",
+    "ending_video": "https://files.catbox.moe/c51oge.mp4"
+  },
+  {
+    "title": "Maou no Musume wa Yasashisugiru!!",
+    "img": "https://myanimelist.net/images/anime/1160/154083.jpg",
+    "url": "https://myanimelist.net/anime/61884/Maou_no_Musume_wa_Yasashisugiru",
+    "opening_video": "https://files.catbox.moe/0lm6xg.mp4",
+    "ending_video": "https://files.catbox.moe/o0tnxb.mp4"
+  },
+  {
     "title": "Dead Account",
     "img": "https://myanimelist.net/images/anime/1622/154192.jpg",
     "url": "https://myanimelist.net/anime/61196/Dead_Account",
@@ -465,6 +479,24 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/law41g.mp4"
   },
   {
+    "title": "Ansatsu Kyoushitsu 2nd Season",
+    "img": "https://myanimelist.net/images/anime/8/77966.jpg",
+    "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season?q=ansatsu&cat=anime",
+    "opening_video": "https://files.catbox.moe/kehu9k.mp4",
+    "ending_video": "https://files.catbox.moe/bq2ogj.mp4",
+    "op": 2,
+    "ed": 2
+  },
+  {
+    "title": "Neko no Kura-chan: Ordinary Days",
+    "img": "https://myanimelist.net/images/anime/1616/151047.jpg",
+    "url": "https://myanimelist.net/anime/62055/Jiu_Cang_Miao_Wo_Season_25",
+    "opening_video": "https://files.catbox.moe/byw2wg.mp4",
+    "ending_video": "https://files.catbox.moe/6494yq.mp4",
+    "op": 3,
+    "ed": 3
+  },
+  {
     "title": "Android wa Keiken Ninzuu ni Hairimasu ka??",
     "img": "https://myanimelist.net/images/anime/1084/149783.jpg",
     "url": "https://myanimelist.net/anime/61694/Android_wa_Keiken_Ninzuu_ni_Hairimasu_ka",
@@ -500,13 +532,6 @@ window.animeSeasons["Winter 2026"] = [
     "ed": 1
   },
   {
-    "title": "Fumetsu no Anata e Season 3",
-    "img": "https://myanimelist.net/images/anime/1140/152364.jpg",
-    "url": "https://myanimelist.net/anime/54703/Fumetsu_no_Anata_e_Season_3",
-    "ending_video": "https://files.catbox.moe/e0echm.mp4",
-    "ed": 1
-  },
-  {
     "title": "Digimon Beatbreak",
     "img": "https://myanimelist.net/images/anime/1776/151242.jpg",
     "url": "https://myanimelist.net/anime/61269/Digimon_Beatbreak",
@@ -535,10 +560,10 @@ window.animeSeasons["Winter 2026"] = [
     "ed": 1
   },
   {
-    "title": "Android wa Keiken Ninzuu ni Hairimasu ka?? Special",
-    "img": "https://myanimelist.net/images/anime/1655/155040.jpg",
-    "url": "https://myanimelist.net/anime/63330/Android_wa_Keiken_Ninzuu_ni_Hairimasu_ka_Special",
-    "ending_video": "https://files.catbox.moe/355zod.mp4",
+    "title": "Arisugawa Ren tte Honto wa Onna Nanda yo ne.",
+    "img": "https://myanimelist.net/images/anime/1822/154239.jpg",
+    "url": "https://myanimelist.net/anime/63096/Arisugawa_Ren_tte_Honto_wa_Onna_Nanda_yo_ne?q=Arisugawa%20Ren%20tte%20Honto%20wa%20Onna%20nanda%20yo%20ne&cat=anime",
+    "ending_video": "https://files.catbox.moe/nlid78.mp4",
     "ed": 1
   },
   {
@@ -645,6 +670,13 @@ window.animeSeasons["Winter 2026"] = [
     "url": "https://myanimelist.net/anime/59047/Tamon-kun_Ima_Docchi",
     "ending_video": "https://files.catbox.moe/h4xd8l.mp4",
     "ed": "EP5"
+  },
+  {
+    "title": "Watashi ga Koibito ni Nareru Wake Nai jan, Muri Muri! (※Muri ja Nakatta!?) (TV Special)",
+    "img": "https://myanimelist.net/images/anime/1129/152182.jpg",
+    "url": "https://myanimelist.net/anime/62543/Watashi_ga_Koibito_ni_Nareru_Wake_Nai_jan_Muri_Muri_※Muri_ja_Nakatta_TV_Special",
+    "ending_video": "https://files.catbox.moe/7jowyv.mp4",
+    "ed": "EP17"
   },
   {
     "title": "Yuusha Party ni Kawaii Ko ga Ita node, Kokuhaku shitemita.",
