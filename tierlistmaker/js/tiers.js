@@ -37,6 +37,33 @@ const extractImgBaseId = (url) => {
     return match ? match[1] : "";
 };
 
+const extractLooseBaseId = (url) => {
+    const match = String(url || '').match(/(\d+\/\d+)/);
+    return match ? match[1] : "";
+};
+
+const extractQuery = (url) => {
+    const raw = String(url || '');
+    const idx = raw.indexOf('?');
+    return idx >= 0 ? raw.slice(idx + 1) : '';
+};
+
+function sameImageRef(a, b) {
+    const aFull = extractImgId(a);
+    const bFull = extractImgId(b);
+    if (aFull && bFull) return aFull === bFull;
+
+    const aBase = extractLooseBaseId(a);
+    const bBase = extractLooseBaseId(b);
+    if (!aBase || !bBase || aBase !== bBase) return false;
+
+    const aQuery = extractQuery(a);
+    const bQuery = extractQuery(b);
+    if (aQuery || bQuery) return aQuery === bQuery;
+
+    return true;
+}
+
 const COLOR_LIST = [
 	'Blue',      // #0066CC
 	'Magenta', // #FF00FF
@@ -947,8 +974,10 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
 
 	if (num) {
 		const isMulti = multipleEntries(title);
-		if (isNaN(num) || isMulti) badgeText = num;
-		if (!isNaN(num) && num != 1) suffix_number = ` ${mode} ${num}`;
+		const numericNum = Number(num);
+		const isNumericNum = !Number.isNaN(numericNum);
+		if (!isNumericNum || isMulti || numericNum !== 1) badgeText = num;
+		if (isNumericNum && numericNum !== 1) suffix_number = ` ${mode} ${num}`;
 	}
 
     let img = document.createElement('img');
@@ -1560,7 +1589,7 @@ function bind_trash_events() {
 			for (let anime of animes) {
 				let isAlreadyAdded = alreadyAdded.some(span => {
 					let img = span.querySelector('img');
-					return img && removeExtension(img.src) === removeExtension(anime.img);
+					return img && sameImageRef(img.src, anime.img);
 				});
 
 				if (!isAlreadyAdded) {
