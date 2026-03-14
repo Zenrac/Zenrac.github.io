@@ -151,10 +151,23 @@ function countColorUsage(color) {
 
 function openInfoModal(img) {
     if (!img) return;
-    const title = img.title || img.alt || "";
+    const rawTitle = (img.title || img.alt || "").trim();
+    const badgeText = img.parentNode?.querySelector('.badge')?.textContent?.trim() || "";
     const src = img.src;
     const dropdownType = document.getElementById("dropdowntype");
     const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
+    const mediaLabel = (tierListType === OPENING || tierListType === ENDING)
+        ? `${tierListType} ${badgeText || '1'}`
+        : tierListType;
+    const title = rawTitle || mediaLabel;
+    let modalTitle = title;
+    if (tierListType === OPENING || tierListType === ENDING) {
+        const baseTitle = title
+            .replace(/\s-\s(?:Opening|Ending)\s+[^\s]+$/i, '')
+            .replace(/\s(?:Opening|Ending)\s+[^\s]+$/i, '')
+            .trim();
+        modalTitle = baseTitle ? `${baseTitle} - ${mediaLabel}` : mediaLabel;
+    }
 	let search_type = img.dataset.suffix_number ? img.dataset.suffix_number : " " + tierListType;
 	if (search_type != "" && title.endsWith(search_type)) {
 		search_type = "";
@@ -164,7 +177,17 @@ function openInfoModal(img) {
 	let animeVideo = "";
 	if (window.animeSeasons) {
 		const dropdown = document.getElementById("dropdown");
-		const anime = window.animeSeasons[dropdown.value]?.find(a => removeExtension(a.img) === removeExtension(src));
+		const srcId = extractImgId(src);
+		const srcBaseId = extractImgBaseId(src);
+		const anime = window.animeSeasons[dropdown.value]?.find((entry) => {
+			const entryId = extractImgId(entry.img);
+			if (srcId && entryId) return entryId === srcId;
+
+			const entryBaseId = extractImgBaseId(entry.img);
+			if (srcBaseId && entryBaseId) return entryBaseId === srcBaseId;
+
+			return removeExtension(entry.img) === removeExtension(src);
+		});
 		if (anime) {
 			animeUrl = anime.url || "";
 			if (tierListType === OPENING) {
@@ -224,7 +247,7 @@ function openInfoModal(img) {
 		`;
 
     Swal.fire({
-        title: escapeHtml(title),
+        title: escapeHtml(modalTitle),
         html: html,
 		showConfirmButton: false,
 		showCloseButton: true,
@@ -865,7 +888,6 @@ function multipleEntries(title, list = null) {
 }
 
 function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
-	console.log("Creating image with src:", src, "title:", title, "url:", url, "op:", op, "ed:", ed);
     var dropdownType = document.getElementById("dropdowntype");
     var dropdown = document.getElementById("dropdown");
 
