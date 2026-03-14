@@ -1,6 +1,7 @@
 let globalImageList = [];
 let uploadedFiles = [];
 let animeSeasons = [];
+let imageMetaMap = {};
 
 const tieColors = [
     'rgba(255,179,71,0.18)',
@@ -12,7 +13,43 @@ const tieColors = [
     'rgba(71,255,179,0.18)',
 ];
 
-const removeExtension = (url) => url.replace(/\.(jpg|jpeg|png|webp)/i, '');
+const removeExtension = (url) => {
+    const raw = String(url || '');
+    const [withoutQuery] = raw.split('?');
+    return withoutQuery.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+};
+
+const extractImgId = (url) => {
+    const match = String(url || '').match(/(\d+\/\d+)\.(webp|jpe?g)(\?.*)?$/i);
+    return match ? match[1] + (match[3] || '') : '';
+};
+
+const extractLooseBaseId = (url) => {
+    const match = String(url || '').match(/(\d+\/\d+)/);
+    return match ? match[1] : '';
+};
+
+const extractQuery = (url) => {
+    const raw = String(url || '');
+    const idx = raw.indexOf('?');
+    return idx >= 0 ? raw.slice(idx + 1) : '';
+};
+
+function sameImageRef(a, b) {
+    const aFull = extractImgId(a);
+    const bFull = extractImgId(b);
+    if (aFull && bFull) return aFull === bFull;
+
+    const aBase = extractLooseBaseId(a);
+    const bBase = extractLooseBaseId(b);
+    if (!aBase || !bBase || aBase !== bBase) return false;
+
+    const aQuery = extractQuery(a);
+    const bQuery = extractQuery(b);
+    if (aQuery || bQuery) return aQuery === bQuery;
+
+    return true;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const iframe = document.getElementById("indexFrame");
@@ -33,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function processFiles() {
     const files = document.getElementById('fileInput').files;
+    imageMetaMap = {};
     if (files.length === 0) {
         alert('Please select at least 1 file.');
         return;
@@ -52,6 +90,11 @@ function processFiles() {
                         if (item.positions && typeof item.positions === "object") {
                             Object.keys(item.positions).forEach(user => userSet.add(user));
                         }
+                        imageMetaMap[item.imgId] = {
+                            op: item.op,
+                            ed: item.ed,
+                            title: item.title
+                        };
                     });
                     const userList = Array.from(userSet);
 
@@ -117,6 +160,11 @@ function processFiles() {
                     const colorMap = {};
                     jsonData.forEach(item => {
                         colorMap[item.imgId] = item.colors || [];
+                        imageMetaMap[item.imgId] = {
+                            op: item.op,
+                            ed: item.ed,
+                            title: item.title
+                        };
                     });
 
                     jsonData = {
@@ -251,7 +299,7 @@ function displayResults(results, files) {
         if (averageCount[result.averagePosition] > 1) rankCell.style.backgroundColor = tieColorMap[result.averagePosition];
         rankCell.textContent = `${index + 1} (${result.averagePosition.toFixed(2)})`;
         const imgCell = document.createElement('td');
-        imgCell.textContent = animeSeasons ? detectAnimeTitle(result.imgId) : result.imgId;
+        imgCell.textContent = buildDisplayTitle(result.imgId);
         row.appendChild(rankCell);
         row.appendChild(imgCell);
 
@@ -362,8 +410,49 @@ function resetTable() {
 function toggleExportButton() { document.querySelector("#exportBtn").disabled = document.querySelector("#resultsTable tbody").rows.length === 0 ? true : false; }
 function toggleTierlistButton() { document.querySelector("#tierlistBtn").disabled = document.querySelector("#resultsTable tbody").rows.length === 0 ? true : false; }
 
-function detectAnimeTitle(img) { for (const [season, items] of Object.entries(animeSeasons)) { const anime = items.find(item => item.img && removeExtension(item.img).includes(removeExtension(img))); if (anime) return anime.title; } return img; }
-function detectAnime(img) { for (const [season, items] of Object.entries(animeSeasons)) { const anime = items.find(item => item.img && item.img.includes(img)); if (anime) return anime; } return null; }
+function detectAnimeTitle(img) {
+    for (const [season, items] of Object.entries(animeSeasons)) {
+        const anime = items.find(item => item.img && sameImageRef(item.img, img));
+        if (anime) return anime.title;
+    }
+    return img;
+}
+
+function parseOpEdFromImgId(imgId) {
+    const match = String(imgId || '').match(/[?&](op|ed)=([^&]+)/i);
+    if (!match) return {};
+    const key = match[1].toLowerCase();
+    const value = decodeURIComponent(match[2] || '').trim();
+    if (!value) return {};
+    return key === 'op' ? { op: value } : { ed: value };
+}
+
+function buildDisplayTitle(imgId) {
+    const meta = imageMetaMap[imgId] || {};
+    const fallbackTitle = animeSeasons ? detectAnimeTitle(imgId) : imgId;
+    const baseTitle = (meta.title || fallbackTitle || imgId || '').trim();
+    const parsed = parseOpEdFromImgId(imgId);
+    const op = meta.op ?? parsed.op;
+    const ed = meta.ed ?? parsed.ed;
+    let mediaLabel = '';
+    if (op !== undefined && op !== null && String(op).trim() !== '') {
+        mediaLabel = `Opening ${op}`;
+    } else if (ed !== undefined && ed !== null && String(ed).trim() !== '') {
+        mediaLabel = `Ending ${ed}`;
+    }
+    if (!mediaLabel) return baseTitle;
+    const normalized = baseTitle.toLowerCase();
+    const mediaNormalized = mediaLabel.toLowerCase();
+    return normalized.endsWith(mediaNormalized) ? baseTitle : `${baseTitle} - ${mediaLabel}`;
+}
+
+function detectAnime(img) {
+    for (const [season, items] of Object.entries(animeSeasons)) {
+        const anime = items.find(item => item.img && sameImageRef(item.img, img));
+        if (anime) return anime;
+    }
+    return null;
+}
 
 function enableColumnReordering() {
     const headers = document.querySelectorAll("#resultsTable thead th");

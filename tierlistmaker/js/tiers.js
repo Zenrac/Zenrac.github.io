@@ -149,6 +149,22 @@ function countColorUsage(color) {
     return count;
 }
 
+function buildYoutubeSearchType(title, tierListType, suffixNumber = "", badgeText = "") {
+    let searchType = "";
+    if (suffixNumber) {
+        searchType = suffixNumber;
+    } else if ((tierListType === OPENING || tierListType === ENDING) && badgeText) {
+        searchType = ` ${tierListType} ${badgeText}`;
+    } else {
+        searchType = ` ${tierListType}`;
+    }
+
+    if (searchType && String(title || "").endsWith(searchType)) {
+        return "";
+    }
+    return searchType;
+}
+
 function openInfoModal(img) {
     if (!img) return;
     const rawTitle = (img.title || img.alt || "").trim();
@@ -168,10 +184,12 @@ function openInfoModal(img) {
             .trim();
         modalTitle = baseTitle ? `${baseTitle} - ${mediaLabel}` : mediaLabel;
     }
-	let search_type = img.dataset.suffix_number ? img.dataset.suffix_number : " " + tierListType;
-	if (search_type != "" && title.endsWith(search_type)) {
-		search_type = "";
-	}
+	let search_type = buildYoutubeSearchType(
+        title,
+        tierListType,
+        img.dataset.suffix_number || "",
+        badgeText
+    );
     
 	let animeUrl = "";
 	let animeVideo = "";
@@ -956,7 +974,8 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
                     let animeUrl = ANIMETHEMES_SEARCH_URL + encodeURIComponent(title);
                     window.open(animeUrl, "_blank");
                 } else {
-					let search_type = suffix_number ? suffix_number : " " + tierListType;
+					const badgeTextForSearch = this.parentNode?.querySelector('.badge')?.textContent?.trim() || "";
+					let search_type = buildYoutubeSearchType(title, tierListType, suffix_number, badgeTextForSearch);
                     let youtubeUrl = YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type);
                     window.open(youtubeUrl, "_blank");
                 }
