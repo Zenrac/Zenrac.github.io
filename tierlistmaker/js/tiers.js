@@ -1185,15 +1185,30 @@ function save_tierlist() {
 function load_tierlist(serialized_tierlist, fileName = null) {
 
 	if (serialized_tierlist.rows === undefined) {
-		let currentSeason = detectAnimeSeason(serialized_tierlist[0].imgId);
-		if (currentSeason === undefined) {
+		let currentSeason = [];
+		const legacyImgIds = Array.isArray(serialized_tierlist)
+			? serialized_tierlist.map(item => item?.imgId).filter(Boolean)
+			: [];
+
+		for (const imgId of legacyImgIds) {
+			currentSeason = detectAnimeSeason(imgId);
+			if (currentSeason && currentSeason.length > 0) break;
+
+			const baseId = extractLooseBaseId(imgId);
+			if (baseId) {
+				currentSeason = detectAnimeSeason(baseId);
+				if (currentSeason && currentSeason.length > 0) break;
+			}
+		}
+
+		if (!currentSeason || currentSeason.length === 0) {
 			alert("Cannot detect anime season for this tierlist.");
 			return;
 		}
 		let animeList = filter_anime_with_modes(window.animeSeasons[currentSeason[0]]);
 		let addedAnimes = new Set();
 
-		serialized_tierlist.title = fileName ? fileName.replace('.json', '') : detected;
+		serialized_tierlist.title = fileName ? fileName.replace('.json', '') : (currentSeason[0] || "Imported Tierlist");
 
 		let rowNames = [...new Set(serialized_tierlist.map(anime => anime.row))];
 		serialized_tierlist.rows = rowNames.map(name => ({
@@ -1222,7 +1237,23 @@ function load_tierlist(serialized_tierlist, fileName = null) {
 
     hard_reset_list();
 
-	var detected = detectAnimeSeason(serialized_tierlist.rows[0].imgs[0])[0];
+	let firstImgRef = null;
+	for (const row of serialized_tierlist.rows || []) {
+		const first = row?.imgs?.[0];
+		if (!first) continue;
+		firstImgRef = typeof first === 'string' ? first : first.src;
+		if (firstImgRef) break;
+	}
+
+	let detected = null;
+	if (firstImgRef) {
+		let detectedCandidates = detectAnimeSeason(firstImgRef);
+		if (!detectedCandidates || detectedCandidates.length === 0) {
+			const baseId = extractLooseBaseId(firstImgRef);
+			if (baseId) detectedCandidates = detectAnimeSeason(baseId);
+		}
+		detected = detectedCandidates?.[0] || null;
+	}
 	
     if (detected) {
 		var dropdownPicker = document.getElementById("seasonPicker");
