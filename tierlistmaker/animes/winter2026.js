@@ -479,7 +479,7 @@ window.animeSeasons["Winter 2026"] = [
     "ending_video": "https://files.catbox.moe/law41g.mp4"
   },
   {
-    "title": "Ansatsu Kyoushitsu 2nd Season",
+    "title": "Ansatsu Kyoushitsu 2nd Season (Rebroadcast)",
     "img": "https://myanimelist.net/images/anime/8/77966.jpg",
     "url": "https://myanimelist.net/anime/30654/Ansatsu_Kyoushitsu_2nd_Season?q=ansatsu&cat=anime",
     "opening_video": "https://files.catbox.moe/kehu9k.mp4",
