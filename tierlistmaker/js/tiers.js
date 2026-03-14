@@ -1104,7 +1104,7 @@ function exportTierlistDetails() {
                 if (match) id = match[1];
             }
 
-			let img = document.querySelector(`img[src*="${imgId}"]`);
+			let img = Array.from(document.querySelectorAll('.item img')).find(el => sameImageRef(el.src, imgId));
 			let badge = img ? img.parentNode.querySelector('.color-badge') : null;
 			let colors = badge ? JSON.parse(badge.dataset.colors) : [];
 
