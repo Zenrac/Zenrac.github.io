@@ -10,7 +10,8 @@ window.animeSeasons["Spring 2026"] = [
   {
     "title": "Re:Zero kara Hajimeru Isekai Seikatsu 4th Season",
     "img": "https://myanimelist.net/images/anime/1540/155824.jpg",
-    "url": "https://myanimelist.net/anime/61316/Re_Zero_kara_Hajimeru_Isekai_Seikatsu_4th_Season"
+    "url": "https://myanimelist.net/anime/61316/Re_Zero_kara_Hajimeru_Isekai_Seikatsu_4th_Season",
+    "opening_video": "https://files.catbox.moe/te6icr.mp4"
   },
   {
     "title": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e 4th Season: 2-nensei-hen 1 Gakki",
@@ -92,6 +93,7 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Himekishi wa Barbaroi no Yome",
     "img": "https://myanimelist.net/images/anime/1229/155022.jpg",
     "url": "https://myanimelist.net/anime/60028/Himekishi_wa_Barbaroi_no_Yome",
+    "opening_video": "https://files.catbox.moe/6p8gi4.mp4",
     "ending_video": "https://files.catbox.moe/pcvy91.mp4"
   },
   {
@@ -118,7 +120,9 @@ window.animeSeasons["Spring 2026"] = [
   {
     "title": "Otaku ni Yasashii Gal wa Inai!?",
     "img": "https://myanimelist.net/images/anime/1956/155456.jpg",
-    "url": "https://myanimelist.net/anime/62604/Otaku_ni_Yasashii_Gal_wa_Inai"
+    "url": "https://myanimelist.net/anime/62604/Otaku_ni_Yasashii_Gal_wa_Inai",
+    "opening_video": "https://files.catbox.moe/bribpp.mp4",
+    "ending_video": "https://files.catbox.moe/f2vo08.mp4"
   },
   {
     "title": "Shunkashuutou Daikousha: Haru no Mai",
@@ -178,7 +182,8 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Kanojo, Okarishimasu 5th Season",
     "img": "https://myanimelist.net/images/anime/1393/156075.jpg",
     "url": "https://myanimelist.net/anime/62485/Kanojo_Okarishimasu_5th_Season",
-    "opening_video": "https://files.catbox.moe/xagv2m.mp4"
+    "opening_video": "https://files.catbox.moe/xagv2m.mp4",
+    "ending_video": "https://files.catbox.moe/r07sgp.mp4"
   },
   {
     "title": "Yozakura-san Chi no Daisakusen 2nd Season",
@@ -380,7 +385,9 @@ window.animeSeasons["Spring 2026"] = [
   {
     "title": "Kami no Shizuku",
     "img": "https://myanimelist.net/images/anime/1045/155698.jpg",
-    "url": "https://myanimelist.net/anime/62981/Kami_no_Shizuku"
+    "url": "https://myanimelist.net/anime/62981/Kami_no_Shizuku",
+    "opening_video": "https://files.catbox.moe/gal4b3.mp4",
+    "ending_video": "https://files.catbox.moe/z41mjo.mp4"
   },
   {
     "title": "Ghost Concert: Missing Songs",
@@ -458,6 +465,7 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Cardfight!! Vanguard 15-shuunen Kinen PV",
     "img": "https://myanimelist.net/images/anime/1388/155059.jpg",
     "url": "https://myanimelist.net/anime/63336/Cardfight_Vanguard_15-shuunen_Kinen_PV?suggestion=",
+    "opening_video": "https://files.catbox.moe/ineaeg.mp4",
     "op": 1
   },
   {
@@ -506,6 +514,7 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Candy Caries",
     "img": "https://myanimelist.net/images/anime/1780/154909.jpg",
     "url": "https://myanimelist.net/anime/63276/Candy_Caries",
+    "ending_video": "https://files.catbox.moe/b3nsex.mp4",
     "ed": 1
   },
   {
@@ -553,6 +562,7 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Dandelion",
     "img": "https://myanimelist.net/images/anime/1222/156332.jpg",
     "url": "https://myanimelist.net/anime/63572/Dandelion",
+    "ending_video": "https://files.catbox.moe/9l2cto.mp4",
     "ed": 1
   },
   {
