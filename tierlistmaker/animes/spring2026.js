@@ -52,7 +52,8 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Tsue to Tsurugi no Wistoria Season 2",
     "img": "https://myanimelist.net/images/anime/1190/155788.jpg",
     "url": "https://myanimelist.net/anime/59983/Tsue_to_Tsurugi_no_Wistoria_Season_2",
-    "opening_video": "https://files.catbox.moe/21hmui.mp4"
+    "opening_video": "https://files.catbox.moe/21hmui.mp4",
+    "ending_video": "https://files.catbox.moe/xrwrku.mp4"
   },
   {
     "title": "Honzuki no Gekokujou: Shisho ni Naru Tame ni wa Shudan wo Erandeiraremasen - Ryoushu no Youjo",
@@ -189,7 +190,8 @@ window.animeSeasons["Spring 2026"] = [
     "title": "Yozakura-san Chi no Daisakusen 2nd Season",
     "img": "https://myanimelist.net/images/anime/1230/155783.jpg",
     "url": "https://myanimelist.net/anime/60055/Yozakura-san_Chi_no_Daisakusen_2nd_Season",
-    "opening_video": "https://files.catbox.moe/xilxxb.mp4"
+    "opening_video": "https://files.catbox.moe/xilxxb.mp4",
+    "ending_video": "https://files.catbox.moe/9iqooz.mp4"
   },
   {
     "title": "Higeki no Genkyou to Naru Saikyou Gedou Last Boss Joou wa Tami no Tame ni Tsukushimasu. Season 2",
@@ -271,7 +273,9 @@ window.animeSeasons["Spring 2026"] = [
   {
     "title": "Kill Ao",
     "img": "https://myanimelist.net/images/anime/1899/156600.jpg",
-    "url": "https://myanimelist.net/anime/62391/Kill_Ao"
+    "url": "https://myanimelist.net/anime/62391/Kill_Ao",
+    "opening_video": "https://files.catbox.moe/g3zlg3.mp4",
+    "ending_video": "https://files.catbox.moe/7p8re3.mp4"
   },
   {
     "title": "Mata Korosarete Shimatta no desu ne, Tantei-sama",
@@ -283,7 +287,9 @@ window.animeSeasons["Spring 2026"] = [
   {
     "title": "Kuroneko to Majo no Kyoushitsu",
     "img": "https://myanimelist.net/images/anime/1716/153989.jpg",
-    "url": "https://myanimelist.net/anime/62171/Kuroneko_to_Majo_no_Kyoushitsu"
+    "url": "https://myanimelist.net/anime/62171/Kuroneko_to_Majo_no_Kyoushitsu",
+    "opening_video": "https://files.catbox.moe/o0tsff.mp4",
+    "ending_video": "https://files.catbox.moe/jzs5zr.mp4"
   },
   {
     "title": "Kami no Niwatsuki Kusunoki-tei",
@@ -394,7 +400,7 @@ window.animeSeasons["Spring 2026"] = [
     "img": "https://myanimelist.net/images/anime/1489/155658.jpg",
     "url": "https://myanimelist.net/anime/62852/Ghost_Concert__Missing_Songs",
     "opening_video": "https://files.catbox.moe/jvzmsc.mp4",
-    "ending_video": "https://files.catbox.moe/sf6qe3.mp4"
+    "ending_video": "https://files.catbox.moe/svqgii.mp4"
   },
   {
     "title": "Mahou no Shimai Lulutto Lilly",
@@ -402,6 +408,12 @@ window.animeSeasons["Spring 2026"] = [
     "url": "https://myanimelist.net/anime/59176/Mahou_no_Shimai_Lulutto_Lilly",
     "opening_video": "https://files.catbox.moe/7r30dq.mp4",
     "ending_video": "https://files.catbox.moe/a2xbgi.mp4"
+  },
+  {
+    "title": "Komekami! Girls",
+    "img": "https://myanimelist.net/images/anime/1392/156024.jpg",
+    "url": "https://myanimelist.net/anime/63709/Komekami_Girls",
+    "ending_video": "https://files.catbox.moe/yrnitf.mp4"
   },
   {
     "title": "Onegai AiPri",
@@ -504,13 +516,6 @@ window.animeSeasons["Spring 2026"] = [
     "ed": 1
   },
   {
-    "title": "Komekami! Girls",
-    "img": "https://myanimelist.net/images/anime/1392/156024.jpg",
-    "url": "https://myanimelist.net/anime/63709/Komekami_Girls",
-    "ending_video": "https://files.catbox.moe/yrnitf.mp4",
-    "ed": 1
-  },
-  {
     "title": "Candy Caries",
     "img": "https://myanimelist.net/images/anime/1780/154909.jpg",
     "url": "https://myanimelist.net/anime/63276/Candy_Caries",
@@ -599,6 +604,13 @@ window.animeSeasons["Spring 2026"] = [
     "url": "https://myanimelist.net/anime/59551/Ganbare_Nakamura-kun",
     "ending_video": "https://files.catbox.moe/h72i7w.mp4",
     "ed": "EP3"
+  },
+  {
+    "title": "Niwatori Fighter",
+    "img": "https://myanimelist.net/images/anime/1666/150983.jpg",
+    "url": "https://myanimelist.net/anime/59393/Niwatori_Fighter",
+    "ending_video": "https://files.catbox.moe/qcauat.mp4",
+    "ed": "EP6"
   },
   {
     "title": "Tongari Boushi no Atelier",
