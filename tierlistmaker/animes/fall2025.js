@@ -310,7 +310,7 @@ window.animeSeasons["Fall 2025"] = [
   },
   {
     "title": "Alma-chan wa Kazoku ni Naritai",
-    "img": "https://cdn.myanimelist.net/images/anime/1065/153469l.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1065/153469.jpg",
     "url": "https://myanimelist.net/anime/60781/Alma-chan_wa_Kazoku_ni_Naritai",
     "opening_video": "https://files.catbox.moe/q6vz5d.mp4",
     "ending_video": "https://files.catbox.moe/1ust1q.mp4"
@@ -567,7 +567,7 @@ window.animeSeasons["Fall 2025"] = [
   },
   {
     "title": "Pokemon Horizons: Mega Evolution",
-    "img": "https://cdn.myanimelist.net/images/anime/1772/148477l.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1772/148477.jpg",
     "url": "https://myanimelist.net/anime/53876/Pokemon_2023",
     "ending_video": "https://files.catbox.moe/62rp2k.mp4",
     "ed": 1
