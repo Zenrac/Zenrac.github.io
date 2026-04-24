@@ -10,7 +10,9 @@ window.animeSeasons['Spring 2025'] = [
     "title": "Kusuriya no Hitorigoto 2nd Season",
     "url": "https://myanimelist.net/anime/58514/Kusuriya_no_Hitorigoto_2nd_Season",
     "opening_video": "https://files.catbox.moe/35mb54.mp4",
-    "ending_video": "https://files.catbox.moe/kdfbhg.mp4"
+    "ending_video": "https://files.catbox.moe/kdfbhg.mp4",
+    "op": 2,
+    "ed": 2
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1527/146836.jpg",
