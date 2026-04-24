@@ -484,13 +484,17 @@ window.animeSeasons['Summer 2025'] = [
     "img": "https://cdn.myanimelist.net/images/anime/1526/150689.jpg",
     "title": "Witch Watch",
     "url": "https://myanimelist.net/anime/59597/Witch_Watch",
-    "opening_video": "https://files.catbox.moe/gmybv3.mp4",
-    "ending_video": "https://files.catbox.moe/1tb84j.mp4"
+    "opening_video": "https://files.catbox.moe/90tooq.mp4",
+    "ending_video": "https://files.catbox.moe/xgcsn1.mp4",
+    "op": 2,
+    "ed": 2
   },
   {
     "img": "https://cdn.myanimelist.net/images/anime/1988/148017.jpg",
     "title": "Uron Mirage (Witch Watch)",
     "url": "https://myanimelist.net/anime/59597/Witch_Watch",
+    "opening_video": "https://files.catbox.moe/gmybv3.mp4",
+    "ending_video": "https://files.catbox.moe/1tb84j.mp4",
     "op": "EP14",
     "ed": "EP14"
   },
