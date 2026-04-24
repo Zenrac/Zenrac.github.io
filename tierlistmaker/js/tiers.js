@@ -8,6 +8,7 @@ const ANIME = "Anime";
 const TRAILER = "Trailer";
 
 const SEASONS = ['Winter', 'Spring', 'Summer', 'Fall'];
+const FULL_YEAR_LABEL = 'Full Year';
 
 const ANIMETHEMES_SEARCH_URL = "https://animethemes.moe/search?q=";
 const YOUTUBE_SEARCH_URL = "https://www.youtube.com/results?search_query=";
@@ -62,6 +63,66 @@ function sameImageRef(a, b) {
     if (aQuery || bQuery) return aQuery === bQuery;
 
     return true;
+}
+
+function isYearSelection(value) {
+    return /^\d{4}$/.test(String(value || '').trim());
+}
+
+function getSeasonsForYear(year) {
+    const yearStr = String(year);
+    return SEASONS
+        .map((season) => `${season} ${yearStr}`)
+        .filter((key) => Array.isArray(window.animeSeasons[key]));
+}
+
+function buildDisambiguatedAnimeList(animeList) {
+    const titleCounts = new Map();
+    for (const item of animeList || []) {
+        const title = String(item?.title || '');
+        if (!title) continue;
+        titleCounts.set(title, (titleCounts.get(title) || 0) + 1);
+    }
+
+    return (animeList || []).map((item) => {
+        const title = String(item?.title || '');
+        if (!title || (titleCounts.get(title) || 0) <= 1) return item;
+        if (!item?.img || (!item?.op && !item?.ed)) return item;
+
+        const paramName = item.op ? SHORT_OPENING : SHORT_ENDING;
+        const paramValue = item.op ? item.op : item.ed;
+        if (paramValue === undefined || paramValue === null || String(paramValue) === '') return item;
+
+        const img = String(item.img);
+        const query = extractQuery(img);
+        const params = new URLSearchParams(query);
+        if (!params.has(paramName)) {
+            params.set(paramName, String(paramValue));
+        }
+
+        const base = img.split('?')[0];
+        const newQuery = params.toString();
+        return {
+            ...item,
+            img: newQuery ? `${base}?${newQuery}` : base
+        };
+    });
+}
+
+function getAnimeListForSelection(selection) {
+    if (Array.isArray(window.animeSeasons[selection])) {
+        return window.animeSeasons[selection];
+    }
+
+    if (isYearSelection(selection)) {
+        const merged = [];
+        for (const seasonKey of getSeasonsForYear(selection)) {
+            merged.push(...window.animeSeasons[seasonKey]);
+        }
+        return buildDisambiguatedAnimeList(merged);
+    }
+
+    return [];
 }
 
 const COLOR_LIST = [
@@ -138,6 +199,140 @@ function detectAnimeSeason(img) {
 		items.some(item => item.img && item.img.includes(img))
 	  )
 	  .map(([season]) => season);
+}
+
+function getDefaultSelectionFallback() {
+	const dropdown = document.getElementById("dropdown");
+	const dropdownValue = dropdown?.value;
+	if (dropdownValue && getAnimeListForSelection(dropdownValue).length > 0) {
+		return dropdownValue;
+	}
+
+	const seasonKeys = Object.keys(window.animeSeasons || {});
+	if (seasonKeys.length > 0) {
+		return seasonKeys[0];
+	}
+
+	return '';
+}
+
+function detectSelectionFromImageRefs(imageRefs, fallbackSelection = '') {
+	const seasonScore = new Map();
+	const seasonHits = new Map();
+	const confidentSeasonHits = new Map();
+
+	for (const rawRef of imageRefs || []) {
+		if (!rawRef) continue;
+		const ref = typeof rawRef === 'string' ? rawRef : rawRef.src;
+		if (!ref) continue;
+
+		let matches = detectAnimeSeason(ref);
+		if (!matches || matches.length === 0) {
+			const baseId = extractLooseBaseId(ref);
+			if (baseId) matches = detectAnimeSeason(baseId);
+		}
+
+		const uniqueMatches = [...new Set(matches || [])];
+		if (uniqueMatches.length === 0) continue;
+		const weight = 1 / uniqueMatches.length;
+
+		for (const season of uniqueMatches) {
+			seasonScore.set(season, (seasonScore.get(season) || 0) + weight);
+			seasonHits.set(season, (seasonHits.get(season) || 0) + 1);
+		}
+
+		// Strong signal: this image points to exactly one season.
+		if (uniqueMatches.length === 1) {
+			const season = uniqueMatches[0];
+			confidentSeasonHits.set(season, (confidentSeasonHits.get(season) || 0) + 1);
+		}
+	}
+
+	// If confident matches span multiple seasons in the same year, prefer full-year selection.
+	const yearToSeasons = new Map();
+	const yearToHits = new Map();
+	for (const [season, hits] of confidentSeasonHits.entries()) {
+		const parts = season.split(' ');
+		const year = parts[1];
+		if (!year) continue;
+		if (!yearToSeasons.has(year)) yearToSeasons.set(year, new Set());
+		yearToSeasons.get(year).add(season);
+		yearToHits.set(year, (yearToHits.get(year) || 0) + hits);
+	}
+
+	let bestYear = null;
+	for (const [year, seasonsSet] of yearToSeasons.entries()) {
+		if (seasonsSet.size < 2) continue;
+		if (!bestYear) {
+			bestYear = year;
+			continue;
+		}
+		const hits = yearToHits.get(year) || 0;
+		const bestHits = yearToHits.get(bestYear) || 0;
+		if (hits > bestHits || (hits === bestHits && year < bestYear)) {
+			bestYear = year;
+		}
+	}
+	if (bestYear && getAnimeListForSelection(bestYear).length > 0) {
+		return bestYear;
+	}
+
+	if (seasonScore.size > 0) {
+		let bestSeason = null;
+		for (const [season, score] of seasonScore.entries()) {
+			if (!bestSeason) {
+				bestSeason = season;
+				continue;
+			}
+
+			const bestScore = seasonScore.get(bestSeason) || 0;
+			if (score > bestScore) {
+				bestSeason = season;
+				continue;
+			}
+			if (score < bestScore) continue;
+
+			const hits = seasonHits.get(season) || 0;
+			const bestHits = seasonHits.get(bestSeason) || 0;
+			if (hits > bestHits) {
+				bestSeason = season;
+				continue;
+			}
+			if (hits < bestHits) continue;
+
+			if (season < bestSeason) {
+				bestSeason = season;
+			}
+		}
+		return bestSeason;
+	}
+
+	if (fallbackSelection && getAnimeListForSelection(fallbackSelection).length > 0) {
+		return fallbackSelection;
+	}
+
+	return getDefaultSelectionFallback();
+}
+
+function collectTierlistImageRefs(serialized_tierlist) {
+	const refs = [];
+	for (const row of serialized_tierlist?.rows || []) {
+		for (const imgObj of row?.imgs || []) {
+			if (typeof imgObj === 'string') {
+				refs.push(imgObj);
+			} else if (imgObj?.src) {
+				refs.push(imgObj.src);
+			}
+		}
+	}
+	for (const imgObj of serialized_tierlist?.untiered || []) {
+		if (typeof imgObj === 'string') {
+			refs.push(imgObj);
+		} else if (imgObj?.src) {
+			refs.push(imgObj.src);
+		}
+	}
+	return refs;
 }
 
 function importTierlist(file) {
@@ -222,9 +417,10 @@ function openInfoModal(img) {
 	let animeVideo = "";
 	if (window.animeSeasons) {
 		const dropdown = document.getElementById("dropdown");
+		const animeList = getAnimeListForSelection(dropdown.value);
 		const srcId = extractImgId(src);
 		const srcBaseId = extractImgBaseId(src);
-		const anime = window.animeSeasons[dropdown.value]?.find((entry) => {
+		const anime = animeList.find((entry) => {
 			const entryId = extractImgId(entry.img);
 			if (srcId && entryId) return entryId === srcId;
 
@@ -628,7 +824,7 @@ function randomize_tierlist() {
 	var dropdown = document.getElementById("dropdown");
 	var dropdownType = document.getElementById("dropdowntype");
 	load_from_anime(
-		window.animeSeasons[dropdown.value],
+		getAnimeListForSelection(dropdown.value),
 		`${dropdown.value} ${dropdownType.value}`,
 		false,
 		true
@@ -734,7 +930,7 @@ window.addEventListener('load', () => {
 			soft_reset_list(true);
 			var dropdown = document.getElementById("dropdown");
 			var dropdownType = document.getElementById("dropdowntype");
-			load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`, false);
+			load_from_anime(getAnimeListForSelection(dropdown.value), `${dropdown.value} ${dropdownType.value}`, false);
 			refreshTierListStyle();
 		}
 	});
@@ -863,8 +1059,8 @@ function initialize_dropdown_type() {
 	}
 
 	dropdownType.addEventListener("change", function() {
-		soft_reset_list();
-		load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+		soft_reset_list(true);
+		load_from_anime(getAnimeListForSelection(dropdown.value), `${dropdown.value} ${dropdownType.value}`);
 	});
 }
 
@@ -880,10 +1076,23 @@ function initialize_dropdown_tierlists() {
 		dropdown.add(option);
 	}
 
+	const uniqueYears = [...new Set(Object.keys(window.animeSeasons).map((key) => {
+		const parts = key.split(' ');
+		return parseInt(parts[1], 10);
+	}).filter((year) => !isNaN(year)))].sort((a, b) => b - a);
+
+	for (const year of uniqueYears) {
+		var yearOption = document.createElement("option");
+		yearOption.text = `${FULL_YEAR_LABEL} ${year}`;
+		yearOption.value = String(year);
+		dropdown.add(yearOption);
+	}
+
 	dropdown.addEventListener("change", function() {
 		dropdownPicker.value = dropdown.value;
-		soft_reset_list();
-		load_from_anime(window.animeSeasons[dropdown.value], `${dropdown.value} ${dropdownType.value}`);
+		previousValue = dropdown.value;
+		soft_reset_list(true);
+		load_from_anime(getAnimeListForSelection(dropdown.value), `${dropdown.value} ${dropdownType.value}`);
 	});
 
 	dropdownPicker.addEventListener("change", function() {
@@ -926,7 +1135,7 @@ function openVideoModal(searchUrl) {
 function multipleEntries(title, list = null) {
 	if (!list) {
 		var dropdown = document.getElementById("dropdown");
-		list = window.animeSeasons[dropdown.value];
+		list = getAnimeListForSelection(dropdown.value);
 	}
 	var matches = list.filter(m => m.title == title);
 	return matches.length > 1;
@@ -946,10 +1155,11 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         src = `${base}${ext}${query}`;
     }
 
-    if ((title.trim() == "" || url.trim() == "") && window.animeSeasons[dropdown.value]) {
+	const selectedAnimeList = getAnimeListForSelection(dropdown.value);
+    if ((title.trim() == "" || url.trim() == "") && selectedAnimeList.length > 0) {
         const srcId = extractImgId(src);
         const srcBaseId = extractImgBaseId(src);
-        const anime = window.animeSeasons[dropdown.value].find((entry) => {
+        const anime = selectedAnimeList.find((entry) => {
             const entryId = extractImgId(entry.img);
             if (srcId && entryId) return entryId === srcId;
 
@@ -1182,33 +1392,17 @@ function save_tierlist() {
     saveToLocalStorage(TIERLIST_COOKIE, cookieData);
 }
 
-function load_tierlist(serialized_tierlist, fileName = null) {
+function load_tierlist(serialized_tierlist, fileName = null, syncSelection = true) {
 
 	if (serialized_tierlist.rows === undefined) {
-		let currentSeason = [];
 		const legacyImgIds = Array.isArray(serialized_tierlist)
 			? serialized_tierlist.map(item => item?.imgId).filter(Boolean)
 			: [];
-
-		for (const imgId of legacyImgIds) {
-			currentSeason = detectAnimeSeason(imgId);
-			if (currentSeason && currentSeason.length > 0) break;
-
-			const baseId = extractLooseBaseId(imgId);
-			if (baseId) {
-				currentSeason = detectAnimeSeason(baseId);
-				if (currentSeason && currentSeason.length > 0) break;
-			}
-		}
-
-		if (!currentSeason || currentSeason.length === 0) {
-			alert("Cannot detect anime season for this tierlist.");
-			return;
-		}
-		let animeList = filter_anime_with_modes(window.animeSeasons[currentSeason[0]]);
+		const detectedSelection = detectSelectionFromImageRefs(legacyImgIds, getDefaultSelectionFallback());
+		let animeList = filter_anime_with_modes(getAnimeListForSelection(detectedSelection));
 		let addedAnimes = new Set();
 
-		serialized_tierlist.title = fileName ? fileName.replace('.json', '') : (currentSeason[0] || "Imported Tierlist");
+		serialized_tierlist.title = fileName ? fileName.replace('.json', '') : (detectedSelection || "Imported Tierlist");
 
 		let rowNames = [...new Set(serialized_tierlist.map(anime => anime.row))];
 		serialized_tierlist.rows = rowNames.map(name => ({
@@ -1237,29 +1431,15 @@ function load_tierlist(serialized_tierlist, fileName = null) {
 
     hard_reset_list();
 
-	let firstImgRef = null;
-	for (const row of serialized_tierlist.rows || []) {
-		const first = row?.imgs?.[0];
-		if (!first) continue;
-		firstImgRef = typeof first === 'string' ? first : first.src;
-		if (firstImgRef) break;
-	}
-
-	let detected = null;
-	if (firstImgRef) {
-		let detectedCandidates = detectAnimeSeason(firstImgRef);
-		if (!detectedCandidates || detectedCandidates.length === 0) {
-			const baseId = extractLooseBaseId(firstImgRef);
-			if (baseId) detectedCandidates = detectAnimeSeason(baseId);
-		}
-		detected = detectedCandidates?.[0] || null;
-	}
+	const allImageRefs = collectTierlistImageRefs(serialized_tierlist);
+	const detected = detectSelectionFromImageRefs(allImageRefs, getDefaultSelectionFallback());
 	
-    if (detected) {
+    if (detected && syncSelection) {
 		var dropdownPicker = document.getElementById("seasonPicker");
 		dropdownPicker.value = detected;
 		var dropdown = document.getElementById("dropdown");
 		dropdown.value = detected;
+		previousValue = detected;
     }
 
     document.querySelector('.title-label').innerText = serialized_tierlist.title;
@@ -1388,7 +1568,7 @@ function load_from_anime(animeList, title, cookie = true, randomize = false) {
 	var dropdownType = document.getElementById("dropdowntype");
 
 	if (cookie && cookieData && dropdown.value in cookieData && dropdownType.value in cookieData[dropdown.value]) {
-		load_tierlist(cookieData[dropdown.value][dropdownType.value]);
+		load_tierlist(cookieData[dropdown.value][dropdownType.value], null, false);
 	}
 
 	refreshTierListStyle();
@@ -1606,15 +1786,9 @@ function bind_trash_events() {
 	trash.addEventListener('click', (evt) => {
 		evt.preventDefault();
 		if (confirm('Restore bin? (this will place all deleted images back in the pool)')) {
-			let animeList = window.animeSeasons[dropdown.value];
-			let mode = document.getElementById("dropdowntype").value;
-
-			let animes = animeList.filter(item => {
-				if (mode === ANIME) return !item.ed && !item.op;
-				if (mode === OPENING) return !item.ed || item.op;
-				if (mode === ENDING) return !item.op || item.ed;
-				return true;
-			});
+			const dropdown = document.getElementById("dropdown");
+			let animeList = getAnimeListForSelection(dropdown.value);
+			let animes = filter_anime_with_modes(animeList);
 
 			let alreadyAdded = Array.from(document.getElementsByClassName('item'));
 			for (let anime of animes) {
@@ -1717,6 +1891,7 @@ function restorePreviousValue() {
 }
 
 function updateSeasons() {
+    const dropdown = document.getElementById("dropdown");
     const datepickerVisible = document.querySelector('.air-datepicker--content') !== null;
     if (datepickerVisible) {
         if (input.value !== "Selecting...") {
@@ -1751,7 +1926,6 @@ function updateSeasons() {
     });
 
     const yearAvailable = seasonsAvailableInYear.size > 0;
-
     SEASONS.forEach((season, i) => {
         const div = document.createElement('div');
         div.className = 'custom-season-cell ' + season.toLowerCase();
@@ -1765,11 +1939,15 @@ function updateSeasons() {
             div.addEventListener('click', () => {
                 picker.selectDate(new Date(displayedYear, i * 3, 1));
                 picker.$el.value = season + ' ' + displayedYear;
+                dropdown.value = season + ' ' + displayedYear;
+                dropdown.dispatchEvent(new Event('change', { bubbles: true }));
                 picker.hide();
             });
         }
 
-        if (picker.date && picker.date.length) {
+        if (String(dropdown.value) === `${season} ${displayedYear}`) {
+            div.classList.add('selected');
+        } else if (picker.date && picker.date.length) {
             const selectedYear = picker.date[0].getFullYear();
             const selectedSeason = Math.floor(picker.date[0].getMonth() / 3);
             if (selectedYear === displayedYear && selectedSeason === i) {
@@ -1779,6 +1957,23 @@ function updateSeasons() {
 
         container.appendChild(div);
     });
+
+    if (yearAvailable) {
+        const yearDiv = document.createElement('div');
+        yearDiv.className = 'custom-season-cell full-year';
+        yearDiv.textContent = FULL_YEAR_LABEL;
+        yearDiv.addEventListener('click', () => {
+            picker.$el.value = yearStr;
+            dropdown.value = yearStr;
+            dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+            picker.hide();
+        });
+
+        if (String(dropdown.value) === yearStr) {
+            yearDiv.classList.add('selected');
+        }
+        container.appendChild(yearDiv);
+    }
 
     var yearElement = picker.$datepicker.querySelector('.air-datepicker-nav--title.-disabled-');
     if (!yearElement) {
@@ -1794,9 +1989,21 @@ function attachNavListeners() {
 }
 
 picker.$el.addEventListener('click', () => {
-    let val = picker.$el.value;
-    if (val === "Selecting..." || !val || !val.includes(' ')) {
+    const dropdown = document.getElementById("dropdown");
+    let val = dropdown.value;
+    if (!val || val === "Selecting...") {
+        val = picker.$el.value;
+    }
+    if (!val || val === "Selecting...") {
         val = previousValue;
+    }
+    if (isYearSelection(val)) {
+        val = `${SEASONS[0]} ${val}`;
+    }
+    if (!val || !val.includes(' ')) {
+        const now = new Date();
+        const seasonIndex = Math.floor(now.getMonth() / 3);
+        val = `${SEASONS[seasonIndex]} ${now.getFullYear()}`;
     }
     const [seasonName, yearStr] = val.split(' ');
     const year = parseInt(yearStr, 10);

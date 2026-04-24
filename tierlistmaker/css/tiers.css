@@ -512,6 +512,11 @@ img.draggable.dragged, .button:active {
   filter: brightness(1.07);
 }
 
+.custom-season-cell.selected {
+  outline: 2px solid #234b87;
+  outline-offset: 1px;
+}
+
 .custom-season-cell:focus {
   outline: 2px solid #007BFF;
   outline-offset: 2px;
@@ -651,6 +656,17 @@ img.draggable.dragged, .button:active {
   animation: leaf-fall 6s ease-in-out infinite;
   user-select: none;
   pointer-events: none;
+}
+
+.custom-season-cell.full-year {
+  grid-column: 1 / -1;
+  max-width: none;
+  background: linear-gradient(135deg, #ffe6ef 0%, #ffd3e2 52%, #ffc2d8 100%);
+  color: #7a1f45;
+  border: 1px solid #e58ab0;
+  box-shadow: 0 6px 12px rgba(173, 60, 112, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.4px;
 }
 
 /* Animations */
