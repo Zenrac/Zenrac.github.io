@@ -1287,10 +1287,23 @@ function save_tierlist_png() {
 }
 
 function findAnimeObj(imgId) {
-	for (const season in window.animeSeasons) {
-		const found = window.animeSeasons[season].find(a => a.img && removeExtension(a.img).includes(removeExtension(imgId)));
+	const dropdown = document.getElementById("dropdown");
+	const selection = dropdown?.value;
+	const searchLists = [];
+
+	if (selection) {
+		searchLists.push(getAnimeListForSelection(selection));
+	}
+
+	searchLists.push(...Object.values(window.animeSeasons));
+
+	for (const animeList of searchLists) {
+		if (!Array.isArray(animeList)) continue;
+		const found = animeList.find(a => a.img && sameImageRef(a.img, imgId));
 		if (found) return found;
-	}        return null;
+	}
+
+	return null;
 }
 
 function exportTierlistDetails() {
