@@ -1729,7 +1729,21 @@ body.swal2-height-auto {
 }
 
 .aw-summary-stats span {
-  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  text-align: center;
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.aw-summary-stats span:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
 }
 
 .aw-summary strong {
@@ -2144,3 +2158,4 @@ body.swal2-height-auto {
     padding: 6px 7px;
   }
 }
+

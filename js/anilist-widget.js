@@ -69,7 +69,7 @@ function compactNumber(value) {
 
 function formatWatchTime(minutes) {
   const days = Math.floor((minutes || 0) / 1440);
-  return `${compactNumber(days)} days`;
+  return compactNumber(days);
 }
 
 function formatNextEpisode(seconds) {
@@ -203,7 +203,7 @@ function renderWidget(data) {
     <div class="aw-head">
       <button class="aw-summary" type="button" aria-expanded="${isAniListExpanded}" aria-controls="aw-details">
         <span class="aw-summary-copy">
-          <span class="aw-eyebrow"><i class="fa-solid si-anilist" aria-hidden="true"></i> AniList</span>
+          <span onclick='window.open("https://anilist.co/user/Zenrac/", "_blank", "noopener,noreferrer")' class="aw-eyebrow"><i class="fa-solid si-anilist" aria-hidden="true"></i> AniList</span>
           <span class="aw-summary-stats" aria-label="Anime summary">
             <span>
               <strong>${watching.length || 0}</strong>
@@ -215,7 +215,7 @@ function renderWidget(data) {
             </span>
             <span>
               <strong>${formatWatchTime(stats.minutesWatched)}</strong>
-              <small>watch time</small>
+              <small>days</small>
             </span>
           </span>
           <span class="aw-goal">
