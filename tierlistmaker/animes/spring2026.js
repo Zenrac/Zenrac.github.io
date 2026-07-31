@@ -57,18 +57,18 @@ window.animeSeasons["Spring 2026"] = [
     "ending_video": "https://files.catbox.moe/lqb08o.mp4"
   },
   {
-    "title": "Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken 2",
-    "img": "https://cdn.myanimelist.net/images/anime/1989/154843.jpg",
-    "url": "https://myanimelist.net/anime/56876/Otonari_no_Tenshi-sama_ni_Itsunomanika_Dame_Ningen_ni_Sareteita_Ken_2",
-    "opening_video": "https://files.catbox.moe/ro1awp.mp4",
-    "ending_video": "https://files.catbox.moe/v0ourd.mp4"
-  },
-  {
     "title": "Class de 2-banme ni Kawaii Onnanoko to Tomodachi ni Natta",
     "img": "https://cdn.myanimelist.net/images/anime/1423/155713.jpg",
     "url": "https://myanimelist.net/anime/56734/Class_de_2-banme_ni_Kawaii_Onnanoko_to_Tomodachi_ni_Natta",
     "opening_video": "https://files.catbox.moe/swhfuw.mp4",
     "ending_video": "https://files.catbox.moe/wjio14.mp4"
+  },
+  {
+    "title": "Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken 2",
+    "img": "https://cdn.myanimelist.net/images/anime/1989/154843.jpg",
+    "url": "https://myanimelist.net/anime/56876/Otonari_no_Tenshi-sama_ni_Itsunomanika_Dame_Ningen_ni_Sareteita_Ken_2",
+    "opening_video": "https://files.catbox.moe/ro1awp.mp4",
+    "ending_video": "https://files.catbox.moe/v0ourd.mp4"
   },
   {
     "title": "Marriagetoxin",
@@ -176,11 +176,25 @@ window.animeSeasons["Spring 2026"] = [
     "ending_video": "https://files.catbox.moe/lwdk0w.mp4"
   },
   {
+    "title": "Jishou Akuyaku Reijou na Konyakusha no Kansatsu Kiroku.",
+    "img": "https://cdn.myanimelist.net/images/anime/1769/153376.jpg",
+    "url": "https://myanimelist.net/anime/61687/Jishou_Akuyaku_Reijou_na_Konyakusha_no_Kansatsu_Kiroku",
+    "opening_video": "https://files.catbox.moe/33v5st.mp4",
+    "ending_video": "https://files.catbox.moe/1mqpsb.mp4"
+  },
+  {
     "title": "Needy Girl Overdose",
     "img": "https://cdn.myanimelist.net/images/anime/1755/154935.jpg",
     "url": "https://myanimelist.net/anime/62913/Needy_Girl_Overdose",
     "opening_video": "https://files.catbox.moe/911ibc.mp4",
     "ending_video": "https://files.catbox.moe/nberjc.mp4"
+  },
+  {
+    "title": "Ponkotsu Fuuki Iin to Skirt-take ga Futekisetsu na JK no Hanashi",
+    "img": "https://cdn.myanimelist.net/images/anime/1484/155726.jpg",
+    "url": "https://myanimelist.net/anime/61425/Ponkotsu_Fuuki_Iin_to_Skirt-take_ga_Futekisetsu_na_JK_no_Hanashi",
+    "opening_video": "https://files.catbox.moe/80rtyb.mp4",
+    "ending_video": "https://files.catbox.moe/jhf54q.mp4"
   },
   {
     "title": "Ganbare! Nakamura-kun!!",
@@ -189,18 +203,11 @@ window.animeSeasons["Spring 2026"] = [
     "opening_video": "https://files.catbox.moe/u1nyi7.mp4"
   },
   {
-    "title": "Jishou Akuyaku Reijou na Konyakusha no Kansatsu Kiroku.",
-    "img": "https://cdn.myanimelist.net/images/anime/1769/153376.jpg",
-    "url": "https://myanimelist.net/anime/61687/Jishou_Akuyaku_Reijou_na_Konyakusha_no_Kansatsu_Kiroku",
-    "opening_video": "https://files.catbox.moe/33v5st.mp4",
-    "ending_video": "https://files.catbox.moe/1mqpsb.mp4"
-  },
-  {
-    "title": "Ponkotsu Fuuki Iin to Skirt-take ga Futekisetsu na JK no Hanashi",
-    "img": "https://cdn.myanimelist.net/images/anime/1484/155726.jpg",
-    "url": "https://myanimelist.net/anime/61425/Ponkotsu_Fuuki_Iin_to_Skirt-take_ga_Futekisetsu_na_JK_no_Hanashi",
-    "opening_video": "https://files.catbox.moe/80rtyb.mp4",
-    "ending_video": "https://files.catbox.moe/jhf54q.mp4"
+    "title": "Kamiina Botan, Yoeru Sugata wa Yuri no Hana",
+    "img": "https://cdn.myanimelist.net/images/anime/1026/155965.jpg",
+    "url": "https://myanimelist.net/anime/61186/Kamiina_Botan_Yoeru_Sugata_wa_Yuri_no_Hana",
+    "opening_video": "https://files.catbox.moe/irpdjy.mp4",
+    "ending_video": "https://files.catbox.moe/hvwonr.mp4"
   },
   {
     "title": "Saikyou no Shokugyou wa Yuusha demo Kenja demo Naku Kanteishi (Kari) Rashii desu yo?",
@@ -215,13 +222,6 @@ window.animeSeasons["Spring 2026"] = [
     "url": "https://myanimelist.net/anime/59443/Reincarnation_no_Kaben",
     "opening_video": "https://files.catbox.moe/gb148l.mp4",
     "ending_video": "https://files.catbox.moe/1qkbgm.mp4"
-  },
-  {
-    "title": "Kamiina Botan, Yoeru Sugata wa Yuri no Hana",
-    "img": "https://cdn.myanimelist.net/images/anime/1026/155965.jpg",
-    "url": "https://myanimelist.net/anime/61186/Kamiina_Botan_Yoeru_Sugata_wa_Yuri_no_Hana",
-    "opening_video": "https://files.catbox.moe/irpdjy.mp4",
-    "ending_video": "https://files.catbox.moe/hvwonr.mp4"
   },
   {
     "title": "Kanojo, Okarishimasu 5th Season",
@@ -287,18 +287,18 @@ window.animeSeasons["Spring 2026"] = [
     "ending_video": "https://files.catbox.moe/b24wq3.mp4"
   },
   {
-    "title": "Mao",
-    "img": "https://cdn.myanimelist.net/images/anime/1738/156386.jpg",
-    "url": "https://myanimelist.net/anime/62048/Mao",
-    "opening_video": "https://files.catbox.moe/n18jk6.mp4",
-    "ending_video": "https://files.catbox.moe/5h7prk.mp4"
-  },
-  {
     "title": "Megami \"Isekai Tensei Nani ni Naritai desu ka\" Ore \"Yuusha no Rokkotsu de\"",
     "img": "https://cdn.myanimelist.net/images/anime/1228/156696.jpg",
     "url": "https://myanimelist.net/anime/63376/Megami_Isekai_Tensei_Nani_ni_Naritai_desu_ka_Ore_Yuusha_no_Rokkotsu_de",
     "opening_video": "https://files.catbox.moe/g674e7.mp4",
     "ending_video": "https://files.catbox.moe/qdoy8c.mp4"
+  },
+  {
+    "title": "Mao",
+    "img": "https://cdn.myanimelist.net/images/anime/1738/156386.jpg",
+    "url": "https://myanimelist.net/anime/62048/Mao",
+    "opening_video": "https://files.catbox.moe/n18jk6.mp4",
+    "ending_video": "https://files.catbox.moe/5h7prk.mp4"
   },
   {
     "title": "Jidou Hanbaiki ni Umarekawatta Ore wa Meikyuu wo Samayou 3rd Season",
@@ -350,18 +350,18 @@ window.animeSeasons["Spring 2026"] = [
     "ending_video": "https://files.catbox.moe/08v004.mp4"
   },
   {
-    "title": "Hidarikiki no Eren",
-    "img": "https://cdn.myanimelist.net/images/anime/1015/156388.jpg",
-    "url": "https://myanimelist.net/anime/53732/Hidarikiki_no_Eren",
-    "opening_video": "https://files.catbox.moe/460ei2.mp4",
-    "ending_video": "https://files.catbox.moe/6nlcmz.mp4"
-  },
-  {
     "title": "Awajima Hyakkei",
     "img": "https://cdn.myanimelist.net/images/anime/1594/157161.jpg",
     "url": "https://myanimelist.net/anime/58820/Awajima_Hyakkei",
     "opening_video": "https://files.catbox.moe/idyqlm.mp4",
     "ending_video": "https://files.catbox.moe/dv49pk.mp4"
+  },
+  {
+    "title": "Hidarikiki no Eren",
+    "img": "https://cdn.myanimelist.net/images/anime/1015/156388.jpg",
+    "url": "https://myanimelist.net/anime/53732/Hidarikiki_no_Eren",
+    "opening_video": "https://files.catbox.moe/460ei2.mp4",
+    "ending_video": "https://files.catbox.moe/6nlcmz.mp4"
   },
   {
     "title": "Mamonogurai no Boukensha: Ore dake Mamono wo Kuratte Tsuyoku Naru",
@@ -400,7 +400,7 @@ window.animeSeasons["Spring 2026"] = [
   },
   {
     "title": "Kami no Shizuku",
-    "img": "https://cdn.myanimelist.net/images/anime/1863/158831.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1045/155698.jpg",
     "url": "https://myanimelist.net/anime/62981/Kami_no_Shizuku",
     "opening_video": "https://files.catbox.moe/gal4b3.mp4",
     "ending_video": "https://files.catbox.moe/z41mjo.mp4"
@@ -434,17 +434,17 @@ window.animeSeasons["Spring 2026"] = [
     "ending_video": "https://files.catbox.moe/neqbx5.mp4"
   },
   {
-    "title": "Kumarba Season 3",
-    "img": "https://cdn.myanimelist.net/images/anime/1148/155162.jpg",
-    "url": "https://myanimelist.net/anime/63383/Kumarba_Season_3",
-    "opening_video": "https://files.catbox.moe/1go3po.mp4",
-    "op": 1
-  },
-  {
     "title": "Chibi Godzilla no Gyakushuu 4th Season",
     "img": "https://cdn.myanimelist.net/images/anime/1791/158762.jpg",
     "url": "https://myanimelist.net/anime/64502/Chibi_Godzilla_no_Gyakushuu_4th_Season",
     "opening_video": "https://files.catbox.moe/jfktms.mp4",
+    "op": 1
+  },
+  {
+    "title": "Kumarba Season 3",
+    "img": "https://cdn.myanimelist.net/images/anime/1148/155162.jpg",
+    "url": "https://myanimelist.net/anime/63383/Kumarba_Season_3",
+    "opening_video": "https://files.catbox.moe/1go3po.mp4",
     "op": 1
   },
   {
@@ -763,6 +763,13 @@ window.animeSeasons["Spring 2026"] = [
     "url": "https://myanimelist.net/anime/62913/Needy_Girl_Overdose",
     "ending_video": "https://files.catbox.moe/eidjee.mp4",
     "ed": "EP5"
+  },
+  {
+    "title": "Needy Girl Overdose",
+    "img": "https://cdn.myanimelist.net/images/anime/1755/154935.jpg",
+    "url": "https://myanimelist.net/anime/62913/Needy_Girl_Overdose",
+    "ending_video": "https://files.catbox.moe/ixc9pf.mp4",
+    "ed": "EP13"
   },
   {
     "title": "Niwatori Fighter",
