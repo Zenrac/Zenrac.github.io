@@ -2,6 +2,7 @@ let globalImageList = [];
 let uploadedFiles = [];
 let animeSeasons = [];
 let imageMetaMap = {};
+let selectedSeason = null;
 
 const tieColors = [
     'rgba(255,179,71,0.18)',
@@ -90,11 +91,10 @@ function processFiles() {
                         if (item.positions && typeof item.positions === "object") {
                             Object.keys(item.positions).forEach(user => userSet.add(user));
                         }
-                        imageMetaMap[item.imgId] = {
-                            op: item.op,
-                            ed: item.ed,
-                            title: item.title
-                        };
+                        const meta = { title: item.title };
+                        if (item.op !== undefined) meta.op = item.op;
+                        if (item.ed !== undefined) meta.ed = item.ed;
+                        imageMetaMap[item.imgId] = meta;
                     });
                     const userList = Array.from(userSet);
 
@@ -102,6 +102,8 @@ function processFiles() {
                     jsonData.forEach(item => {
                         colorMap[item.imgId] = item.colors || [];
                     });
+
+                    selectedSeason = determineSeasonFromImageRefs(jsonData.map(item => item.imgId));
 
                     jsonData = {
                         title: file.name.replace('.json', ''),
@@ -160,12 +162,13 @@ function processFiles() {
                     const colorMap = {};
                     jsonData.forEach(item => {
                         colorMap[item.imgId] = item.colors || [];
-                        imageMetaMap[item.imgId] = {
-                            op: item.op,
-                            ed: item.ed,
-                            title: item.title
-                        };
+                        const meta = { title: item.title };
+                        if (item.op !== undefined) meta.op = item.op;
+                        if (item.ed !== undefined) meta.ed = item.ed;
+                        imageMetaMap[item.imgId] = meta;
                     });
+
+                    selectedSeason = determineSeasonFromImageRefs(jsonData.map(item => item.imgId));
 
                     jsonData = {
                         title: file.name.replace('.json', ''),
@@ -195,6 +198,57 @@ function processFiles() {
 
 function showTable() {
     document.getElementById("results").style.display = "block";
+}
+
+function detectAnimeSeason(img) {
+    return Object.entries(animeSeasons)
+        .filter(([season, items]) => items.some(item => item.img && sameImageRef(item.img, img)))
+        .map(([season]) => season);
+}
+
+function determineSeasonFromImageRefs(imageRefs) {
+    const seasonScore = new Map();
+    const seasonHits = new Map();
+    for (const rawRef of imageRefs || []) {
+        if (!rawRef) continue;
+        const ref = String(rawRef);
+        let matches = detectAnimeSeason(ref);
+        if (!matches.length) {
+            const baseId = extractLooseBaseId(ref);
+            if (baseId) matches = detectAnimeSeason(baseId);
+        }
+        const uniqueMatches = [...new Set(matches)];
+        if (!uniqueMatches.length) continue;
+        const weight = 1 / uniqueMatches.length;
+        for (const season of uniqueMatches) {
+            seasonScore.set(season, (seasonScore.get(season) || 0) + weight);
+            seasonHits.set(season, (seasonHits.get(season) || 0) + 1);
+        }
+    }
+    let bestSeason = null;
+    for (const [season, score] of seasonScore.entries()) {
+        if (!bestSeason) {
+            bestSeason = season;
+            continue;
+        }
+        const bestScore = seasonScore.get(bestSeason) || 0;
+        if (score > bestScore) {
+            bestSeason = season;
+            continue;
+        }
+        if (score < bestScore) continue;
+        const hits = seasonHits.get(season) || 0;
+        const bestHits = seasonHits.get(bestSeason) || 0;
+        if (hits > bestHits) {
+            bestSeason = season;
+            continue;
+        }
+        if (hits < bestHits) continue;
+        if (season < bestSeason) {
+            bestSeason = season;
+        }
+    }
+    return bestSeason;
 }
 
 function calculateAverageRankings(allData, files) {
@@ -363,10 +417,11 @@ function prepare_export_details() {
             colorsByFile[file] = result.colors[file] || [];
         });
         const animeObj = detectAnime(result.imgId);
+        const meta = imageMetaMap[result.imgId] || {};
         let url = animeObj?.url || '';
         let id = '';
-        let op = animeObj?.op ?? 1;
-        let ed = animeObj?.ed ?? 1;
+        let op = Object.prototype.hasOwnProperty.call(meta, 'op') ? meta.op : animeObj?.op;
+        let ed = Object.prototype.hasOwnProperty.call(meta, 'ed') ? meta.ed : animeObj?.ed;
         if (url) {
             const match = url.match(/anime\/(\d+)/);
             if (match) id = match[1];
@@ -411,6 +466,10 @@ function toggleExportButton() { document.querySelector("#exportBtn").disabled = 
 function toggleTierlistButton() { document.querySelector("#tierlistBtn").disabled = document.querySelector("#resultsTable tbody").rows.length === 0 ? true : false; }
 
 function detectAnimeTitle(img) {
+    if (selectedSeason && Array.isArray(animeSeasons[selectedSeason])) {
+        const anime = animeSeasons[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
+        if (anime) return anime.title;
+    }
     for (const [season, items] of Object.entries(animeSeasons)) {
         const anime = items.find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime.title;
@@ -447,6 +506,10 @@ function buildDisplayTitle(imgId) {
 }
 
 function detectAnime(img) {
+    if (selectedSeason && Array.isArray(animeSeasons[selectedSeason])) {
+        const anime = animeSeasons[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
+        if (anime) return anime;
+    }
     for (const [season, items] of Object.entries(animeSeasons)) {
         const anime = items.find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime;
