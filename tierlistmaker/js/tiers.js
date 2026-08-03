@@ -216,6 +216,18 @@ function getDefaultSelectionFallback() {
 	return '';
 }
 
+function getCurrentTierlistStorageKey() {
+	const dropdown = document.getElementById("dropdown");
+	const vis = document.getElementById('jpopListSelect');
+	const dropdownType = document.getElementById("dropdowntype");
+	const jpopModeSelect = document.getElementById("jpopModeSelect");
+	const filename = dropdown?.value || vis?.value || '';
+	const type = (document.body?.getAttribute('data-jpop') === '1' && jpopModeSelect)
+		? jpopModeSelect.value
+		: dropdownType?.value || '';
+	return { filename, type };
+}
+
 function detectSelectionFromImageRefs(imageRefs, fallbackSelection = '') {
 	const seasonScore = new Map();
 	const seasonHits = new Map();
@@ -1152,7 +1164,9 @@ function isDefaultTierlist(data) {
 	var dropdown = document.getElementById("dropdown");
 	var dropdownType = document.getElementById("dropdowntype");
 
-	var expectedTitle = `Tierlist ${dropdown.value} ${dropdownType.value}`;
+	var expectedTitle = (document.body?.getAttribute('data-jpop') === '1')
+		? `Tierlist ${dropdown.value}`
+		: `Tierlist ${dropdown.value} ${dropdownType.value}`;
 	if (data.title !== expectedTitle) {
 		return false;
 	}
@@ -1703,14 +1717,13 @@ function save_tierlist() {
 			}
 		});
     }
-    var dropdown = document.getElementById("dropdown");
-    var dropdownType = document.getElementById("dropdowntype");
-    var filename = dropdown.value;
+    const { filename, type } = getCurrentTierlistStorageKey();
+    if (!filename || !type) return;
     if (!cookieData[filename])
         cookieData[filename] = {};
-    cookieData[filename][dropdownType.value] = serialized_tierlist;
+    cookieData[filename][type] = serialized_tierlist;
     if (isDefaultTierlist(serialized_tierlist)) {
-        delete cookieData[filename][dropdownType.value];
+        delete cookieData[filename][type];
         if (Object.keys(cookieData[filename]).length === 0) {
             delete cookieData[filename];
         }
@@ -1765,6 +1778,15 @@ function load_tierlist(serialized_tierlist, fileName = null, syncSelection = tru
 		dropdownPicker.value = detected;
 		var dropdown = document.getElementById("dropdown");
 		dropdown.value = detected;
+		if (document.body?.getAttribute('data-jpop') === '1') {
+			const vis = document.getElementById('jpopListSelect');
+			if (vis) {
+				vis.value = detected;
+				if (Array.from(document.getElementById('dropdown').options).some(o => o.value === detected)) {
+					document.getElementById('dropdown').value = detected;
+				}
+			}
+		}
 		previousValue = detected;
     }
 
@@ -1903,11 +1925,10 @@ function load_from_anime(animeList, title, cookie = true, randomize = false) {
 		}
 	}	
 
-	var dropdown = document.getElementById("dropdown");
-	var dropdownType = document.getElementById("dropdowntype");
+	const { filename, type } = getCurrentTierlistStorageKey();
 
-	if (cookie && cookieData && dropdown.value in cookieData && dropdownType.value in cookieData[dropdown.value]) {
-		load_tierlist(cookieData[dropdown.value][dropdownType.value], null, false);
+	if (cookie && cookieData && filename in cookieData && type in cookieData[filename]) {
+		load_tierlist(cookieData[filename][type], null, false);
 	}
 
 	refreshTierListStyle();

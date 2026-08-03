@@ -290,11 +290,11 @@
                                 hidden.value = val;
                             }
                             soft_reset_list(true);
-                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`, false);
+                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`);
                         });
                         mode.addEventListener('change', () => {
                             soft_reset_list(true);
-                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`, false);
+                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`);
                         });
                         vis.value = keys[0];
                         vis.dispatchEvent(new Event('change', { bubbles: true }));
