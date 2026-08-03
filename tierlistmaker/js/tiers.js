@@ -1373,7 +1373,7 @@ function startGuessSongGame() {
 		`;
 
 		Swal.fire({
-			title: `Guess the song! (${round}/${total})`,
+			title: `Guess the song!`,
 			html: html,
 			showConfirmButton: false,
 			showCloseButton: true,
