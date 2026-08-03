@@ -1483,6 +1483,18 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         dragged_image.classList.add("dragged");
     });
 
+	img.addEventListener('load', function onLoad() {
+		if (this.naturalWidth === 120 && this.naturalHeight === 90) {
+			const fallback = this.src.replace('maxresdefault.jpg', 'hqdefault.jpg');
+			this.src = fallback;
+		}
+	}, { once: true });
+
+	img.addEventListener('error', function onError() {
+		const fallback = this.src.replace('maxresdefault.jpg', 'hqdefault.jpg');
+		if (this.src !== fallback) this.src = fallback;
+	}, { once: true });
+
     if (url.trim() != "") {
         img.addEventListener("click", function(event) {
 			event.preventDefault();
