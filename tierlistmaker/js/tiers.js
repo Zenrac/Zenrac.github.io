@@ -391,7 +391,8 @@ function openInfoModal(img) {
     if (!img) return;
     const rawTitle = (img.title || img.alt || "").trim();
     const badgeText = img.parentNode?.querySelector('.badge')?.textContent?.trim() || "";
-    const src = img.src;
+	// hack to pretend all image did not fail
+    const src = img.src.replace('hqdefault.jpg', 'maxresdefault.jpg');
     const dropdownType = document.getElementById("dropdowntype");
     const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
     const mediaLabel = (tierListType === OPENING || tierListType === ENDING)
@@ -420,6 +421,7 @@ function openInfoModal(img) {
     
 	let animeUrl = "";
 	let animeVideo = "";
+
 	if (window.dataTierlists) {
 		const dropdown = document.getElementById("dropdown");
 		const animeList = getAnimeListForSelection(dropdown.value);
@@ -451,58 +453,58 @@ function openInfoModal(img) {
 	const index = imgs.indexOf(img);
 	const rank = index >= 0 ? index + 1 : "N/A";
 
-		// Build media HTML: use iframe for YouTube links, otherwise keep <video>
-		let mediaHtml = '';
-		if (animeVideo) {
-			const m = String(animeVideo).match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-			if (m) {
-				const embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
-				mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><iframe alt="${escapeHtml(title)}" src="${embedUrl}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
-			} else {
-				mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>`;
-			}
+	// Build media HTML: use iframe for YouTube links, otherwise keep <video>
+	let mediaHtml = '';
+	if (animeVideo) {
+		const m = String(animeVideo).match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+		if (m) {
+			const embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
+			mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><iframe alt="${escapeHtml(title)}" src="${embedUrl}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+		} else {
+			mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>`;
 		}
+	}
 
-		const html = `
-				<div style="text-align:center;">
-					<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
+	const html = `
+			<div style="text-align:center;">
+				<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
 
-					<div style="margin-bottom:8px;font-weight:bold;">
-						Current Rank: ${rank}
-					</div>
-
-
-					${mediaHtml}
-
-					<div style="display:flex;justify-content:center;gap:10px;">
-					<div class="icon mal">
-						<a class="si-a" href="${animeUrl}" title="Open MyAnimeList" target="_blank">
-							<i class="si-mal"></i>
-						</a>
-					</div>
-					<div class="icon animetheme">
-						<a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" title="Open AnimeTheme" target="_blank">
-							<svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
-								<polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
-								<polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
-							</svg>
-						</a>
-					</div>
-					<div class="icon youtube">
-						<a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" title="Open YouTube" target="_blank">
-							<i class="fab fa-youtube fa-no-width"></i>
-						</a>
-					</div>
-					<div class="icon color-selector">
-						<a href="javascript:void(0);" title="Choose colors">
-							<i class="fas fa-palette"></i>
-						</a>
-					</div>
-					${animeVideo ? `<div class="icon play-toggle"><a href="javascript:void(0);" title="Play Video"><i class="fas fa-play"></i></a></div>` : ''}
-					${animeVideo ? `<div class="icon cinema-mode"><a href="javascript:void(0);" title="Cinema Mode"><i class="fas fa-expand"></i></a></div>` : ''}
+				<div style="margin-bottom:8px;font-weight:bold;">
+					Current Rank: ${rank}
 				</div>
+
+
+				${mediaHtml}
+
+				<div style="display:flex;justify-content:center;gap:10px;">
+				<div class="icon mal">
+					<a class="si-a" href="${animeUrl}" title="Open MyAnimeList" target="_blank">
+						<i class="si-mal"></i>
+					</a>
+				</div>
+				<div class="icon animetheme">
+					<a class="si-a" href="${ANIMETHEMES_SEARCH_URL + encodeURIComponent(title)}" title="Open AnimeTheme" target="_blank">
+						<svg fill="white" viewBox="0 0 160 86.6" width="50" height="50">
+							<polygon points="56.25 32.48 56.25 75.78 75 86.6 75 0 0 43.3 18.75 54.13 56.25 32.48"></polygon>
+							<polygon points="103.75 32.48 141.25 54.13 160 43.3 85 0 85 86.6 103.75 75.78 103.75 32.48"></polygon>
+						</svg>
+					</a>
+				</div>
+				<div class="icon youtube">
+					<a href="${YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type)}" title="Open YouTube" target="_blank">
+						<i class="fab fa-youtube fa-no-width"></i>
+					</a>
+				</div>
+				<div class="icon color-selector">
+					<a href="javascript:void(0);" title="Choose colors">
+						<i class="fas fa-palette"></i>
+					</a>
+				</div>
+				${animeVideo ? `<div class="icon play-toggle"><a href="javascript:void(0);" title="Play Video"><i class="fas fa-play"></i></a></div>` : ''}
+				${animeVideo ? `<div class="icon cinema-mode"><a href="javascript:void(0);" title="Cinema Mode"><i class="fas fa-expand"></i></a></div>` : ''}
 			</div>
-		`;
+		</div>
+	`;
 
     Swal.fire({
         title: escapeHtml(modalTitle),
@@ -1249,7 +1251,7 @@ function openVideoModal(searchUrl) {
     modal.style.zIndex = "9999";
 
     const iframe = document.createElement("iframe");
-    iframe.src = searchUrl.replace("results?search_query=", "embed/"); // tentative pour un embed direct si possible
+    iframe.src = searchUrl.replace("results?search_query=", "embed/");
     iframe.style.width = "80%";
     iframe.style.height = "80%";
     iframe.allow = "autoplay; encrypted-media";
