@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Fall 2024'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Fall 2024'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1584/143719.webp",
     "title": "Dandadan",

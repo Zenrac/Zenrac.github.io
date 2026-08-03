@@ -1,6 +1,6 @@
 let globalImageList = [];
 let uploadedFiles = [];
-let animeSeasons = [];
+let dataTierlists = [];
 let imageMetaMap = {};
 let selectedSeason = null;
 
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     iframe.addEventListener("load", () => {
         try {
             const indexWindow = iframe.contentWindow;
-            animeSeasons = indexWindow.animeSeasons;
+            dataTierlists = indexWindow.dataTierlists;
         } catch {}
     });
 
@@ -201,7 +201,7 @@ function showTable() {
 }
 
 function detectAnimeSeason(img) {
-    return Object.entries(animeSeasons)
+    return Object.entries(dataTierlists)
         .filter(([season, items]) => items.some(item => item.img && sameImageRef(item.img, img)))
         .map(([season]) => season);
 }
@@ -466,11 +466,11 @@ function toggleExportButton() { document.querySelector("#exportBtn").disabled = 
 function toggleTierlistButton() { document.querySelector("#tierlistBtn").disabled = document.querySelector("#resultsTable tbody").rows.length === 0 ? true : false; }
 
 function detectAnimeTitle(img) {
-    if (selectedSeason && Array.isArray(animeSeasons[selectedSeason])) {
-        const anime = animeSeasons[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
+    if (selectedSeason && Array.isArray(dataTierlists[selectedSeason])) {
+        const anime = dataTierlists[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime.title;
     }
-    for (const [season, items] of Object.entries(animeSeasons)) {
+    for (const [season, items] of Object.entries(dataTierlists)) {
         const anime = items.find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime.title;
     }
@@ -488,7 +488,7 @@ function parseOpEdFromImgId(imgId) {
 
 function buildDisplayTitle(imgId) {
     const meta = imageMetaMap[imgId] || {};
-    const fallbackTitle = animeSeasons ? detectAnimeTitle(imgId) : imgId;
+    const fallbackTitle = dataTierlists ? detectAnimeTitle(imgId) : imgId;
     const baseTitle = (meta.title || fallbackTitle || imgId || '').trim();
     const parsed = parseOpEdFromImgId(imgId);
     const op = meta.op ?? parsed.op;
@@ -506,11 +506,11 @@ function buildDisplayTitle(imgId) {
 }
 
 function detectAnime(img) {
-    if (selectedSeason && Array.isArray(animeSeasons[selectedSeason])) {
-        const anime = animeSeasons[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
+    if (selectedSeason && Array.isArray(dataTierlists[selectedSeason])) {
+        const anime = dataTierlists[selectedSeason].find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime;
     }
-    for (const [season, items] of Object.entries(animeSeasons)) {
+    for (const [season, items] of Object.entries(dataTierlists)) {
         const anime = items.find(item => item.img && sameImageRef(item.img, img));
         if (anime) return anime;
     }

@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Winter 2023'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Winter 2023'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1170/124312.webp",
     "title": "Vinland Saga Season 2",

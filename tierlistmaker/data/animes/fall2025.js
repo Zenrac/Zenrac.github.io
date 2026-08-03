@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons["Fall 2025"] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists["Fall 2025"] = [
   {
     "title": "One Punch Man 3",
     "img": "https://cdn.myanimelist.net/images/anime/1168/148347.jpg",

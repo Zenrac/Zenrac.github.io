@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Summer 2025'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Summer 2025'] = [
   {
     "title": "One Piece",
     "img": "https://cdn.myanimelist.net/images/anime/1244/138851.jpg",

@@ -73,7 +73,7 @@ function getSeasonsForYear(year) {
     const yearStr = String(year);
     return SEASONS
         .map((season) => `${season} ${yearStr}`)
-        .filter((key) => Array.isArray(window.animeSeasons[key]));
+        .filter((key) => Array.isArray(window.dataTierlists[key]));
 }
 
 function buildDisambiguatedAnimeList(animeList) {
@@ -110,14 +110,14 @@ function buildDisambiguatedAnimeList(animeList) {
 }
 
 function getAnimeListForSelection(selection) {
-    if (Array.isArray(window.animeSeasons[selection])) {
-        return window.animeSeasons[selection];
+    if (Array.isArray(window.dataTierlists[selection])) {
+        return window.dataTierlists[selection];
     }
 
     if (isYearSelection(selection)) {
         const merged = [];
         for (const seasonKey of getSeasonsForYear(selection)) {
-            merged.push(...window.animeSeasons[seasonKey]);
+            merged.push(...window.dataTierlists[seasonKey]);
         }
         return buildDisambiguatedAnimeList(merged);
     }
@@ -167,7 +167,7 @@ let untiered_images;
 let tierlist_div;
 let dragged_image;
 
-const years = Object.keys(window.animeSeasons).map(key => {
+const years = Object.keys(window.dataTierlists).map(key => {
   const parts = key.split(' ');
   return parseInt(parts[1], 10);
 }).filter(year => !isNaN(year));
@@ -181,8 +181,8 @@ const maxDate = new Date(maxYear, 11, 31);
 treatDuplicateFromSeason();
 
 function treatDuplicateFromSeason() {
-	for (var season in window.animeSeasons) {
-		let items = window.animeSeasons[season];
+	for (var season in window.dataTierlists) {
+		let items = window.dataTierlists[season];
 		for (let item of items) {
 			if (multipleEntries(item.title, items) && (item.op || item.ed)) {
 				let paramName = item.op ? SHORT_OPENING : SHORT_ENDING;
@@ -194,7 +194,7 @@ function treatDuplicateFromSeason() {
 }
 
 function detectAnimeSeason(img) {
-	return Object.entries(window.animeSeasons)
+	return Object.entries(window.dataTierlists)
 	  .filter(([season, items]) => 
 		items.some(item => item.img && item.img.includes(img))
 	  )
@@ -208,7 +208,7 @@ function getDefaultSelectionFallback() {
 		return dropdownValue;
 	}
 
-	const seasonKeys = Object.keys(window.animeSeasons || {});
+	const seasonKeys = Object.keys(window.dataTierlists || {});
 	if (seasonKeys.length > 0) {
 		return seasonKeys[0];
 	}
@@ -406,6 +406,11 @@ function openInfoModal(img) {
             .trim();
         modalTitle = baseTitle ? `${baseTitle} - ${mediaLabel}` : mediaLabel;
     }
+	try {
+		if (document.body && document.body.getAttribute('data-jpop') === '1') {
+			modalTitle = String(modalTitle).replace(/\s*-\s*(Opening|Ending)\s*\d*$/i, '').replace(/\s*(Opening|Ending)\s*\d*$/i, '').trim();
+		}
+	} catch (e) {}
 	let search_type = buildYoutubeSearchType(
         title,
         tierListType,
@@ -415,7 +420,7 @@ function openInfoModal(img) {
     
 	let animeUrl = "";
 	let animeVideo = "";
-	if (window.animeSeasons) {
+	if (window.dataTierlists) {
 		const dropdown = document.getElementById("dropdown");
 		const animeList = getAnimeListForSelection(dropdown.value);
 		const srcId = extractImgId(src);
@@ -446,18 +451,30 @@ function openInfoModal(img) {
 	const index = imgs.indexOf(img);
 	const rank = index >= 0 ? index + 1 : "N/A";
 
+		// Build media HTML: use iframe for YouTube links, otherwise keep <video>
+		let mediaHtml = '';
+		if (animeVideo) {
+			const m = String(animeVideo).match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+			if (m) {
+				const embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
+				mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><iframe alt="${escapeHtml(title)}" src="${embedUrl}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+			} else {
+				mediaHtml = `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>`;
+			}
+		}
+
 		const html = `
-			<div style="text-align:center;">
-				<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
+				<div style="text-align:center;">
+					<img id="anime-detail-img" src="${src}" alt="${escapeHtml(title)}" style="width:250px;height:360px;border-radius:8px;margin-bottom:10px;">
 
-				<div style="margin-bottom:8px;font-weight:bold;">
-					Current Rank: ${rank}
-				</div>
+					<div style="margin-bottom:8px;font-weight:bold;">
+						Current Rank: ${rank}
+					</div>
 
 
-				${animeVideo ? `<div id="video-wrapper" style="display:flex;justify-content:center;display:none;"><video alt="${escapeHtml(title)}" src="${animeVideo}" style="width:550px;height:360px;border-radius:8px;margin-bottom:10px;max-width:100%;display:none;" controls></video></div>` : ''}
+					${mediaHtml}
 
-				<div style="display:flex;justify-content:center;gap:10px;">
+					<div style="display:flex;justify-content:center;gap:10px;">
 					<div class="icon mal">
 						<a class="si-a" href="${animeUrl}" title="Open MyAnimeList" target="_blank">
 							<i class="si-mal"></i>
@@ -502,27 +519,39 @@ function openInfoModal(img) {
 			const colorBtn = popup.querySelector('.color-selector a');
 			colorBtn?.addEventListener('click', () => openColorSelector(img.parentNode));
 			const video = popup.querySelector('video');
+			const iframe = popup.querySelector('iframe');
 			if (video) video.volume = 0.5;
 			const videoWrapper = popup.querySelector('#video-wrapper');
 			const playBtn = popup.querySelector('.play-toggle a');
 			const cinemaDiv = popup.querySelector('.cinema-mode');
 			const cinemaBtn = popup.querySelector('.cinema-mode a');
-			let videoVisible = false;
+			let mediaVisible = false;
 			const videoPrefKey = 'tierlist_video_preference';
 			try {
 				const pref = localStorage.getItem(videoPrefKey);
-				if (pref === 'video') videoVisible = true;
+				if (pref === 'video') mediaVisible = true;
 			} catch {}
 			let cinemaMode = false;
-			if (playBtn && video && videoWrapper) {
+			const isIframe = !!iframe;
+			// compute embed url from animeVideo if possible
+			let embedUrl = '';
+			if (animeVideo) {
+				const m = String(animeVideo).match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+				if (m) embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
+			}
+			if (playBtn && (video || iframe) && videoWrapper) {
 				const imgElem = popup.querySelector('#anime-detail-img');
 				function updateVideoDisplay() {
-					if (videoVisible) {
+					if (mediaVisible) {
 						videoWrapper.style.display = '';
-						video.style.display = '';
-						video.style.height = '360px';
+						if (isIframe) {
+							iframe.style.display = '';
+						} else if (video) {
+							video.style.display = '';
+							video.style.height = '360px';
+						}
 						if (imgElem) imgElem.style.display = 'none';
-						cinemaDiv.style.display = '';
+						if (cinemaDiv) cinemaDiv.style.display = '';
 						const icon = playBtn.querySelector('i');
 						if (icon) {
 							icon.classList.remove('fa-play');
@@ -531,9 +560,14 @@ function openInfoModal(img) {
 						playBtn.title = 'Pause video';
 					} else {
 						videoWrapper.style.display = 'none';
-						video.style.display = 'none';
+						if (isIframe) {
+							try { iframe.src = ''; } catch(e) {}
+							iframe.style.display = 'none';
+						} else if (video) {
+							video.style.display = 'none';
+						}
 						if (imgElem) imgElem.style.display = '';
-						cinemaDiv.style.display = 'none';
+						if (cinemaDiv) cinemaDiv.style.display = 'none';
 						const icon = playBtn.querySelector('i');
 						if (icon) {
 							icon.classList.remove('fa-stop');
@@ -543,26 +577,39 @@ function openInfoModal(img) {
 					}
 				}
 				updateVideoDisplay();
-				if (videoVisible) {
-					setTimeout(() => { try { video.play(); } catch {} }, 0);
+				if (mediaVisible) {
+					if (isIframe && embedUrl) {
+						try { iframe.src = embedUrl; } catch(e) {}
+					} else if (video) {
+						setTimeout(() => { try { video.play(); } catch {} }, 0);
+					}
 				}
 				playBtn.addEventListener('click', () => {
-					videoVisible = !videoVisible;
+					mediaVisible = !mediaVisible;
 					try {
-						localStorage.setItem(videoPrefKey, videoVisible ? 'video' : 'image');
+						localStorage.setItem(videoPrefKey, mediaVisible ? 'video' : 'image');
 					} catch {}
-					if (!videoVisible) {
-						video.pause();
-						video.currentTime = 0;
+					if (!mediaVisible) {
+						if (isIframe) {
+							try { iframe.src = ''; } catch(e) {}
+						} else if (video) {
+							try { video.pause(); video.currentTime = 0; } catch(e) {}
+						}
 						if (cinemaMode) {
 							cinemaMode = false;
 							popup.style.width = '600px';
-							video.style.width = '550px';
-							video.style.height = '360px';
-							videoWrapper.style.width = '550px';
+							if (video) {
+								video.style.width = '550px';
+								video.style.height = '360px';
+								videoWrapper.style.width = '550px';
+							}
 						}
 					} else {
-						video.play();
+						if (isIframe && embedUrl) {
+							try { iframe.src = embedUrl; } catch(e) {}
+						} else if (video) {
+							try { video.play(); } catch(e) {}
+						}
 					}
 					updateVideoDisplay();
 				});
@@ -572,10 +619,17 @@ function openInfoModal(img) {
 					const imgElem = popup.querySelector('#anime-detail-img');
 					const cinemaIcon = cinemaBtn.querySelector('i');
 					if (cinemaMode) {
-						video.style.width = '100%';
-						video.style.height = 'auto';
-						videoWrapper.style.width = '100%';
-						popup.style.width = '80vw';
+						if (isIframe && iframe) {
+							iframe.style.width = '100%';
+							iframe.style.height = 'calc(80vh)';
+							videoWrapper.style.width = '100%';
+						} else if (video) {
+							video.style.width = '100%';
+							video.style.height = 'auto';
+							videoWrapper.style.width = '100%';
+						}
+						const popupEl = document.querySelector('.swal2-popup');
+						if (popupEl) popupEl.style.width = '80vw';
 						if (imgElem) imgElem.style.display = 'none';
 						if (cinemaIcon) {
 							cinemaIcon.classList.remove('fa-expand');
@@ -583,10 +637,17 @@ function openInfoModal(img) {
 							cinemaBtn.title = 'Exit Cinema Mode';
 						}
 					} else {
-						video.style.width = '550px';
-						video.style.height = '360px';
-						videoWrapper.style.width = '550px';
-						popup.style.width = '600px';
+						if (isIframe && iframe) {
+							iframe.style.width = '550px';
+							iframe.style.height = '360px';
+							videoWrapper.style.width = '550px';
+						} else if (video) {
+							video.style.width = '550px';
+							video.style.height = '360px';
+							videoWrapper.style.width = '550px';
+						}
+						const popupEl = document.querySelector('.swal2-popup');
+						if (popupEl) popupEl.style.width = '600px';
 						if (imgElem && videoWrapper.style.display === 'none') imgElem.style.display = '';
 						if (cinemaIcon) {
 							cinemaIcon.classList.remove('fa-compress');
@@ -719,15 +780,17 @@ function addColorBadge(container, color) {
     }
 }
 
-function exportImages(format) {
+function exportImages(format, opts) {
 	save_tierlist();
 	if (format == "PNG") {
-		save_tierlist_png();
+		const scale = opts && opts.scale ? opts.scale : undefined;
+		save_tierlist_png(scale);
 	}
 	if (format == "JSON") {
 		save_tierlist_json();
 	}
-	document.getElementById("export-menu").style.display = "none";
+	const menu = document.getElementById("export-menu");
+	if (menu) menu.style.display = "none";
 }
 
 function changeImageColorBasedOnSearch() {
@@ -873,7 +936,12 @@ window.addEventListener('load', () => {
 			window.location.href = "./merger.html";
 		}
 
-		if (event.shiftKey && event.shiftKey && event.key.toUpperCase() === 'S') {
+	if (event.shiftKey && event.key.toUpperCase() === 'Q') {
+		event.preventDefault();
+		try { startGuessSongGame(); } catch(e) { console.error(e); }
+	}
+
+	if (event.shiftKey && event.shiftKey && event.key.toUpperCase() === 'S') {
 			event.preventDefault();
 			save_tierlist_json();
 		}
@@ -935,17 +1003,41 @@ window.addEventListener('load', () => {
 		}
 	});
 
-	document.getElementById("export-json-btn").addEventListener("click", function(event) {
-		exportTierlistDetails();
-	});
-
-	document.getElementById("export-png-btn").addEventListener("click", function(event) {
-		exportImages('PNG');
-	});
+	// Populate export menu dynamically. If opened with Shift, show PNG Low/Med/High.
+	function populateExportMenu(withOptions) {
+		const menu = document.getElementById('export-menu');
+		if (!menu) return;
+		menu.innerHTML = '';
+		if (withOptions) {
+			const btnLow = document.createElement('button'); btnLow.textContent = 'PNG (Low)';
+			btnLow.addEventListener('click', () => { menu.style.display = 'none'; exportImages('PNG', { scale: 1 }); });
+			const btnMed = document.createElement('button'); btnMed.textContent = 'PNG (Medium)';
+			btnMed.addEventListener('click', () => { menu.style.display = 'none'; exportImages('PNG', { scale: 1.5 }); });
+			const btnHigh = document.createElement('button'); btnHigh.textContent = 'PNG (High)';
+			btnHigh.addEventListener('click', () => { menu.style.display = 'none'; exportImages('PNG', { scale: 3 }); });
+			const sep = document.createElement('div'); sep.style.height = '6px';
+			const btnJson = document.createElement('button'); btnJson.textContent = 'JSON';
+			btnJson.addEventListener('click', () => { menu.style.display = 'none'; exportImages('JSON'); });
+			menu.appendChild(btnLow);
+			menu.appendChild(btnMed);
+			menu.appendChild(btnHigh);
+			menu.appendChild(sep);
+			menu.appendChild(btnJson);
+		} else {
+			const btnPng = document.createElement('button'); btnPng.id = 'export-png-btn'; btnPng.textContent = 'PNG';
+			btnPng.addEventListener('click', () => { menu.style.display = 'none'; exportImages('PNG'); });
+			const btnJson = document.createElement('button'); btnJson.id = 'export-json-btn'; btnJson.textContent = 'JSON';
+			btnJson.addEventListener('click', () => { menu.style.display = 'none'; exportImages('JSON'); });
+			menu.appendChild(btnPng);
+			menu.appendChild(btnJson);
+		}
+	}
 
 	document.getElementById("export-btn").addEventListener("click", function(event) {
 		event.stopPropagation();
 		const menu = document.getElementById("export-menu");
+		const useOptions = !!event.shiftKey;
+		populateExportMenu(useOptions);
 		menu.style.display = (menu.style.display === "block") ? "none" : "block";
 	});
 	
@@ -955,6 +1047,43 @@ window.addEventListener('load', () => {
 			menu.style.display = "none";
 		}
 	});
+
+// Add a small scale selector near the export menu to let users choose export resolution
+(function addExportScaleSelector() {
+	const exportBtn = document.getElementById('export-btn');
+	if (!exportBtn) return;
+	const container = exportBtn.parentNode;
+	if (!container) return;
+	const wrapper = document.createElement('div');
+	wrapper.id = 'exportScaleWrapper';
+	// hidden by default; shown only on Shift+Click PNG
+	wrapper.style.display = 'none';
+	wrapper.style.marginLeft = '8px';
+	wrapper.style.verticalAlign = 'middle';
+
+	const label = document.createElement('label');
+	label.htmlFor = 'exportScaleSelect';
+	label.style.marginRight = '6px';
+	label.style.fontSize = '12px';
+	label.textContent = 'Scale:';
+
+	const select = document.createElement('select');
+	select.id = 'exportScaleSelect';
+	select.style.fontSize = '12px';
+	select.style.padding = '2px 4px';
+	const opts = [3, 2, 1.5, 1];
+	for (const o of opts) {
+		const op = document.createElement('option');
+		op.value = String(o);
+		op.text = String(o);
+		if (o === 3) op.selected = true;
+		select.appendChild(op);
+	}
+
+	wrapper.appendChild(label);
+	wrapper.appendChild(select);
+	container.appendChild(wrapper);
+})();
 
 	document.getElementById('load-file-input').addEventListener('change', function(event) {
 		const files = event.target.files;
@@ -1069,14 +1198,14 @@ function initialize_dropdown_tierlists() {
 	var dropdown = document.getElementById("dropdown");
 	var dropdownPicker = document.getElementById("seasonPicker");
 
-	for (var season in window.animeSeasons) {
+	for (var season in window.dataTierlists) {
 		var option = document.createElement("option");
 		option.text = season;
 		option.value = season;
 		dropdown.add(option);
 	}
 
-	const uniqueYears = [...new Set(Object.keys(window.animeSeasons).map((key) => {
+	const uniqueYears = [...new Set(Object.keys(window.dataTierlists).map((key) => {
 		const parts = key.split(' ');
 		return parseInt(parts[1], 10);
 	}).filter((year) => !isNaN(year)))].sort((a, b) => b - a);
@@ -1130,6 +1259,156 @@ function openVideoModal(searchUrl) {
     document.body.appendChild(modal);
 
     modal.addEventListener("click", () => modal.remove());
+}
+
+function startGuessSongGame() {
+	const dropdown = document.getElementById("dropdown");
+	const selection = dropdown?.value || getDefaultSelectionFallback();
+
+	// Prefer to build the pool from currently visible images in the UI (untiered + rows)
+	const visibleImgEls = Array.from(document.querySelectorAll('.image-container img'));
+	let candidates = [];
+	if (visibleImgEls.length > 0) {
+		for (const imgEl of visibleImgEls) {
+			const found = findAnimeObj(imgEl.src) || null;
+			const suffix = imgEl.dataset?.suffix_number || '';
+			if (found && (found.opening_video || found.url || found.img || found.title)) {
+				const copy = Object.assign({}, found);
+				if (suffix) copy.suffix_number = suffix;
+				candidates.push(copy);
+			} else {
+				// fallback object for custom images
+				candidates.push({ img: imgEl.src, title: imgEl.title || '', suffix_number: suffix });
+			}
+		}
+	} else {
+		// fallback to list from selection (filtered by mode)
+		let list = filter_anime_with_modes(getAnimeListForSelection(selection));
+		candidates = list.filter(it => (it && (it.opening_video || it.url || it.img)));
+	}
+	if (!candidates || candidates.length === 0) {
+		Swal.fire({ icon: 'info', title: 'No tracks', text: 'No playable tracks found for the current selection.' });
+		return;
+	}
+
+	// Build a deduplicated pool of tracks (unique by url/img/title/op/ed/suffix) and shuffle
+	const keyOf = (it) => {
+		if (!it) return '';
+		const url = it.url || '';
+		const img = it.img || '';
+		const title = it.title || it.name || '';
+		const op = (it.op !== undefined && it.op !== null) ? String(it.op) : '';
+		const ed = (it.ed !== undefined && it.ed !== null) ? String(it.ed) : '';
+		const suffix = (it.suffix_number !== undefined && it.suffix_number !== null) ? String(it.suffix_number) : '';
+		return `${url}|${img}|${title}|op:${op}|ed:${ed}|suf:${suffix}`;
+	};
+	const seen = new Set();
+	const uniqueCandidates = [];
+	for (const it of candidates) {
+		const k = keyOf(it);
+		if (!seen.has(k)) { seen.add(k); uniqueCandidates.push(it); }
+	}
+	const pool = uniqueCandidates.slice().sort(() => Math.random() - 0.5);
+	let total = pool.length;
+	let score = 0;
+	let round = 0;
+
+	function getEmbedFor(item) {
+		let embedUrl = '';
+		if (item.opening_video) embedUrl = item.opening_video;
+		else if (item.url) {
+			const m = String(item.url).match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+			if (m) embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
+		} else if (item.img) {
+			const m = String(item.img).match(/vi\/(.+?)\//);
+			if (m) embedUrl = `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=1`;
+		}
+		if (embedUrl) {
+			const extra = 'modestbranding=1&controls=0&iv_load_policy=3&playsinline=1&rel=0&autoplay=1';
+			embedUrl = embedUrl + (embedUrl.includes('?') ? '&' : '?') + extra;
+		}
+		return embedUrl;
+	}
+
+	function playRound() {
+		if (pool.length === 0) {
+			// game over
+			Swal.fire({ title: 'Game over', html: `Score: <b>${score}</b> / <b>${total}</b>`, icon: 'info' });
+			return;
+		}
+
+		round++;
+		// chosen for this round (remove from pool so it's not chosen again)
+		const chosen = pool.pop();
+
+		// Build unique options: include chosen + up to 3 other distinct items
+		const opts = [chosen];
+		const usedKeys = new Set([keyOf(chosen)]);
+		const maxOptions = Math.min(4, uniqueCandidates.length);
+		const shuffledCandidates = uniqueCandidates.slice().sort(() => Math.random() - 0.5);
+		for (const c of shuffledCandidates) {
+			if (opts.length >= maxOptions) break;
+			const k = keyOf(c);
+			if (usedKeys.has(k)) continue;
+			usedKeys.add(k);
+			opts.push(c);
+		}
+		const options = opts.sort(() => Math.random() - 0.5);
+
+		const embedUrl = getEmbedFor(chosen);
+		const buttonsHtml = options.map((opt, idx) => `<button class="guess-btn" data-idx="${idx}" style="margin:6px;padding:8px 12px;border-radius:6px;">${escapeHtml(opt.title || opt.name || 'Unknown')}</button>`).join('');
+
+		const html = `
+			<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+				<div id="guess-video" style="width:100%;display:flex;justify-content:center;align-items:center;">
+					${embedUrl? `<div style="display:flex;align-items:center;gap:12px;">
+						<div class="playing-indicator" style="width:160px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#111;color:#fff;font-weight:600;">Playing… (${round}/${total})</div>
+						<iframe src="${embedUrl}" style="width:1px;height:1px;opacity:0;border:0;position:relative;pointer-events:none;" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+					</div>` : `<div class="playing-indicator" style="width:160px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#111;color:#fff;font-weight:600;">Playing… (${round}/${total})</div>`}
+				</div>
+				<div style="display:flex;flex-wrap:wrap;justify-content:center">${buttonsHtml}</div>
+			</div>
+		`;
+
+		Swal.fire({
+			title: `Guess the song! (${round}/${total})`,
+			html: html,
+			showConfirmButton: false,
+			showCloseButton: true,
+			width: 760,
+			didOpen: () => {
+				const popup = Swal.getPopup();
+				popup.querySelectorAll('.guess-btn').forEach(btn => {
+					btn.addEventListener('click', (ev) => {
+						const idx = Number(btn.dataset.idx);
+						const selected = options[idx];
+						const correct = selected && chosen && (selected === chosen || (selected.title && chosen.title && selected.title === chosen.title));
+
+						// stop playback
+						try { const iframe = popup.querySelector('iframe'); if (iframe) iframe.src = ''; } catch(e) {}
+
+						const chosenTitle = escapeHtml(chosen?.title || chosen?.name || 'Unknown');
+						const selectedTitle = escapeHtml(selected?.title || selected?.name || 'Unknown');
+
+						if (correct) score++;
+
+						// show feedback, then next round
+						Swal.fire({
+							icon: correct ? 'success' : 'error',
+							title: correct ? 'Correct!' : 'Wrong',
+							html: `You chose <b>${selectedTitle}</b>.<br>It was <b>${chosenTitle}</b>.<br><br>Score: <b>${score}</b> / <b>${total}</b>`
+						}).then(() => {
+							// continue to next round
+							setTimeout(() => playRound(), 200);
+						});
+					});
+				});
+			}
+		});
+	}
+
+	// Start the first round
+	playRound();
 }
 
 function multipleEntries(title, list = null) {
@@ -1208,18 +1487,25 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
         img.addEventListener("click", function(event) {
 			event.preventDefault();
             const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
-            if (event.ctrlKey && title) {
-                if (event.altKey || event.metaKey) {
-                    let animeUrl = ANIMETHEMES_SEARCH_URL + encodeURIComponent(title);
-                    window.open(animeUrl, "_blank");
-                } else {
+			if (event.ctrlKey && title) {
+				if (event.altKey || event.metaKey) {
+					let animeUrl = ANIMETHEMES_SEARCH_URL + encodeURIComponent(title);
+					window.open(animeUrl, "_blank");
+				} else {
+					// If a direct URL exists and points to YouTube, open it directly; otherwise do a YouTube search
 					const badgeTextForSearch = this.parentNode?.querySelector('.badge')?.textContent?.trim() || "";
 					let search_type = buildYoutubeSearchType(title, tierListType, suffix_number, badgeTextForSearch);
-                    let youtubeUrl = YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type);
-                    window.open(youtubeUrl, "_blank");
-                }
-            } else if (event.altKey || event.metaKey) {
-                window.open(url, "_blank");
+					const isYouTubeUrl = url && /(?:youtube\.com\/watch\?|youtu\.be\/|youtube\.com\/)/i.test(String(url));
+					if (isYouTubeUrl) {
+						window.open(url, "_blank");
+					} else {
+						let youtubeUrl = YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type);
+						window.open(youtubeUrl, "_blank");
+					}
+				}
+			} else if (event.altKey || event.metaKey) {
+				// Alt+Click: open direct URL when present
+				window.open(url, "_blank");
             } else if (event.shiftKey){
                 openColorSelector(this.parentNode);
             } else {
@@ -1251,7 +1537,7 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
     return item;
 }
 
-function save_tierlist_png() {
+function save_tierlist_png(scaleOverride) {
 	
     const tierlist = document.getElementById('tierlist');
 	let title = document.getElementById('title-label');
@@ -1261,7 +1547,14 @@ function save_tierlist_png() {
         element.style.display = 'none';
     });
     
-    const scale = 3;
+	// Determine scale: explicit override > selector > default
+	let scale = 3;
+	if (typeof scaleOverride === 'number' && !Number.isNaN(scaleOverride)) {
+		scale = scaleOverride;
+	} else {
+		const scaleEl = document.getElementById('exportScaleSelect');
+		if (scaleEl) scale = (parseFloat(scaleEl.value) || scale);
+	}
     domtoimage.toBlob(tierlist, {
         width: tierlist.clientWidth * scale,
         height: tierlist.clientHeight * scale,
@@ -1295,7 +1588,7 @@ function findAnimeObj(imgId) {
 		searchLists.push(getAnimeListForSelection(selection));
 	}
 
-	searchLists.push(...Object.values(window.animeSeasons));
+	searchLists.push(...Object.values(window.dataTierlists));
 
 	for (const animeList of searchLists) {
 		if (!Array.isArray(animeList)) continue;
@@ -1368,8 +1661,12 @@ function save_tierlist() {
         });
 		row.querySelectorAll('img').forEach((img) => {
 			let match = img.src.match(regex);
-			if (!match) return;
-			let imgId = match[1] + (match[3] || "");
+			let imgId;
+			if (match) {
+				imgId = match[1] + (match[3] || "");
+			} else {
+				imgId = img.src;
+			}
 
 			let badge = img.parentNode.querySelector('.color-badge');
 			let colors = badge ? JSON.parse(badge.dataset.colors) : [];
@@ -1383,12 +1680,14 @@ function save_tierlist() {
     let untiered_imgs = document.querySelectorAll('.images img');
     if (untiered_imgs.length > 0) {
         serialized_tierlist.untiered = [];
-        untiered_imgs.forEach((img) => {
-            let match = img.src.match(regex);
-            if (match) {
-                serialized_tierlist.untiered.push(match[1] + (match[3] || ""));
-            }
-        });
+		untiered_imgs.forEach((img) => {
+			let match = img.src.match(regex);
+			if (match) {
+				serialized_tierlist.untiered.push(match[1] + (match[3] || ""));
+			} else {
+				serialized_tierlist.untiered.push(img.src);
+			}
+		});
     }
     var dropdown = document.getElementById("dropdown");
     var dropdownType = document.getElementById("dropdowntype");
@@ -1558,7 +1857,13 @@ function load_from_anime(animeList, title, cookie = true, randomize = false) {
     let animes = filter_anime_with_modes(animeList);
 
 	untiered_images.innerHTML = '';
-	document.getElementById('title-label').innerText = "Tierlist " + title;
+	if (document.body && document.body.getAttribute('data-jpop') === '1') {
+		var dropdown = document.getElementById("dropdown");
+		document.getElementById('title-label').innerText = "Tierlist " + dropdown.value;
+	}
+	else {
+		document.getElementById('title-label').innerText = "Tierlist " + title;
+	}
 	if (randomize) {
 		shuffleArray(animes);
 		for (let anime of animes) {
@@ -1807,7 +2112,15 @@ function bind_trash_events() {
 			for (let anime of animes) {
 				let isAlreadyAdded = alreadyAdded.some(span => {
 					let img = span.querySelector('img');
-					return img && sameImageRef(img.src, anime.img);
+					if (!img) return false;
+					// First try the existing logic
+					if (sameImageRef(img.src, anime.img)) return true;
+					// Fallbacks: compare without extensions / query, or full exact match
+					try {
+						if (removeExtension(img.src) === removeExtension(anime.img)) return true;
+					} catch(e) {}
+					if (img.src === anime.img) return true;
+					return false;
 				});
 
 				if (!isAlreadyAdded) {
@@ -1927,11 +2240,11 @@ function updateSeasons() {
     const container = document.createElement('div');
     container.className = 'custom-season-container';
 
-    // Corrected: Use Object.keys since animeSeasons is an object
+    // Corrected: Use Object.keys since dataTierlists is an object
     const seasonsAvailableInYear = new Set();
     const yearStr = displayedYear.toString();
 
-    Object.keys(window.animeSeasons).forEach(seasonYearStr => {
+    Object.keys(window.dataTierlists).forEach(seasonYearStr => {
         const [seasonName, year] = seasonYearStr.split(' ');
         if (year === yearStr) {
             seasonsAvailableInYear.add(seasonName);
@@ -2197,7 +2510,23 @@ function openDuelModal() {
 						if (event.altKey || event.metaKey) {
 							window.open(ANIMETHEMES_SEARCH_URL + encodeURIComponent(title), "_blank");
 						} else {
-							window.open(YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type), "_blank");
+							// Try to open a direct YouTube link if possible; fallback to search
+							let url = findAnimeObj(imgEl.src)?.url;
+							// If no URL from data, try to detect a YouTube id from the thumbnail/embed/img src
+							if (!url) {
+								const s = String(imgEl.src || '');
+								let m = s.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{11})/i) || s.match(/vi\/([A-Za-z0-9_-]{11})\//i) || s.match(/([A-Za-z0-9_-]{11})\.(webp|jpe?g)/i);
+								if (m) {
+									const id = m[1];
+									if (id && id.length === 11) url = `https://www.youtube.com/watch?v=${id}`;
+								}
+							}
+							const isYouTubeUrl = url && /(?:youtube\.com\/watch\?|youtu\.be\/|youtube\.com\/)/i.test(String(url));
+							if (isYouTubeUrl) {
+								window.open(url, "_blank");
+							} else {
+								window.open(YOUTUBE_SEARCH_URL + encodeURIComponent(title + search_type), "_blank");
+							}
 						}
 					} else if (event.altKey || event.metaKey) {
 						const url = findAnimeObj(imgEl.src).url;

@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Winter 2024'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Winter 2024'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1926/140799.webp",
     "title": "Ore dake Level Up na Ken",

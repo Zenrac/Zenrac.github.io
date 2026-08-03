@@ -52,7 +52,7 @@ body {
     font-size: 20px;
 }
 
-#dropdowntype {
+#dropdowntype, #jpopListSelect {
     width: 103px;
     height: 25px;
     font-size: 15px;
@@ -715,6 +715,21 @@ font-size: 12px;
 user-select: none;
 font-weight: bold;
 line-height: 1;
+}
+
+.discrete-link {
+    display: block;
+    color: #fff;
+    font-size: 0.9em;
+    text-decoration: none;
+    background: #222;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.discrete-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .custom-season-cell.disabled {

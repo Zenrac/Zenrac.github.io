@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Spring 2023'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Spring 2023'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1765/135099.webp",
     "title": "Kimetsu no Yaiba: Katanakaji no Sato-hen",

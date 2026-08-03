@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons["Winter 2026"] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists["Winter 2026"] = [
   {
     "title": "Sousou no Frieren 2nd Season",
     "img": "https://myanimelist.net/images/anime/1921/154528.jpg",

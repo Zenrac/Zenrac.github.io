@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Winter 2025'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Winter 2025'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1448/147351.jpg",
     "title": "Ore dake Level Up na Ken Season 2: Arise from the Shadow",

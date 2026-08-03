@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons["Summer 2026"] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists["Summer 2026"] = [
   {
     "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
     "img": "https://cdn.myanimelist.net/images/anime/1527/158340.jpg",

@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons["Spring 2026"] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists["Spring 2026"] = [
   {
     "title": "Tongari Boushi no Atelier",
     "img": "https://cdn.myanimelist.net/images/anime/1726/155542.jpg",

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="darkreader-lock" content="true">
+        <title>Zenrac J-Pop TierList</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset='utf-8' lang='en'/>
+        <style>
+        /* J-Pop: slightly wider thumbnails without using !important or changing global CSS */
+        body[data-jpop="1"] .image-container {
+            width: 180px; /* wider */
+            height: 101px; /* 16:9-ish */
+        }
+        body[data-jpop="1"] img.draggable {
+            width: 180px;
+            height: 101px;
+        }
+        body[data-jpop="1"] .title-img {
+            max-width: 180px;
+            height: 20px;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* J-Pop: modal detail image and duel images sizing (only on J-Pop page) */
+        body[data-jpop="1"] #anime-detail-img {
+            width: 360px !important;
+            height: 202px !important;
+        }
+        body[data-jpop="1"] .duel-choice img {
+            width: 180px !important;
+            height: 101px !important;
+        }
+        /* J-Pop: show title overlay on thumbnails */
+        body[data-jpop="1"] .image-container {
+            width: 180px;
+            height: 101px;
+            overflow: hidden;
+            position: relative;
+        }
+        body[data-jpop="1"] .image-container .title-img {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 8px;
+            height: 36px;
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+            padding: 0 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 1;
+            box-sizing: border-box;
+            pointer-events: none; /* allow drag & drop through the title overlay */
+        }
+        body[data-jpop="1"] .swal2-popup .icon.mal,
+        body[data-jpop="1"] .swal2-popup .icon.animetheme,
+        body[data-jpop="1"] .swal2-popup .icon.youtube {
+            display: none !important;
+        }
+        /* Ensure tierlist headers match J-Pop thumbnail height */
+        body[data-jpop="1"] .tierlist .header {
+            min-height: 101px;
+        }
+        </style>
+        <!-- JQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+        <!-- Latest compiled and minified bootstrap -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+        <!-- Sweetalert2 -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@1/dark.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+
+        <!-- Keyboard CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/keyboard-css@1.2.4/dist/css/main.min.css" /> 
+
+        <!-- Air Datepicker -->
+        <link href="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.css" rel="stylesheet" />
+
+        <!-- Custom styles -->
+        <link rel='stylesheet' href='css/tiers.css'/>
+        
+
+        <!-- Dom-to-Image -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+        <!-- Air Datepicker -->
+        <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.6.0/air-datepicker.min.js"></script>
+
+        <!-- J-Pop data -->
+        <script src='data/jpop/kurana.js'></script>
+        <script src='data/jpop/siita.js'></script>
+        <script src='data/jpop/ado.js'></script>
+
+        <!-- Parse J-Pop data into the full shape expected by tiers.js -->
+        <script>
+            window.dataTierlists = window.dataTierlists || {};
+            (function() {
+                 const src = window.dataTierlistsJpop || {};
+                 // prefer keys from dataTierlists (mapped earlier), fallback to dataTierlistsJpop
+                 const keys = Object.keys(window.dataTierlists || window.dataTierlistsJpop || {});
+                for (const [key, items] of Object.entries(src)) {
+                    window.dataTierlists[key] = (items || []).map(item => {
+                        const out = Object.assign({}, item);
+                        // normalize id -> img/url/opening_video (use full youtube watch URL for compatibility)
+                        const id = item.id || (item.url && String(item.url).match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1]);
+                        if (id) {
+                            if (!out.img) out.img = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+                            if (!out.url) out.url = `https://www.youtube.com/watch?v=${id}`;
+                            // prefer an embed URL for opening_video so tiers.js can load it in an iframe
+                            if (!out.opening_video) out.opening_video = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1`;
+                            else if (String(out.opening_video).includes('watch?v=')) {
+                                const mid = String(out.opening_video).match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+                                if (mid) out.opening_video = `https://www.youtube.com/embed/${mid}?rel=0&autoplay=1`;
+                            }
+                        }
+                        return out;
+                    });
+                }
+            })();
+        </script>
+
+        <script src='js/tiers.js' async></script>
+    </head>
+    <body data-jpop="1">
+    <div class="avatar-container">
+        <a href="../">
+            <img src="../images/avatar.gif" alt="Home" class="avatar">
+        </a>
+    </div>
+    <div class='title'>
+        <label id='title-label' class='title-label' for='title-input'>J-Pop TierList</label>
+        <input type='text' id='title-input' />
+    </div>
+    <section class='main-content'>
+        <div class="first-container">
+            <div id='tierlist' class='tierlist'></div>
+            <div class='bottom-container'>
+                <input type='text' id='search-input' placeholder="Search..." />
+                <div class='buttons-container'>
+                    <div class='button'>
+                        <label for='load-file-input'>
+                            <img src='img/plus.png' title='Add images or JSON'/>
+                        </label>
+                        <input id='load-file-input' type='file' accept='image/*,application/json' multiple/>
+                    </div>
+                    <div class='button'>
+                        <label for='reset-list-input'>
+                            <img src='img/reset.png' title='Reset list'>
+                        </label>
+                        <input id='reset-list-input' type='button' />
+                    </div>
+                    <div class='button export'>
+                        <label id='export-label'>
+                            <img src='img/export.png' title='Export' id="export-btn"/>
+                        </label>
+                        <div class="dropdown-content" id="export-menu">
+                            <button id="export-png-btn">PNG</button>
+                            <button id="export-json-btn">JSON</button>
+                        </div>
+                    </div>
+                    <div class='button'>
+                        <img id='trash' src='img/trash_bin.png' title='Delete image (drag it over here)'></img>
+                    </div>
+                </div>
+
+                <button id="toggle-shortcuts">⌨ Shortcuts</button>
+                <div id="shortcuts-box" class="hint">
+                    <div class="shortcuts-close" id="shortcuts-close">&times;</div>
+
+                    <div class="shortcut-section-title">General</div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Ctrl</kbd> <kbd class="kbc-button">F</kbd>
+                        </div>
+                        <div class="desc">Search an image</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">M</kbd>
+                        </div>
+                        <div class="desc">Open Super Merger</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">R</kbd>
+                        </div>
+                        <div class="desc">Randomize tierlist</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">Q</kbd>
+                        </div>
+                        <div class="desc">Start quiz</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">D</kbd>
+                        </div>
+                        <div class="desc">Start duel mode</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Alt</kbd> <kbd class="kbc-button">S</kbd>
+                        </div>
+                        <div class="desc">Save as image</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Alt</kbd><kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">S</kbd>
+                        </div>
+                        <div class="desc">Save as JSON</div>
+                    </div>
+
+                    <div class="shortcut-section-title">Images</div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Shift</kbd> <kbd class="kbc-button">Click</kbd>
+                        </div>
+                        <div class="desc">Add Color Badge</div>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <div class="keys">
+                        <kbd class="kbc-button">Ctrl</kbd> <kbd class="kbc-button">Click</kbd>
+                        </div>
+                        <div class="desc">Open Youtube</div>
+                    </div>
+
+                </div>
+
+                <!-- Visible selector for J-Pop lists -->
+                <select id="jpopListSelect"></select>
+
+                <!-- Hidden controls required by tiers.js but not used for J-Pop -->
+                <input type="text" id="seasonPicker" readonly style="display: none;">
+                <select id="dropdown" style="display: none;"></select>
+                <select id="dropdowntype" style="display: none;">
+                    <option value="Opening">Opening</option>
+                    <option value="Ending">Ending</option>
+                    <option value="Anime">Anime</option>
+                </select>
+                <a class="discrete-link" href="index.html">Anime tierlist</a>
+                <script>
+                (function() {
+                    function populate() {
+                        const hidden = document.getElementById('dropdown');
+                        const vis = document.getElementById('jpopListSelect');
+                        if (!hidden || !vis) return false;
+                        const keys = Object.keys(window.dataTierlists || window.dataTierlistsJpop || {});
+                        if (keys.length === 0) return false;
+                        vis.innerHTML = '';
+                        for (const k of keys) {
+                            const o = document.createElement('option');
+                            o.value = k; o.text = k;
+                            vis.appendChild(o);
+                        }
+                        vis.addEventListener('change', () => {
+                            const val = vis.value;
+                            if (Array.from(hidden.options).some(o => o.value === val)) {
+                                hidden.value = val;
+                            } else {
+                                const o = document.createElement('option'); o.value = val; o.text = val; hidden.add(o);
+                                hidden.value = val;
+                            }
+                            hidden.dispatchEvent(new Event('change', { bubbles: true }));
+                        });
+                        vis.value = keys[0];
+                        vis.dispatchEvent(new Event('change', { bubbles: true }));
+                        return true;
+                    }
+                    let tries = 0;
+                    const iv = setInterval(() => {
+                        if (populate() || ++tries > 50) clearInterval(iv);
+                    }, 100);
+                })();
+                </script>
+            </div>
+        </div>
+        <section class='images bank droppabled'></section>
+    </section>
+    
+  </body>
+</html>

@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Summer 2024'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Summer 2024'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1006/143302.webp",
     "title": "\"Oshi no Ko\" 2nd Season",

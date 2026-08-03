@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Summer 2023'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Summer 2023'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1792/138022.webp",
     "title": "Jujutsu Kaisen 2nd Season",

@@ -1,5 +1,5 @@
-window.animeSeasons = window.animeSeasons || {};
-window.animeSeasons['Spring 2024'] = [
+window.dataTierlists = window.dataTierlists || {};
+window.dataTierlists['Spring 2024'] = [
   {
     "img": "https://cdn.myanimelist.net/images/anime/1758/141268.webp",
     "title": "Kono Subarashii Sekai ni Shukufuku wo! 3",
