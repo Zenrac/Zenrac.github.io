@@ -52,7 +52,7 @@ body {
     font-size: 20px;
 }
 
-#dropdowntype, #jpopListSelect {
+#dropdowntype, #jpopListSelect, #jpopModeSelect {
     width: 103px;
     height: 25px;
     font-size: 15px;

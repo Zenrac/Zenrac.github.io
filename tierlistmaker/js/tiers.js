@@ -1843,8 +1843,15 @@ function shuffleArray(array) {
 
 function filter_anime_with_modes(animeList) {
 	const mode = document.getElementById("dropdowntype").value;
+	const jpopMode = document.getElementById("jpopModeSelect")?.value;
 
 	let animes = animeList.filter(item => {
+		if (jpopMode) {
+			if (jpopMode === 'original') {
+				return item.type === 'original';
+			}
+			return true;
+		}
 		if (mode === OPENING) {
 			return !item.ed || item.op;
 		}
@@ -2133,7 +2140,7 @@ function bind_trash_events() {
 					try {
 						if (removeExtension(img.src) === removeExtension(anime.img)) return true;
 					} catch(e) {}
-					if (img.src === anime.img) return true;
+					if (img.src.replace('hqdefault.jpg', 'maxresdefault.jpg') === anime.img.replace('hqdefault.jpg', 'maxresdefault.jpg')) return true;
 					return false;
 				});
 

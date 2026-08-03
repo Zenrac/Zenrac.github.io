@@ -251,6 +251,10 @@
 
                 <!-- Visible selector for J-Pop lists -->
                 <select id="jpopListSelect"></select>
+                <select id="jpopModeSelect">
+                    <option value="all">All</option>
+                    <option value="original">Original</option>
+                </select>
 
                 <!-- Hidden controls required by tiers.js but not used for J-Pop -->
                 <input type="text" id="seasonPicker" readonly style="display: none;">
@@ -266,7 +270,9 @@
                     function populate() {
                         const hidden = document.getElementById('dropdown');
                         const vis = document.getElementById('jpopListSelect');
-                        if (!hidden || !vis) return false;
+                        const mode = document.getElementById('jpopModeSelect');
+                        if (!hidden || !vis || !mode) return false;
+
                         const keys = Object.keys(window.dataTierlists || window.dataTierlistsJpop || {});
                         if (keys.length === 0) return false;
                         vis.innerHTML = '';
@@ -283,7 +289,12 @@
                                 const o = document.createElement('option'); o.value = val; o.text = val; hidden.add(o);
                                 hidden.value = val;
                             }
-                            hidden.dispatchEvent(new Event('change', { bubbles: true }));
+                            soft_reset_list(true);
+                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`, false);
+                        });
+                        mode.addEventListener('change', () => {
+                            soft_reset_list(true);
+                            load_from_anime(getAnimeListForSelection(vis.value), `${vis.value} ${document.getElementById('dropdowntype').value}`, false);
                         });
                         vis.value = keys[0];
                         vis.dispatchEvent(new Event('change', { bubbles: true }));
