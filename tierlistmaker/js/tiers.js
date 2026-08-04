@@ -801,7 +801,7 @@ function exportImages(format, opts) {
 		save_tierlist_png(scale);
 	}
 	if (format == "JSON") {
-		save_tierlist_json();
+		exportTierlistDetails();
 	}
 	const menu = document.getElementById("export-menu");
 	if (menu) menu.style.display = "none";
@@ -957,7 +957,9 @@ window.addEventListener('load', () => {
 
 	if (event.shiftKey && event.shiftKey && event.key.toUpperCase() === 'S') {
 			event.preventDefault();
-			save_tierlist_json();
+			if (document.body?.getAttribute('data-jpop') !== '1') {
+				exportTierlistDetails();
+			}
 		}
 
 		else if (event.altKey && event.key.toUpperCase() === 'S') {
@@ -1036,21 +1038,30 @@ window.addEventListener('load', () => {
 			menu.appendChild(btnMed);
 			menu.appendChild(btnHigh);
 			menu.appendChild(sep);
-			menu.appendChild(btnJson);
+			if (document.body?.getAttribute('data-jpop') !== '1') {
+				menu.appendChild(btnJson);
+			}
 		} else {
 			const btnPng = document.createElement('button'); btnPng.id = 'export-png-btn'; btnPng.textContent = 'PNG';
 			btnPng.addEventListener('click', () => { menu.style.display = 'none'; exportImages('PNG'); });
 			const btnJson = document.createElement('button'); btnJson.id = 'export-json-btn'; btnJson.textContent = 'JSON';
 			btnJson.addEventListener('click', () => { menu.style.display = 'none'; exportImages('JSON'); });
 			menu.appendChild(btnPng);
-			menu.appendChild(btnJson);
+			if (document.body?.getAttribute('data-jpop') !== '1') {
+				menu.appendChild(btnJson);
+			}
 		}
 	}
 
 	document.getElementById("export-btn").addEventListener("click", function(event) {
 		event.stopPropagation();
-		const menu = document.getElementById("export-menu");
+		const isJpop = document.body?.getAttribute('data-jpop') === '1';
 		const useOptions = !!event.shiftKey;
+		if (isJpop && !useOptions) {
+			exportImages('PNG');
+			return;
+		}
+		const menu = document.getElementById("export-menu");
 		populateExportMenu(useOptions);
 		menu.style.display = (menu.style.display === "block") ? "none" : "block";
 	});
@@ -1106,7 +1117,11 @@ window.addEventListener('load', () => {
 			if (file.type.startsWith('image/')) {
 				importImage(file);
 			} else if (file.type === 'application/json') {
-				importTierlist(file);
+				if (document.body?.getAttribute('data-jpop') === '1') {
+					alert("Format non supporté !");
+				} else {
+					importTierlist(file);
+				}
 			} else {
 				alert("Format non supporté !");
 			}
@@ -1442,7 +1457,11 @@ function create_img_with_src(src, title = "", url = "", op = "", ed = "") {
 
 	const tierListType = (dropdownType?.value == ANIME ? TRAILER : dropdownType?.value) ?? OPENING;
 
-    let parts = src.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
+    const srcStr = String(src || '');
+    let parts = null;
+    if (!srcStr.toLowerCase().startsWith('data:')) {
+        parts = srcStr.match(/(.*?)(\?.*)?(\.(webp|jpe?g))$/i);
+    }
     if (parts) {
         let base = parts[1];
         let query = parts[2] || "";
@@ -1688,12 +1707,16 @@ function save_tierlist() {
             imgs: []
         });
 		row.querySelectorAll('img').forEach((img) => {
-			let match = img.src.match(regex);
-			let imgId;
+			let match = String(img.src || '').match(regex);
+			let imgId = '';
 			if (match) {
 				imgId = match[1] + (match[3] || "");
-			} else {
+			} else if (!String(img.src || '').toLowerCase().startsWith('data:')) {
 				imgId = img.src;
+			}
+
+			if (!imgId) {
+				return;
 			}
 
 			let badge = img.parentNode.querySelector('.color-badge');
@@ -1709,10 +1732,10 @@ function save_tierlist() {
     if (untiered_imgs.length > 0) {
         serialized_tierlist.untiered = [];
 		untiered_imgs.forEach((img) => {
-			let match = img.src.match(regex);
+			let match = String(img.src || '').match(regex);
 			if (match) {
 				serialized_tierlist.untiered.push(match[1] + (match[3] || ""));
-			} else {
+			} else if (!String(img.src || '').toLowerCase().startsWith('data:')) {
 				serialized_tierlist.untiered.push(img.src);
 			}
 		});
@@ -1945,7 +1968,11 @@ window.addEventListener('dragend', end_drag);
 function make_accept_drop(elem) {
     elem.addEventListener('dragover', (evt) => {
         evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'move';
+        if (evt.dataTransfer.types?.includes?.('Files')) {
+            evt.dataTransfer.dropEffect = 'copy';
+        } else {
+            evt.dataTransfer.dropEffect = 'move';
+        }
         evt.target.classList.add('drag-entered');
     });
 
@@ -1956,6 +1983,15 @@ function make_accept_drop(elem) {
     elem.addEventListener('drop', (evt) => {
         evt.preventDefault();
         evt.target.classList.remove('drag-entered');
+
+        const files = Array.from(evt.dataTransfer.files || []);
+        if (files.length > 0) {
+            for (const file of files) {
+                importImage(file);
+            }
+            refreshTierListStyle();
+            return;
+        }
 
         if (!dragged_image) return;
 
