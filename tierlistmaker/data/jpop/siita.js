@@ -1,5 +1,6 @@
 window.dataTierlistsJpop = window.dataTierlistsJpop || {};
 window.dataTierlistsJpop["Phantom Siita"] = [
+  { "title": "Ningyohime no Uta", "id": "Z-N0frXwQE4", "type": "original" },
   { "title": "Horror Queen", "id": "X7Ht9CULonY", "type": "original" },
   { "title": "Mou Ii Kai?", "id": "kGe-sxrAJIw", "type": "original" },
   { "title": "Rinne Meguru", "id": "wP3Q3gqu4j8", "type": "original" },
