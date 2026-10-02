@@ -1,6 +1,7 @@
 window.dataTierlistsJpop = window.dataTierlistsJpop || {};
 window.dataTierlistsJpop["Ado"] = [
   // originals
+  { "title": "Suki de Ite", "id": "iTNwVheLpj8", "type": "original" },
   { "title": "Monstruo", "id": "4IKHox-DKrM", "type": "original" },
   { "title": "Love me forever!", "id": "WSuAVkaSC38", "type": "original" },
   { "title": "Haru ni Mau", "id": "xIYfDbkq-SM", "type": "original" },

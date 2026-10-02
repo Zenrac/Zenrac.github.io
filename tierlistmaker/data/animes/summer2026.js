@@ -8,6 +8,13 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/belmvy.mp4"
   },
   {
+    "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
+    "img": "https://cdn.myanimelist.net/images/anime/1527/158340.jpg",
+    "url": "https://myanimelist.net/anime/59193/Mushoku_Tensei_III__Isekai_Ittara_Honki_Dasu",
+    "opening_video": "https://files.catbox.moe/s3m1y7.mp4",
+    "op": 2
+  },
+  {
     "title": "Youjo Senki II",
     "img": "https://cdn.myanimelist.net/images/anime/1917/158371.jpg",
     "url": "https://myanimelist.net/anime/49233/Youjo_Senki_II",
@@ -36,6 +43,13 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/nvf1px.mp4"
   },
   {
+    "title": "Seihantai na Kimi to Boku 2nd Season",
+    "img": "https://cdn.myanimelist.net/images/anime/1143/158409.jpg",
+    "url": "https://myanimelist.net/anime/63832/Seihantai_na_Kimi_to_Boku_2nd_Season",
+    "opening_video": "https://files.catbox.moe/qcn70z.mp4",
+    "ending_video": "https://files.catbox.moe/lalw5a.mp4"
+  },
+  {
     "title": "Otome Game Sekai wa Mob ni Kibishii Sekai desu 2",
     "img": "https://cdn.myanimelist.net/images/anime/1285/158337.jpg",
     "url": "https://myanimelist.net/anime/54000/Otome_Game_Sekai_wa_Mob_ni_Kibishii_Sekai_desu_2",
@@ -50,25 +64,18 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/79929l.mp4"
   },
   {
-    "title": "Seihantai na Kimi to Boku 2nd Season",
-    "img": "https://cdn.myanimelist.net/images/anime/1143/158409.jpg",
-    "url": "https://myanimelist.net/anime/63832/Seihantai_na_Kimi_to_Boku_2nd_Season",
-    "opening_video": "https://files.catbox.moe/qcn70z.mp4",
-    "ending_video": "https://files.catbox.moe/lalw5a.mp4"
-  },
-  {
-    "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II",
-    "img": "https://cdn.myanimelist.net/images/anime/1544/157046.jpg",
-    "url": "https://myanimelist.net/anime/60522/Gaikotsu_Kishi-sama_Tadaima_Isekai_e_Odekakechuu_II",
-    "opening_video": "https://files.catbox.moe/yvz4dy.mp4",
-    "ending_video": "https://files.catbox.moe/9hxz57.mp4"
-  },
-  {
     "title": "Black Torch",
     "img": "https://cdn.myanimelist.net/images/anime/1965/158363.jpg",
     "url": "https://myanimelist.net/anime/61169/Black_Torch",
     "opening_video": "https://files.catbox.moe/atr6r2.mp4",
     "ending_video": "https://files.catbox.moe/44pn6r.mp4"
+  },
+  {
+    "title": "Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita.",
+    "img": "https://cdn.myanimelist.net/images/anime/1145/158339.jpg",
+    "url": "https://myanimelist.net/anime/62936/Toumei_na_Yoru_ni_Kakeru_Kimi_to_Me_ni_Mienai_Koi_wo_Shita",
+    "opening_video": "https://files.catbox.moe/cbpvq8.mp4",
+    "ending_video": "https://files.catbox.moe/n48ytk.mp4"
   },
   {
     "title": "Koukaku Kidoutai (TV)",
@@ -78,18 +85,11 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/cpwekm.mp4"
   },
   {
-    "title": "Kimi ga Shinu made Koi wo Shitai",
-    "img": "https://cdn.myanimelist.net/images/anime/1096/158712.jpg",
-    "url": "https://myanimelist.net/anime/61126/Kimi_ga_Shinu_made_Koi_wo_Shitai",
-    "opening_video": "https://files.catbox.moe/6bvlwe.mp4",
-    "ending_video": "https://files.catbox.moe/g6r5zc.mp4"
-  },
-  {
-    "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou",
-    "img": "https://cdn.myanimelist.net/images/anime/1741/157105.jpg",
-    "url": "https://myanimelist.net/anime/62513/Clevatess_II__Majuu_no_Ou_to_Itsuwari_no_Yuusha_Denshou",
-    "opening_video": "https://files.catbox.moe/73tj2j.mp4",
-    "ending_video": "https://files.catbox.moe/hu757j.mp4"
+    "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II",
+    "img": "https://cdn.myanimelist.net/images/anime/1544/157046.jpg",
+    "url": "https://myanimelist.net/anime/60522/Gaikotsu_Kishi-sama_Tadaima_Isekai_e_Odekakechuu_II",
+    "opening_video": "https://files.catbox.moe/yvz4dy.mp4",
+    "ending_video": "https://files.catbox.moe/9hxz57.mp4"
   },
   {
     "title": "Nijusseiki Denki Mokuroku: Eureka Evrika",
@@ -106,11 +106,32 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/7caxzg.mp4"
   },
   {
-    "title": "Kimi no Koto ga Daidaidaidaidaisuki na 100-nin no Kanojo 3rd Season",
-    "img": "https://cdn.myanimelist.net/images/anime/1106/157174.jpg",
-    "url": "https://myanimelist.net/anime/62811/Kimi_no_Koto_ga_Daidaidaidaidaisuki_na_100-nin_no_Kanojo_3rd_Season",
-    "opening_video": "https://files.catbox.moe/5pss99.mp4",
-    "ending_video": "https://files.catbox.moe/zbrmzw.mp4"
+    "title": "Futsutsuka na Akujo dewa Gozaimasu ga: Suuguu Chouso Torikae Den",
+    "img": "https://cdn.myanimelist.net/images/anime/1958/158341.jpg",
+    "url": "https://myanimelist.net/anime/61240/Futsutsuka_na_Akujo_dewa_Gozaimasu_ga__Suuguu_Chouso_Torikae_Den",
+    "opening_video": "https://files.catbox.moe/oics8r.mp4",
+    "ending_video": "https://files.catbox.moe/kc6v8r.mp4"
+  },
+  {
+    "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou",
+    "img": "https://cdn.myanimelist.net/images/anime/1741/157105.jpg",
+    "url": "https://myanimelist.net/anime/62513/Clevatess_II__Majuu_no_Ou_to_Itsuwari_no_Yuusha_Denshou",
+    "opening_video": "https://files.catbox.moe/73tj2j.mp4",
+    "ending_video": "https://files.catbox.moe/hu757j.mp4"
+  },
+  {
+    "title": "Kimi ga Shinu made Koi wo Shitai",
+    "img": "https://cdn.myanimelist.net/images/anime/1096/158712.jpg",
+    "url": "https://myanimelist.net/anime/61126/Kimi_ga_Shinu_made_Koi_wo_Shitai",
+    "opening_video": "https://files.catbox.moe/6bvlwe.mp4",
+    "ending_video": "https://files.catbox.moe/g6r5zc.mp4"
+  },
+  {
+    "title": "Kimi ga Shinu made Koi wo Shitai",
+    "img": "https://cdn.myanimelist.net/images/anime/1096/158712.jpg",
+    "url": "https://myanimelist.net/anime/61126/Kimi_ga_Shinu_made_Koi_wo_Shitai",
+    "ending_video": "https://files.catbox.moe/3k6img.mp4",
+    "ed": 2
   },
   {
     "title": "Tenmaku no Jaadugar",
@@ -120,6 +141,13 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/8tqvxc.mp4"
   },
   {
+    "title": "Kimi no Koto ga Daidaidaidaidaisuki na 100-nin no Kanojo 3rd Season",
+    "img": "https://cdn.myanimelist.net/images/anime/1755/159708.jpg",
+    "url": "https://myanimelist.net/anime/62811/Kimi_no_Koto_ga_Daidaidaidaidaisuki_na_100-nin_no_Kanojo_3rd_Season",
+    "opening_video": "https://files.catbox.moe/5pss99.mp4",
+    "ending_video": "https://files.catbox.moe/zbrmzw.mp4"
+  },
+  {
     "title": "Katainaka no Ossan, Kensei ni Naru II",
     "img": "https://cdn.myanimelist.net/images/anime/1100/157173.jpg",
     "url": "https://myanimelist.net/anime/61897/Katainaka_no_Ossan_Kensei_ni_Naru_II",
@@ -127,11 +155,11 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/1ggwpz.mp4"
   },
   {
-    "title": "Toumei na Yoru ni Kakeru Kimi to, Me ni Mienai Koi wo Shita.",
-    "img": "https://cdn.myanimelist.net/images/anime/1145/158339.jpg",
-    "url": "https://myanimelist.net/anime/62936/Toumei_na_Yoru_ni_Kakeru_Kimi_to_Me_ni_Mienai_Koi_wo_Shita",
-    "opening_video": "https://files.catbox.moe/vlf7z1.mp4",
-    "ending_video": "https://files.catbox.moe/lv9t0c.mp4"
+    "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Boukenroku",
+    "img": "https://cdn.myanimelist.net/images/anime/1319/158376.jpg",
+    "url": "https://myanimelist.net/anime/63508/Rakudai_Kenja_no_Gakuin_Musou__Nidome_no_Tensei_S-Rank_Cheat_Majutsushi_Boukenroku",
+    "opening_video": "https://files.catbox.moe/mu9a93.mp4",
+    "ending_video": "https://files.catbox.moe/wl6q77.mp4"
   },
   {
     "title": "Otome Kaijuu Caraméliser",
@@ -139,20 +167,6 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/63150/Otome_Kaijuu_Caraméliser",
     "opening_video": "https://files.catbox.moe/vpycyi.mp4",
     "ending_video": "https://files.catbox.moe/fixgrj.mp4"
-  },
-  {
-    "title": "Futsutsuka na Akujo dewa Gozaimasu ga: Suuguu Chouso Torikae Den",
-    "img": "https://cdn.myanimelist.net/images/anime/1958/158341.jpg",
-    "url": "https://myanimelist.net/anime/61240/Futsutsuka_na_Akujo_dewa_Gozaimasu_ga__Suuguu_Chouso_Torikae_Den",
-    "opening_video": "https://files.catbox.moe/oics8r.mp4",
-    "ending_video": "https://files.catbox.moe/kc6v8r.mp4"
-  },
-  {
-    "title": "Rakudai Kenja no Gakuin Musou: Nidome no Tensei, S-Rank Cheat Majutsushi Boukenroku",
-    "img": "https://cdn.myanimelist.net/images/anime/1319/158376.jpg",
-    "url": "https://myanimelist.net/anime/63508/Rakudai_Kenja_no_Gakuin_Musou__Nidome_no_Tensei_S-Rank_Cheat_Majutsushi_Boukenroku",
-    "opening_video": "https://files.catbox.moe/mu9a93.mp4",
-    "ending_video": "https://files.catbox.moe/wl6q77.mp4"
   },
   {
     "title": "Tenkou-saki no Seiso Karen na Bishoujo ga, Mukashi Danshi to Omotte Issho ni Asonda Osananajimi Datta Ken",
@@ -169,11 +183,11 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/6zs0yv.mp4"
   },
   {
-    "title": "Nige Jouzu no Wakagimi 2nd Season",
-    "img": "https://cdn.myanimelist.net/images/anime/1289/156329.jpg",
-    "url": "https://myanimelist.net/anime/60059/Nige_Jouzu_no_Wakagimi_2nd_Season",
-    "opening_video": "https://files.catbox.moe/ee2zk2.mp4",
-    "ending_video": "https://files.catbox.moe/4joldd.mp4"
+    "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita.",
+    "img": "https://cdn.myanimelist.net/images/anime/1302/160289.jpg",
+    "url": "https://myanimelist.net/anime/62617/Koko_wa_Ore_ni_Makasete_Saki_ni_Ike_to_Itte_kara_10-nen_ga_Tattara_Densetsu_ni_Natteita",
+    "opening_video": "https://files.catbox.moe/ragyr4.mp4",
+    "ending_video": "https://files.catbox.moe/pcck7q.mp4"
   },
   {
     "title": "Lv999 no Murabito",
@@ -183,11 +197,11 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/wcwsro.mp4"
   },
   {
-    "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita.",
-    "img": "https://cdn.myanimelist.net/images/anime/1371/154308.jpg",
-    "url": "https://myanimelist.net/anime/62617/Koko_wa_Ore_ni_Makasete_Saki_ni_Ike_to_Itte_kara_10-nen_ga_Tattara_Densetsu_ni_Natteita",
-    "opening_video": "https://files.catbox.moe/ragyr4.mp4",
-    "ending_video": "https://files.catbox.moe/pcck7q.mp4"
+    "title": "Sayonara Lara",
+    "img": "https://cdn.myanimelist.net/images/anime/1411/156343.jpg",
+    "url": "https://myanimelist.net/anime/58878/Sayonara_Lara",
+    "opening_video": "https://files.catbox.moe/xxxo3x.mp4",
+    "ending_video": "https://files.catbox.moe/hcoiti.mp4"
   },
   {
     "title": "Hell Mode: Yarikomizuki no Gamer wa Hai Settei no Isekai de Musou suru 2nd Season",
@@ -197,25 +211,25 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/b5gs5f.mp4"
   },
   {
-    "title": "Tai-Ari deshita. Ojousama wa Kakutou Game nante Shinai",
-    "img": "https://cdn.myanimelist.net/images/anime/1343/156268.jpg",
-    "url": "https://myanimelist.net/anime/46488/Tai-Ari_deshita_Ojousama_wa_Kakutou_Game_nante_Shinai",
-    "opening_video": "https://files.catbox.moe/bu49yz.mp4",
-    "ending_video": "https://files.catbox.moe/p8nf3e.mp4"
-  },
-  {
-    "title": "Sayonara Lara",
-    "img": "https://cdn.myanimelist.net/images/anime/1411/156343.jpg",
-    "url": "https://myanimelist.net/anime/58878/Sayonara_Lara",
-    "opening_video": "https://files.catbox.moe/xxxo3x.mp4",
-    "ending_video": "https://files.catbox.moe/hcoiti.mp4"
-  },
-  {
     "title": "Ryoumin 0-nin Start no Henkyou Ryoushu-sama",
     "img": "https://cdn.myanimelist.net/images/anime/1891/158566.jpg",
     "url": "https://myanimelist.net/anime/62078/Ryoumin_0-nin_Start_no_Henkyou_Ryoushu-sama",
     "opening_video": "https://files.catbox.moe/kk1z5q.mp4",
     "ending_video": "https://files.catbox.moe/7lb9ny.mp4"
+  },
+  {
+    "title": "Nige Jouzu no Wakagimi 2nd Season",
+    "img": "https://cdn.myanimelist.net/images/anime/1289/156329.jpg",
+    "url": "https://myanimelist.net/anime/60059/Nige_Jouzu_no_Wakagimi_2nd_Season",
+    "opening_video": "https://files.catbox.moe/ee2zk2.mp4",
+    "ending_video": "https://files.catbox.moe/4joldd.mp4"
+  },
+  {
+    "title": "Tai-Ari deshita. Ojousama wa Kakutou Game nante Shinai",
+    "img": "https://cdn.myanimelist.net/images/anime/1343/156268.jpg",
+    "url": "https://myanimelist.net/anime/46488/Tai-Ari_deshita_Ojousama_wa_Kakutou_Game_nante_Shinai",
+    "opening_video": "https://files.catbox.moe/bu49yz.mp4",
+    "ending_video": "https://files.catbox.moe/p8nf3e.mp4"
   },
   {
     "title": "Neko to Ryuu",
@@ -225,11 +239,18 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/9bdada.mp4"
   },
   {
-    "title": "World Is Dancing",
-    "img": "https://cdn.myanimelist.net/images/anime/1165/158709.jpg",
-    "url": "https://myanimelist.net/anime/63347/World_Is_Dancing",
-    "opening_video": "https://files.catbox.moe/3adl9t.mp4",
-    "ending_video": "https://files.catbox.moe/4txoxo.mp4"
+    "title": "Buchigire Reijou wa Houfuku wo Chikaimashita. Madousho no Chikara de Sokoku wo Tatakitsubushimasu",
+    "img": "https://cdn.myanimelist.net/images/anime/1551/157170.jpg",
+    "url": "https://myanimelist.net/anime/62289/Buchigire_Reijou_wa_Houfuku_wo_Chikaimashita_Madousho_no_Chikara_de_Sokoku_wo_Tatakitsubushimasu",
+    "opening_video": "https://files.catbox.moe/yv6x6s.mp4",
+    "ending_video": "https://files.catbox.moe/7w320h.mp4"
+  },
+  {
+    "title": "Hanaori-san wa Tensei shitemo Kenka ga Shitai",
+    "img": "https://cdn.myanimelist.net/images/anime/1350/159514.jpg",
+    "url": "https://myanimelist.net/anime/62535/Hanaori-san_wa_Tensei_shitemo_Kenka_ga_Shitai",
+    "opening_video": "https://files.catbox.moe/1h4bcl.mp4",
+    "ending_video": "https://files.catbox.moe/nxfq4o.mp4"
   },
   {
     "title": "Sekai Saikyou no Kouei: Meikyuukoku no Shinjin Tansakusha",
@@ -237,27 +258,6 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/62435/Sekai_Saikyou_no_Kouei__Meikyuukoku_no_Shinjin_Tansakusha",
     "opening_video": "https://files.catbox.moe/1p0z9p.mp4",
     "ending_video": "https://files.catbox.moe/a8c89n.mp4"
-  },
-  {
-    "title": "Heroine? Seijo? Iie, All Works Maid desu (Hokori)!",
-    "img": "https://cdn.myanimelist.net/images/anime/1498/158290.jpg",
-    "url": "https://myanimelist.net/anime/61686/Heroine_Seijo_Iie_All_Works_Maid_desu_Hokori",
-    "opening_video": "https://files.catbox.moe/oljgha.mp4",
-    "ending_video": "https://files.catbox.moe/3kmebw.mp4"
-  },
-  {
-    "title": "Hanaori-san wa Tensei shitemo Kenka ga Shitai",
-    "img": "https://cdn.myanimelist.net/images/anime/1944/156331.jpg",
-    "url": "https://myanimelist.net/anime/62535/Hanaori-san_wa_Tensei_shitemo_Kenka_ga_Shitai",
-    "opening_video": "https://files.catbox.moe/1h4bcl.mp4",
-    "ending_video": "https://files.catbox.moe/nxfq4o.mp4"
-  },
-  {
-    "title": "Buchigire Reijou wa Houfuku wo Chikaimashita. Madousho no Chikara de Sokoku wo Tatakitsubushimasu",
-    "img": "https://cdn.myanimelist.net/images/anime/1551/157170.jpg",
-    "url": "https://myanimelist.net/anime/62289/Buchigire_Reijou_wa_Houfuku_wo_Chikaimashita_Madousho_no_Chikara_de_Sokoku_wo_Tatakitsubushimasu",
-    "opening_video": "https://files.catbox.moe/yv6x6s.mp4",
-    "ending_video": "https://files.catbox.moe/7w320h.mp4"
   },
   {
     "title": "Oni no Hanayome",
@@ -272,6 +272,20 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/56736/Saikyou_Degarashi_Ouji_no_Anyaku_Teii_Arasoi",
     "opening_video": "https://files.catbox.moe/myu097.mp4",
     "ending_video": "https://files.catbox.moe/27bd8f.mp4"
+  },
+  {
+    "title": "Heroine? Seijo? Iie, All Works Maid desu (Hokori)!",
+    "img": "https://cdn.myanimelist.net/images/anime/1498/158290.jpg",
+    "url": "https://myanimelist.net/anime/61686/Heroine_Seijo_Iie_All_Works_Maid_desu_Hokori",
+    "opening_video": "https://files.catbox.moe/oljgha.mp4",
+    "ending_video": "https://files.catbox.moe/3kmebw.mp4"
+  },
+  {
+    "title": "World Is Dancing",
+    "img": "https://cdn.myanimelist.net/images/anime/1165/158709.jpg",
+    "url": "https://myanimelist.net/anime/63347/World_Is_Dancing",
+    "opening_video": "https://files.catbox.moe/3adl9t.mp4",
+    "ending_video": "https://files.catbox.moe/4txoxo.mp4"
   },
   {
     "title": "Mujikaku Seijo wa Kyou mo Muishiki ni Chikara wo Tare Nagasu",
@@ -309,11 +323,18 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/38tj4j.mp4"
   },
   {
-    "title": "Sora wa Akai Kawa no Hotori",
-    "img": "https://cdn.myanimelist.net/images/anime/1158/158138.jpg",
-    "url": "https://myanimelist.net/anime/63489/Sora_wa_Akai_Kawa_no_Hotori",
-    "opening_video": "https://files.catbox.moe/f9wvzx.mp4",
-    "ending_video": "https://files.catbox.moe/cm16c3.mp4"
+    "title": "Kore Kaite Shine",
+    "img": "https://cdn.myanimelist.net/images/anime/1649/154997.jpg",
+    "url": "https://myanimelist.net/anime/61280/Kore_Kaite_Shine",
+    "opening_video": "https://files.catbox.moe/68jqvz.mp4",
+    "ending_video": "https://files.catbox.moe/w4985n.mp4"
+  },
+  {
+    "title": "Tetsunabe no Jan!",
+    "img": "https://cdn.myanimelist.net/images/anime/1452/159112.jpg",
+    "url": "https://myanimelist.net/anime/63100/Tetsunabe_no_Jan",
+    "opening_video": "https://files.catbox.moe/rqc3ye.mp4",
+    "ending_video": "https://files.catbox.moe/mrvzze.mp4"
   },
   {
     "title": "Ibitte Konai Gibo to Gishi",
@@ -323,25 +344,18 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/fxpjs8.mp4"
   },
   {
-    "title": "Kore Kaite Shine",
-    "img": "https://cdn.myanimelist.net/images/anime/1649/154997.jpg",
-    "url": "https://myanimelist.net/anime/61280/Kore_Kaite_Shine",
-    "opening_video": "https://files.catbox.moe/68jqvz.mp4",
-    "ending_video": "https://files.catbox.moe/w4985n.mp4"
+    "title": "Sora wa Akai Kawa no Hotori",
+    "img": "https://cdn.myanimelist.net/images/anime/1158/158138.jpg",
+    "url": "https://myanimelist.net/anime/63489/Sora_wa_Akai_Kawa_no_Hotori",
+    "opening_video": "https://files.catbox.moe/f9wvzx.mp4",
+    "ending_video": "https://files.catbox.moe/cm16c3.mp4"
   },
   {
     "title": "Uchi no Otouto-domo ga Sumimasen",
-    "img": "https://cdn.myanimelist.net/images/anime/1902/156345.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1474/160261.jpg",
     "url": "https://myanimelist.net/anime/63061/Uchi_no_Otouto-domo_ga_Sumimasen",
     "opening_video": "https://files.catbox.moe/5wa70z.mp4",
     "ending_video": "https://files.catbox.moe/uqirtu.mp4"
-  },
-  {
-    "title": "Ushiro no Shoumen Kamui-san",
-    "img": "https://cdn.myanimelist.net/images/anime/1071/158366.jpg",
-    "url": "https://myanimelist.net/anime/63468/Ushiro_no_Shoumen_Kamui-san",
-    "opening_video": "https://files.catbox.moe/1d0l4k.mp4",
-    "ending_video": "https://files.catbox.moe/85madd.mp4"
   },
   {
     "title": "Mahou Shoujo Lyrical Nanoha EXCEEDS: Gun Blaze Vengeance",
@@ -349,13 +363,6 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/60637/Mahou_Shoujo_Lyrical_Nanoha_EXCEEDS__Gun_Blaze_Vengeance",
     "opening_video": "https://files.catbox.moe/e97bda.mp4",
     "ending_video": "https://files.catbox.moe/feb3bx.mp4"
-  },
-  {
-    "title": "Tetsunabe no Jan!",
-    "img": "https://cdn.myanimelist.net/images/anime/1452/159112.jpg",
-    "url": "https://myanimelist.net/anime/63100/Tetsunabe_no_Jan",
-    "opening_video": "https://files.catbox.moe/rqc3ye.mp4",
-    "ending_video": "https://files.catbox.moe/mrvzze.mp4"
   },
   {
     "title": "Hanazakari no Kimitachi e 2nd Season",
@@ -386,18 +393,18 @@ window.dataTierlists["Summer 2026"] = [
     "ending_video": "https://files.catbox.moe/w14w55.mp4"
   },
   {
-    "title": "Iwamoto-senpai no Suisen",
-    "img": "https://cdn.myanimelist.net/images/anime/1112/158450.jpg",
-    "url": "https://myanimelist.net/anime/63324/Iwamoto-senpai_no_Suisen",
-    "opening_video": "https://files.catbox.moe/a3y97o.mp4",
-    "ending_video": "https://files.catbox.moe/9ammx2.mp4"
-  },
-  {
     "title": "BanG Dream! Yume∞Mita",
     "img": "https://cdn.myanimelist.net/images/anime/1467/158693.jpg",
     "url": "https://myanimelist.net/anime/62430/BanG_Dream_Yume∞Mita",
     "opening_video": "https://files.catbox.moe/4wztdd.mp4",
     "ending_video": "https://files.catbox.moe/husrxi.mp4"
+  },
+  {
+    "title": "Iwamoto-senpai no Suisen",
+    "img": "https://cdn.myanimelist.net/images/anime/1112/158450.jpg",
+    "url": "https://myanimelist.net/anime/63324/Iwamoto-senpai_no_Suisen",
+    "opening_video": "https://files.catbox.moe/a3y97o.mp4",
+    "ending_video": "https://files.catbox.moe/9ammx2.mp4"
   },
   {
     "title": "Let's Go Kaiki-gumi",
@@ -415,17 +422,10 @@ window.dataTierlists["Summer 2026"] = [
   },
   {
     "title": "Thunder 3",
-    "img": "https://cdn.myanimelist.net/images/anime/1084/158946.jpg",
+    "img": "https://cdn.myanimelist.net/images/anime/1549/159931.jpg",
     "url": "https://myanimelist.net/anime/63418/Thunder_3",
     "opening_video": "https://files.catbox.moe/udcn6w.mp4",
     "ending_video": "https://files.catbox.moe/76xp3d.mp4"
-  },
-  {
-    "title": "Yoroi Shin Den Samurai Troopers Part 2",
-    "img": "https://cdn.myanimelist.net/images/anime/1996/158323.jpg",
-    "url": "https://myanimelist.net/anime/63047/Yoroi_Shin_Den_Samurai_Troopers_Part_2",
-    "opening_video": "https://files.catbox.moe/8yppnc.mp4",
-    "ending_video": "https://files.catbox.moe/m8ddud.mp4"
   },
   {
     "title": "Honoo no Toukyuujo: Dodge Danko",
@@ -433,6 +433,13 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/62031/Honoo_no_Toukyuujo__Dodge_Danko",
     "opening_video": "https://files.catbox.moe/2f7rt9.mp4",
     "ending_video": "https://files.catbox.moe/fpj4zi.mp4"
+  },
+  {
+    "title": "Yoroi Shin Den Samurai Troopers Part 2",
+    "img": "https://cdn.myanimelist.net/images/anime/1996/158323.jpg",
+    "url": "https://myanimelist.net/anime/63047/Yoroi_Shin_Den_Samurai_Troopers_Part_2",
+    "opening_video": "https://files.catbox.moe/8yppnc.mp4",
+    "ending_video": "https://files.catbox.moe/m8ddud.mp4"
   },
   {
     "title": "Hokuto no Ken: Kenougun Zako-tachi no Banka Part 2",
@@ -533,6 +540,13 @@ window.dataTierlists["Summer 2026"] = [
     "ed": 2
   },
   {
+    "title": "Ushiro no Shoumen Kamui-san",
+    "img": "https://cdn.myanimelist.net/images/anime/1071/158366.jpg",
+    "url": "https://myanimelist.net/anime/63468/Ushiro_no_Shoumen_Kamui-san",
+    "opening_video": "https://files.catbox.moe/1d0l4k.mp4",
+    "ending_video": "https://files.catbox.moe/85madd.mp4"
+  },
+  {
     "title": "Cyborg 009: Nemesis",
     "img": "https://cdn.myanimelist.net/images/anime/1626/158538.jpg",
     "url": "https://myanimelist.net/anime/62079/Cyborg_009__Nemesis",
@@ -550,9 +564,17 @@ window.dataTierlists["Summer 2026"] = [
     "title": "Neko no Kura-chan: Kurare Oukoku Tairiku no Lutte Amor 2nd Season",
     "img": "https://cdn.myanimelist.net/images/anime/1090/151046.jpg",
     "url": "https://myanimelist.net/anime/51656/Jiu_Cang_Miao_Wo_2nd_Season",
-    "opening_video": "https://files.catbox.moe/bvg9h6.mp4",
+    "opening_video": "https://files.catbox.moe/ap19mv.mp4",
+    "ending_video": "https://files.catbox.moe/qufcfm.mp4",
     "op": 2,
     "ed": 2
+  },
+  {
+    "title": "Neko no Kura-chan: Kurare Oukoku Tairiku no Lutte Amor 2nd Season",
+    "img": "https://cdn.myanimelist.net/images/anime/1090/151046.jpg",
+    "url": "https://myanimelist.net/anime/51656/Jiu_Cang_Miao_Wo_2nd_Season",
+    "opening_video": "https://files.catbox.moe/s8v35d.mp4",
+    "op": 3
   },
   {
     "title": "Toukutsu Ou",
@@ -604,17 +626,17 @@ window.dataTierlists["Summer 2026"] = [
     "ed": 1
   },
   {
-    "title": "Aware! Meisaku-kun (2026)",
-    "img": "https://cdn.myanimelist.net/images/anime/1312/154778.jpg",
-    "url": "https://myanimelist.net/anime/63219/Aware_Meisaku-kun_2026",
-    "ending_video": "https://files.catbox.moe/k1d1q5.mp4",
-    "ed": 1
-  },
-  {
     "title": "Chikyuu Daisuki! Kikkun",
     "img": "https://cdn.myanimelist.net/images/anime/1205/158940.jpg",
     "url": "https://myanimelist.net/anime/64578/Chikyuu_Daisuki_Kikkun",
     "ending_video": "https://files.catbox.moe/0qyqef.mp4",
+    "ed": 1
+  },
+  {
+    "title": "Aware! Meisaku-kun (2026)",
+    "img": "https://cdn.myanimelist.net/images/anime/1312/154778.jpg",
+    "url": "https://myanimelist.net/anime/63219/Aware_Meisaku-kun_2026",
+    "ending_video": "https://files.catbox.moe/k1d1q5.mp4",
     "ed": 1
   },
   {
@@ -628,14 +650,43 @@ window.dataTierlists["Summer 2026"] = [
     "title": "Meitantei Precure!",
     "img": "https://cdn.myanimelist.net/images/anime/1706/154944.jpg",
     "url": "https://myanimelist.net/anime/63042/Meitantei_Precure",
+    "ending_video": "https://files.catbox.moe/elyci6.mp4",
     "ed": 2
   },
   {
-    "title": "Onaji Semi no Someya-san ga Sexy Joyuu datta Hanashi.",
+    "title": "Onaji Zemi no Someya-san ga Sexy Joyuu datta Hanashi.",
     "img": "https://cdn.myanimelist.net/images/anime/1617/157159.jpg",
-    "url": "https://myanimelist.net/anime/63619/Onaji_Semi_no_Someya-san_ga_Sexy_Joyuu_datta_Hanashi",
+    "url": "https://myanimelist.net/anime/63619/Onaji_Zemi_no_Someya-san_ga_Sexy_Joyuu_datta_Hanashi",
     "ending_video": "https://files.catbox.moe/4grhcj.mp4",
     "ed": 1
+  },
+  {
+    "title": "Bleach: Sennen Kessen-hen - Kashin-tan",
+    "img": "https://cdn.myanimelist.net/images/anime/1275/158595.jpg",
+    "url": "https://myanimelist.net/anime/60636/Bleach__Sennen_Kessen-hen_-_Kashin-tan",
+    "ending_video": "https://files.catbox.moe/z3g79g.mp4",
+    "ed": "EP5"
+  },
+  {
+    "title": "Gaikotsu Kishi-sama, Tadaima Isekai e Odekakechuu II",
+    "img": "https://cdn.myanimelist.net/images/anime/1544/157046.jpg",
+    "url": "https://myanimelist.net/anime/60522/Gaikotsu_Kishi-sama_Tadaima_Isekai_e_Odekakechuu_II",
+    "ending_video": "https://files.catbox.moe/shwssv.mp4",
+    "ed": "EP11"
+  },
+  {
+    "title": "Kimi ga Shinu made Koi wo Shitai",
+    "img": "https://cdn.myanimelist.net/images/anime/1096/158712.jpg",
+    "url": "https://myanimelist.net/anime/61126/Kimi_ga_Shinu_made_Koi_wo_Shitai",
+    "ending_video": "https://files.catbox.moe/3k6img.mp4",
+    "ed": "EP7"
+  },
+  {
+    "title": "Koukaku Kidoutai (TV)",
+    "img": "https://cdn.myanimelist.net/images/anime/1474/158937.jpg",
+    "url": "https://myanimelist.net/anime/58929/Koukaku_Kidoutai_TV",
+    "ending_video": "https://files.catbox.moe/lwyw5m.mp4",
+    "ed": "EP10"
   },
   {
     "title": "Koupen-chan",
@@ -650,5 +701,47 @@ window.dataTierlists["Summer 2026"] = [
     "url": "https://myanimelist.net/anime/59193/Mushoku_Tensei_III__Isekai_Ittara_Honki_Dasu",
     "opening_video": "https://files.catbox.moe/huubyy.mp4",
     "op": "EP1"
+  },
+  {
+    "title": "Mushoku Tensei III: Isekai Ittara Honki Dasu",
+    "img": "https://cdn.myanimelist.net/images/anime/1527/158340.jpg",
+    "url": "https://myanimelist.net/anime/59193/Mushoku_Tensei_III__Isekai_Ittara_Honki_Dasu",
+    "ending_video": "https://files.catbox.moe/c4wlm5.mp4",
+    "ed": "EP13"
+  },
+  {
+    "title": "Nijusseiki Denki Mokuroku: Eureka Evrika",
+    "img": "https://cdn.myanimelist.net/images/anime/1068/158475.jpg",
+    "url": "https://myanimelist.net/anime/62856/Nijusseiki_Denki_Mokuroku__Eureka_Evrika",
+    "ending_video": "https://files.catbox.moe/unguvn.mp4",
+    "ed": "EP6"
+  },
+  {
+    "title": "Reiwa no Dara-san",
+    "img": "https://cdn.myanimelist.net/images/anime/1170/155761.jpg",
+    "url": "https://myanimelist.net/anime/63082/Reiwa_no_Dara-san",
+    "ending_video": "https://files.catbox.moe/ny6xix.mp4",
+    "ed": "EP6"
+  },
+  {
+    "title": "Sayonara Lara",
+    "img": "https://cdn.myanimelist.net/images/anime/1411/156343.jpg",
+    "url": "https://myanimelist.net/anime/58878/Sayonara_Lara",
+    "opening_video": "https://files.catbox.moe/56qyou.mp4",
+    "op": "EP12"
+  },
+  {
+    "title": "Yani Neko",
+    "img": "https://cdn.myanimelist.net/images/anime/1281/156496.jpg",
+    "url": "https://myanimelist.net/anime/63403/Yani_Neko",
+    "opening_video": "https://files.catbox.moe/hs72qg.mp4",
+    "op": "EP11"
+  },
+  {
+    "title": "Yani Neko",
+    "img": "https://cdn.myanimelist.net/images/anime/1281/156496.jpg",
+    "url": "https://myanimelist.net/anime/63403/Yani_Neko",
+    "ending_video": "https://files.catbox.moe/307nml.mp4",
+    "ed": "EP11"
   }
 ];
