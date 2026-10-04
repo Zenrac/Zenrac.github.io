@@ -724,20 +724,6 @@ window.dataTierlists["Summer 2026"] = [
     "ed": "EP6"
   },
   {
-    "title": "Sayonara Lara",
-    "img": "https://cdn.myanimelist.net/images/anime/1411/156343.jpg",
-    "url": "https://myanimelist.net/anime/58878/Sayonara_Lara",
-    "opening_video": "https://files.catbox.moe/56qyou.mp4",
-    "op": "EP12"
-  },
-  {
-    "title": "Yani Neko",
-    "img": "https://cdn.myanimelist.net/images/anime/1281/156496.jpg",
-    "url": "https://myanimelist.net/anime/63403/Yani_Neko",
-    "opening_video": "https://files.catbox.moe/hs72qg.mp4",
-    "op": "EP11"
-  },
-  {
     "title": "Yani Neko",
     "img": "https://cdn.myanimelist.net/images/anime/1281/156496.jpg",
     "url": "https://myanimelist.net/anime/63403/Yani_Neko",
