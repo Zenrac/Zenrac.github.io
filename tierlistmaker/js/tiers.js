@@ -1680,8 +1680,8 @@ function exportTierlistDetails() {
 				title: title,
 				colors: colors
 			};
-			if (isNaN(op)) detail.op = op;
-			if (isNaN(ed)) detail.ed = ed;
+			if (op !== 1) detail.op = op;
+			if (ed !== 1) detail.ed = ed;
 			details.push(detail);
         }
     }
